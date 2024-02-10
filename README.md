@@ -36,7 +36,7 @@ tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 config = GPT2Config.from_pretrained(model_name)
 config.max_position_embeddings = 3048
 model = GPT2LMHeadModel(config)
-model_path = "/Users/abdulhodiy/Desktop/alls/MyAIApp/chat_bot/fine_tuned_gpt2_model/"
+model_path = "path/to/path"
 fine_tuned_model, fine_tuned_tokenizer = load_fine_tuned_model(model_path)
 
 while True:
@@ -50,5 +50,5 @@ while True:
             response = generate_response(fine_tuned_model, fine_tuned_tokenizer, prompt, temperature=1.0)
             print("AI:", response)
         except IndexError as err:
-            print("Iltimos bosh joy yasamang")
+            print("Empty question Error")
 ~~~
