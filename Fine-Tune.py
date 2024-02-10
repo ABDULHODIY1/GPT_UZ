@@ -1,18 +1,18 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-# Model va Tokenizer yuklash
-model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6B")
+# Download Model and Tokenizers
+model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6B")# Attention!! This model size is 20gb. You must minimla 48 GB Ram of Computer For Run This Codes!!!
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
-# Ma'lumotlarni yuklash
-with open('/Users/abdulhodiy/Desktop/alls/MyAIApp/my/Chat/chat-data/Data.txt', 'r') as file:
+#upload Text Data
+with open('yourdataforTXT', 'r') as file:
     texts = file.readlines()  # Matnni olish
 
-# Modelni fine-tuning qilish
+# Traing new model
 model.train()
 optimizer = torch.optim.Adam(model.parameters())
 
-for epoch in range(11):  # Epochlar soni
+for epoch in range(11):  # Epochs
     for text in texts:
         inputs = tokenizer(text, return_tensors='pt')
         outputs = model(**inputs, labels=inputs['input_ids'])
@@ -23,5 +23,5 @@ for epoch in range(11):  # Epochlar soni
 
     print(f"Epoch {epoch+1} completed")
 
-# Modelni saqlash
-model.save_pretrained('/Users/abdulhodiy/Desktop/alls/MyAIApp/my/Chat/Models/AIcode/AICode-v1')
+# Save New AI Model!
+model.save_pretrained('YourModelNameAndPath')
