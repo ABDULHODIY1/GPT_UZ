@@ -9,10 +9,11 @@ YOU MUST INSTALL THIS LIBARYS:
 ```pip3 install pytorch```
 ```pip3 install transformers```
 TASK 2 
-IF YOU DONE
+IF YOU DONE,
 YOU MUST DO THIS:
 
-~~~from transformers import GPT2LMHeadModel, GPT2Config, GPT2Tokenizer
+~~~
+from transformers import GPT2LMHeadModel, GPT2Config, GPT2Tokenizer
 import os
 def load_fine_tuned_model(model_path):
     tokenizer = GPT2Tokenizer.from_pretrained(model_path)
@@ -55,3 +56,4 @@ while True:
         except IndexError as err:
             print("Empty question Error")
 ~~~
+Create By Muhiddinov Abdulhodiy
