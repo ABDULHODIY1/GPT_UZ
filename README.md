@@ -1,4 +1,4 @@
-## Attention!! This model size is 20gb. You must minimla 48 GB Ram of Computer For Run This Codes!!!
+# Attention!! This model size is 20gb. You must minimla 48 GB Ram of Computer For Run This Codes!!!
 
 # GPT_UZ
 
@@ -56,4 +56,4 @@ while True:
         except IndexError as err:
             print("Empty question Error")
 ~~~
-Create By Muhiddinov Abdulhodiy
+Author: Muhiddinov Abdulhodiy
