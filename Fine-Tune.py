@@ -25,3 +25,4 @@ for epoch in range(11):  # Epochs
 
 # Save New AI Model!
 model.save_pretrained('YourModelNameAndPath')
+tokenizer.save_pretrained('./models/TestTokenizer')
