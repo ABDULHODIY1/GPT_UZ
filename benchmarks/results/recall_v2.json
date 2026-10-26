@@ -1,0 +1,28 @@
+{
+  "args": {
+    "models": "umid",
+    "train_pairs": 16,
+    "test_pairs": "16,32,48",
+    "n_keys": 64,
+    "n_values": 64,
+    "steps": 2000,
+    "batch_size": 64,
+    "d_model": 128,
+    "n_layers": 2,
+    "n_heads": 2,
+    "lr": 0.002,
+    "seed": 0,
+    "tag": "v2"
+  },
+  "models": {
+    "umid": {
+      "params": 513680,
+      "train_loss": 1.3585384702682495,
+      "acc": {
+        "16": 0.454345703125,
+        "32": 0.2203369140625,
+        "48": 0.1329752653837204
+      }
+    }
+  }
+}
