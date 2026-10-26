@@ -60,6 +60,7 @@ def main():
     ap.add_argument("--n-heads", type=int, default=2)
     ap.add_argument("--lr", type=float, default=2e-3)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--tag", default="", help="natija fayli nomiga qo'shimcha (recall_<tag>.json)")
     args = ap.parse_args()
     default_threads()
     vocab = 1 + args.n_keys + args.n_values
@@ -82,7 +83,7 @@ def main():
     print("juftliklar | " + " | ".join(results["models"]))
     for n in test_pairs:
         print(f"{n:>10} | " + " | ".join(f"{r['acc'][n]:.1%}" for r in results["models"].values()))
-    save_results("recall", results)
+    save_results("recall" + (f"_{args.tag}" if args.tag else ""), results)
 
 
 if __name__ == "__main__":
