@@ -35,7 +35,7 @@ def parse_args():
     ap.add_argument("--n-heads", type=int)
     ap.add_argument("--head-dim", type=int)
     ap.add_argument("--no-neg-eigval", action="store_true", help="β ∈ (0,1) (ablation uchun)")
-    ap.add_argument("--n-reads", type=int, default=None, help="xotiradan qayta so'rashlar soni (v2: 2, v1: 1)")
+    ap.add_argument("--n-reads", type=int, default=None, help="fikrlash rejimi: xotiradan qayta so'rashlar soni (standart 1)")
     ap.add_argument("--decay", choices=["head", "channel"], default=None)
     ap.add_argument("--read-mix-init", type=float, default=None)
     ap.add_argument("--seq-len", type=int, default=256)

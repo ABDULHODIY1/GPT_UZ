@@ -1,0 +1,13 @@
+{"name": "v1", "variant": {}, "seed": 0, "seq": 128, "steps": 800, "params_m": 4.55, "val_loss": {"128": 4.5729, "512": 4.4807, "2048": 4.2984}}
+{"name": "v1", "variant": {}, "seed": 1, "seq": 128, "steps": 800, "params_m": 4.55, "val_loss": {"128": 4.5341, "512": 4.4375, "2048": 4.2615}}
+{"name": "v1", "variant": {}, "seed": 2, "seq": 128, "steps": 800, "params_m": 4.55, "val_loss": {"128": 4.5393, "512": 4.4604, "2048": 4.2829}}
+{"name": "fikr (n_reads=2)", "variant": {"n_reads": 2}, "seed": 0, "seq": 128, "steps": 800, "params_m": 4.62, "val_loss": {"128": 4.3201, "512": 4.234, "2048": 4.0472}}
+{"name": "fikr (n_reads=2)", "variant": {"n_reads": 2}, "seed": 1, "seq": 128, "steps": 800, "params_m": 4.62, "val_loss": {"128": 4.4597, "512": 4.376, "2048": 4.2099}}
+{"name": "fikr (n_reads=2)", "variant": {"n_reads": 2}, "seed": 2, "seq": 128, "steps": 800, "params_m": 4.62, "val_loss": {"128": 4.4398, "512": 4.3593, "2048": 4.1927}}
+{"name": "fikr, read_mix_init=2", "variant": {"n_reads": 2, "read_mix_init": 2.0}, "seed": 0, "seq": 128, "steps": 800, "params_m": 4.62, "val_loss": {"128": 4.3095, "512": 4.2168, "2048": 4.0267}}
+{"name": "channel decay", "variant": {"decay": "channel"}, "seed": 0, "seq": 128, "steps": 800, "params_m": 4.61, "val_loss": {"128": 4.4842, "512": 4.3785, "2048": 4.1993}}
+{"name": "channel decay", "variant": {"decay": "channel"}, "seed": 1, "seq": 128, "steps": 800, "params_m": 4.61, "val_loss": {"128": 4.5322, "512": 4.4311, "2048": 4.2548}}
+{"name": "channel + fikr", "variant": {"decay": "channel", "n_reads": 2}, "seed": 0, "seq": 128, "steps": 800, "params_m": 4.68, "val_loss": {"128": 4.2597, "512": 4.1624, "2048": 3.967}}
+{"name": "channel + fikr", "variant": {"decay": "channel", "n_reads": 2}, "seed": 1, "seq": 128, "steps": 800, "params_m": 4.68, "val_loss": {"128": 4.3334, "512": 4.2351, "2048": 4.0374}}
+{"name": "channel + 3 o'qish", "variant": {"decay": "channel", "n_reads": 3}, "seed": 0, "seq": 128, "steps": 800, "params_m": 4.69, "val_loss": {"128": 4.3914, "512": 4.2994, "2048": 4.1162}}
+{"name": "expand_v=2", "variant": {"expand_v": 2.0}, "seed": 0, "seq": 128, "steps": 800, "params_m": 5.34, "val_loss": {"128": 4.5728, "512": 4.4706, "2048": 4.2745}}

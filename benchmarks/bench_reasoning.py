@@ -29,7 +29,6 @@ VARIANTS = {
     "umid-frame": dict(mixer="optimal", frame=True),   # aylanadigan koordinatalardagi optimal xotira
     "umid-r2": dict(V1, n_reads=2),                     # xotiradan qayta so'rash (2 bosqich)
     "umid-r3": dict(V1, n_reads=3),
-    "umid-v2": dict(),                                  # standart v2: kanal bo'yicha unutish + 2 o'qish
 }
 
 

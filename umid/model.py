@@ -37,8 +37,10 @@ class UmidConfig:
                                   # (LM da biroz yaxshi, lekin eslab qolish va parity'ni yomonlashtirdi)
     decay_rank: int = 32          # "channel" rejimida α proyeksiyasining rangi (D → r → H·Dk)
     n_writes: int = 1             # har token xotiraga necha marta yozadi (Householder ko'paytmasi)
-    n_reads: int = 2              # xotiradan qayta so'rash: o¹ = Sᵀq, q² = norm(W·o¹), o² = Sᵀq² (v2; v1 = 1)
-    read_mix_init: float = 0.0    # boshlang'ich holatda birinchi o'qish foydasiga bias (0 → o'qishlar teng)
+    n_reads: int = 1              # "fikrlash rejimi": xotiradan qayta so'rash o¹ = Sᵀq, q² = norm(W·o¹), o² = Sᵀq².
+                                  # 2 — mantiqiy masalalar va qisqa kontekstda yaxshi, 256 tokenli LM o'qitishda yomon
+                                  # (README: "Aql tadqiqoti"), shuning uchun standart 1.
+    read_mix_init: float = 0.0    # n_reads > 1: boshlang'ich holatda birinchi o'qish foydasiga bias (0 → teng)
     n_loops: int = 1              # fikrlash halqasi: qatlamlar steki necha marta qayta ishlatiladi
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
