@@ -61,6 +61,14 @@ def accuracy(model, x, y):
     return (pred[m] == y[m]).float().mean().item(), (pred[:, -1] == y[:, -1]).float().mean().item()
 
 
+def _hops(n):
+    """hopmix sinovi: faqat n bosqichli so'rovlar baholanadi."""
+    def make(g):
+        x, y, h = tasks.hopmix_batch(512, 16, 8, generator=g)
+        return x, torch.where(h == n, y, torch.full_like(y, -100))
+    return make
+
+
 TASKS = {
     # nom: (lug'at, o'qitish batch funksiyasi, {sinov nomi: batch funksiyasi}, model o'lchami)
     "hop": (tasks.HOP_VOCAB,
@@ -68,6 +76,10 @@ TASKS = {
             {"2-hop, 16 juft": lambda g: tasks.hop_batch(512, 16, 2, 8, g),
              "2-hop, 24 juft": lambda g: tasks.hop_batch(512, 24, 2, 8, g)},
             (128, 2, 4)),
+    "hopmix": (tasks.HOPMIX_VOCAB,
+               lambda g: tasks.hopmix_batch(64, 16, 8, generator=g)[:2],
+               {"1 bosqich": _hops(1), "2 bosqich": _hops(2)},
+               (128, 2, 4)),
     "s3": (tasks.S3_VOCAB,
            lambda g: tasks.s3_batch(64, 32, g),
            {"uzunlik 32": lambda g: tasks.s3_batch(512, 32, g),

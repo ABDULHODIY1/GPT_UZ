@@ -43,6 +43,31 @@ def hop_batch(batch_size, n_pairs=16, hops=2, n_queries=8, generator=None):
 
 
 HOP_VOCAB = HOP_SYMBOLS + 1
+HOP1, HOP2 = HOP_SYMBOLS + 1, HOP_SYMBOLS + 2
+HOPMIX_VOCAB = HOP_SYMBOLS + 3
+
+
+def hopmix_batch(batch_size, n_pairs=16, n_queries=8, p_two=0.5, generator=None):
+    """Aralash zanjir: har so'rov oldidan belgi — HOP1 (javob f(q)) yoki HOP2 (javob f(f(q))).
+    Qaytaradi: x, y va har bir baholanadigan pozitsiya necha bosqichli ekani (1/2, aks holda 0)."""
+    S = HOP_SYMBOLS
+    xs, ys, hs = [], [], []
+    for _ in range(batch_size):
+        keys = torch.randperm(S, generator=generator)[:n_pairs] + 1
+        f = {int(k): int(keys[torch.randint(0, n_pairs, (1,), generator=generator)]) for k in keys}
+        ctx = []
+        for i in torch.randperm(n_pairs, generator=generator):
+            k = int(keys[i])
+            ctx += [k, f[k]]
+        x, y, h = ctx + [0], [-100] * (len(ctx) + 1), [0] * (len(ctx) + 1)
+        for _ in range(n_queries):
+            q = int(keys[torch.randint(0, n_pairs, (1,), generator=generator)])
+            two = bool(torch.rand(1, generator=generator) < p_two)
+            x += [HOP2 if two else HOP1, q]
+            y += [-100, f[f[q]] if two else f[q]]
+            h += [0, 2 if two else 1]
+        xs.append(x), ys.append(y), hs.append(h)
+    return torch.tensor(xs), torch.tensor(ys), torch.tensor(hs)
 
 # ----------------------------------------------------------------------------- s3
 PERMS = list(itertools.permutations(range(3)))

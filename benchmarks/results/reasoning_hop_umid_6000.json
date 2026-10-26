@@ -1,0 +1,26 @@
+{
+  "args": {
+    "task": "hop",
+    "models": "umid",
+    "steps": 6000,
+    "lr": 0.001,
+    "seed": 0,
+    "threads": 1,
+    "tag": "umid_6000"
+  },
+  "models": {
+    "umid": {
+      "params": 431960,
+      "train_loss": 2.21800395488739,
+      "sec_per_step": 0.31545244296391806,
+      "acc": {
+        "2-hop, 16 juft": 0.220947265625,
+        "2-hop, 24 juft": 0.159423828125
+      },
+      "acc_last": {
+        "2-hop, 16 juft": 0.19921875,
+        "2-hop, 24 juft": 0.13671875
+      }
+    }
+  }
+}
