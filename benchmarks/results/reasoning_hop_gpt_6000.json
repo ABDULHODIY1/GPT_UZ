@@ -1,0 +1,26 @@
+{
+  "args": {
+    "task": "hop",
+    "models": "gpt",
+    "steps": 6000,
+    "lr": 0.001,
+    "seed": 0,
+    "threads": 1,
+    "tag": "gpt_6000"
+  },
+  "models": {
+    "gpt": {
+      "params": 430848,
+      "train_loss": 2.2817215156555175,
+      "sec_per_step": 0.14680277363459268,
+      "acc": {
+        "2-hop, 16 juft": 0.20068359375,
+        "2-hop, 24 juft": 0.136474609375
+      },
+      "acc_last": {
+        "2-hop, 16 juft": 0.171875,
+        "2-hop, 24 juft": 0.134765625
+      }
+    }
+  }
+}
