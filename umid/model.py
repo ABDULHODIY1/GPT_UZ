@@ -18,6 +18,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .delta import delta_rule_chunked, delta_rule_step
+from .optimal import optimal_memory_chunked, optimal_memory_step
 
 
 @dataclass
@@ -34,6 +35,10 @@ class UmidConfig:
     allow_neg_eigval: bool = True  # β ∈ (0, 2): holatni kuzatish (parity, sanash) imkoniyati
     decay: str = "head"           # "head": head bo'yicha bitta α; "channel": har bir kalit-kanal o'z α si
     decay_rank: int = 32          # "channel" rejimida α proyeksiyasining rangi (D → r → H·Dk)
+    n_writes: int = 1             # har token xotiraga necha marta yozadi (Householder ko'paytmasi)
+    n_loops: int = 1              # fikrlash halqasi: qatlamlar steki necha marta qayta ishlatiladi
+    mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
+    mlp_hidden_size: int = 0      # 0 bo'lmasa MLP o'lchamini aniq belgilaydi (parametrlarni tenglashtirish uchun)
     dropout: float = 0.0
     norm_eps: float = 1e-6
     tie_embeddings: bool = True
@@ -44,6 +49,8 @@ class UmidConfig:
 
     @property
     def mlp_hidden(self) -> int:
+        if self.mlp_hidden_size:
+            return self.mlp_hidden_size
         return 64 * math.ceil(self.d_model * self.mlp_ratio / 64)
 
 
@@ -105,9 +112,10 @@ class GatedDeltaMemory(nn.Module):
         super().__init__()
         self.cfg = cfg
         D, H, dk, dv = cfg.d_model, cfg.n_heads, cfg.head_dim, cfg.value_dim
-        self.qkv_proj = nn.Linear(D, H * (2 * dk + dv), bias=False)
-        self.qkv_conv = ShortConv(H * (2 * dk + dv), cfg.conv_size)
-        self.b_proj = nn.Linear(D, H, bias=True)      # β — qancha kuch bilan yozish
+        n = cfg.n_writes
+        self.qkv_proj = nn.Linear(D, H * (dk + n * (dk + dv)), bias=False)
+        self.qkv_conv = ShortConv(H * (dk + n * (dk + dv)), cfg.conv_size)
+        self.b_proj = nn.Linear(D, n * H, bias=True)  # β — qancha kuch bilan yozish
         n_decay = H * dk if cfg.decay == "channel" else H
         if cfg.decay == "channel":                    # α — qancha unutish (har bir kanal uchun)
             self.a_proj = nn.Sequential(nn.Linear(D, cfg.decay_rank, bias=False),
@@ -127,36 +135,96 @@ class GatedDeltaMemory(nn.Module):
     def forward(self, x, state=None):
         cfg = self.cfg
         B, T, _ = x.shape
-        H, dk, dv = cfg.n_heads, cfg.head_dim, cfg.value_dim
+        H, dk, dv, n = cfg.n_heads, cfg.head_dim, cfg.value_dim, cfg.n_writes
         st = state or {}
         fdt = torch.promote_types(x.dtype, torch.float32)   # xotira hisob-kitobi kamida fp32 da
         qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"))
-        q, k, v = qkv.split([H * dk, H * dk, H * dv], dim=-1)
+        q, k, v = qkv.split([H * dk, n * H * dk, n * H * dv], dim=-1)
         q = F.normalize(q.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
-        k = F.normalize(k.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
-        v = v.reshape(B, T, H, dv).transpose(1, 2).to(fdt)
+        k = F.normalize(k.reshape(B, T, n, H, dk).to(fdt), dim=-1).permute(0, 3, 1, 2, 4)  # [B, H, T, n, dk]
+        v = v.reshape(B, T, n, H, dv).to(fdt).permute(0, 3, 1, 2, 4)
 
-        beta = torch.sigmoid(self.b_proj(x).to(fdt))
+        beta = torch.sigmoid(self.b_proj(x).to(fdt)).view(B, T, n, H).permute(0, 3, 1, 2)   # [B, H, T, n]
         if cfg.allow_neg_eigval:
             beta = beta * 2.0
         g = F.softplus(self.a_proj(x).to(fdt) + self.dt_bias.to(fdt))
         if cfg.decay == "channel":
             g = (-self.A_log.to(fdt).exp()[:, None] * g.view(B, T, H, dk)).clamp(min=-5.0).transpose(1, 2)
         else:
-            g = (-self.A_log.to(fdt).exp() * g).transpose(1, 2)
-        beta = beta.transpose(1, 2)                          # [B, H, T]; g: [B, H, T] yoki [B, H, T, Dk]
+            g = (-self.A_log.to(fdt).exp() * g).transpose(1, 2)    # g: [B, H, T] yoki [B, H, T, Dk]
 
         S0 = st.get("S")
         if T == 1 and S0 is not None:
-            o, S = delta_rule_step(q[:, :, 0], k[:, :, 0], v[:, :, 0], g[:, :, 0], beta[:, :, 0], S0)
+            S = S0
+            for j in range(n):   # unutish faqat birinchi yozishda, o'qish oxirgisidan keyin
+                o, S = delta_rule_step(q[:, :, 0], k[:, :, 0, j], v[:, :, 0, j],
+                                       g[:, :, 0] if j == 0 else torch.zeros_like(g[:, :, 0]), beta[:, :, 0, j], S)
             o = o[:, :, None]
+        elif n == 1:
+            o, S = delta_rule_chunked(q, k[:, :, :, 0], v[:, :, :, 0], g, beta[..., 0], cfg.chunk_size, S0)
         else:
-            o, S = delta_rule_chunked(q, k, v, g, beta, cfg.chunk_size, S0)
+            # Har bir token n ta ketma-ket "kichik qadam"ga yoyiladi: S ← Π_j (I − β_j k_j k_jᵀ) S + …
+            # Bu xotirani aks ettirishlar ko'paytmasi (aylanish, almashtirish) bilan o'zgartirish imkonini beradi.
+            gz = torch.zeros_like(g).unsqueeze(3).expand(*g.shape[:3], n - 1, *g.shape[3:])
+            g_seq = torch.cat([g.unsqueeze(3), gz], 3).flatten(2, 3)
+            q_seq = torch.cat([q.new_zeros(B, H, T, n - 1, dk), q.unsqueeze(3)], 3).flatten(2, 3)
+            o, S = delta_rule_chunked(q_seq, k.flatten(2, 3), v.flatten(2, 3), g_seq, beta.flatten(2, 3),
+                                      cfg.chunk_size, S0)
+            o = o.view(B, H, T, n, dv)[:, :, :, -1]
 
         o = self.o_norm(o.transpose(1, 2).to(x.dtype))           # [B, T, H, dv]
         o = o * F.silu(self.g_proj(x)).view(B, T, H, dv)
         out = self.o_proj(o.reshape(B, T, H * dv))
         return out, {"conv": conv_cache, "S": S}
+
+
+class OptimalMemory(nn.Module):
+    """Xotira har tokenda eng kichik kvadratlar masalasini aniq yechadi: o = Gᵀ(H + Λ)⁻¹q.
+
+    H — kalitlar kovariatsiyasi, G — kalit-qiymat bog'lanishi (ikkalasi ham α bilan unutiladi).
+    Korrelyatsiyalangan kalitlar bir-birini buzmaydi (delta rule'dan farqli). umid/optimal.py ga qarang.
+    """
+
+    def __init__(self, cfg: UmidConfig):
+        super().__init__()
+        self.cfg = cfg
+        D, H, dk, dv = cfg.d_model, cfg.n_heads, cfg.head_dim, cfg.value_dim
+        self.qkv_proj = nn.Linear(D, H * (2 * dk + dv), bias=False)
+        self.qkv_conv = ShortConv(H * (2 * dk + dv), cfg.conv_size)
+        self.b_proj = nn.Linear(D, H, bias=True)
+        self.a_proj = nn.Linear(D, H, bias=False)
+        self.g_proj = nn.Linear(D, H * dv, bias=False)
+        self.o_norm = RMSNorm(dv, cfg.norm_eps)
+        self.o_proj = nn.Linear(H * dv, D, bias=False)
+        A = torch.empty(H).uniform_(1, 16)
+        self.A_log = nn.Parameter(torch.log(A))
+        dt = torch.exp(torch.rand(H) * (math.log(0.1) - math.log(0.001)) + math.log(0.001))
+        self.dt_bias = nn.Parameter(dt + torch.log(-torch.expm1(-dt)))
+        self.lam_raw = nn.Parameter(torch.full((H, dk), math.log(math.e - 1)))   # softplus → Λ = 1
+
+    def forward(self, x, state=None):
+        cfg = self.cfg
+        B, T, _ = x.shape
+        H, dk, dv = cfg.n_heads, cfg.head_dim, cfg.value_dim
+        st = state or {}
+        fdt = torch.promote_types(x.dtype, torch.float32)
+        qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"))
+        q, k, v = qkv.split([H * dk, H * dk, H * dv], dim=-1)
+        q = F.normalize(q.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
+        k = F.normalize(k.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
+        v = v.reshape(B, T, H, dv).transpose(1, 2).to(fdt)
+        beta = torch.sigmoid(self.b_proj(x).to(fdt)).transpose(1, 2)
+        g = (-self.A_log.to(fdt).exp() * F.softplus(self.a_proj(x).to(fdt) + self.dt_bias.to(fdt))).transpose(1, 2)
+        lam = F.softplus(self.lam_raw.to(fdt)) + 1e-4
+        prev = (st["H"], st["G"]) if "H" in st else None
+        if T == 1 and prev is not None:
+            o, (Hm, G) = optimal_memory_step(q[:, :, 0], k[:, :, 0], v[:, :, 0], g[:, :, 0], beta[:, :, 0], lam, prev)
+            o = o[:, :, None]
+        else:
+            o, (Hm, G) = optimal_memory_chunked(q, k, v, g, beta, lam, 32, prev)
+        o = self.o_norm(o.transpose(1, 2).to(x.dtype))
+        o = o * F.silu(self.g_proj(x)).view(B, T, H, dv)
+        return self.o_proj(o.reshape(B, T, H * dv)), {"conv": conv_cache, "H": Hm, "G": G}
 
 
 class SwiGLU(nn.Module):
@@ -174,7 +242,7 @@ class Block(nn.Module):
     def __init__(self, cfg: UmidConfig):
         super().__init__()
         self.norm1 = RMSNorm(cfg.d_model, cfg.norm_eps)
-        self.mixer = GatedDeltaMemory(cfg)
+        self.mixer = OptimalMemory(cfg) if cfg.mixer == "optimal" else GatedDeltaMemory(cfg)
         self.norm2 = RMSNorm(cfg.d_model, cfg.norm_eps)
         self.mlp = SwiGLU(cfg)
         self.drop = nn.Dropout(cfg.dropout)
@@ -193,6 +261,8 @@ class UmidLM(nn.Module):
         self.embed = nn.Embedding(cfg.vocab_size, cfg.d_model)
         self.drop = nn.Dropout(cfg.dropout)
         self.blocks = nn.ModuleList(Block(cfg) for _ in range(cfg.n_layers))
+        if cfg.n_loops > 1:   # har bir halqa uchun o'z "qaysi qadamdaman" vektori
+            self.loop_embed = nn.Parameter(torch.zeros(cfg.n_loops, cfg.d_model))
         self.norm = RMSNorm(cfg.d_model, cfg.norm_eps)
         self.lm_head = nn.Linear(cfg.d_model, cfg.vocab_size, bias=False)
         self._init_weights()
@@ -201,7 +271,7 @@ class UmidLM(nn.Module):
 
     def _init_weights(self):
         for name, p in self.named_parameters():
-            if name.endswith(("A_log", "dt_bias")) or "conv" in name or "norm" in name:
+            if name.endswith(("A_log", "dt_bias", "lam_raw")) or "conv" in name or "norm" in name:
                 continue
             if name.endswith("bias"):
                 nn.init.zeros_(p)
@@ -217,9 +287,12 @@ class UmidLM(nn.Module):
         """idx: [B, T]. states — oldingi chaqiruvdan qaytgan xotira (davom ettirish uchun)."""
         x = self.drop(self.embed(idx))
         new_states = []
-        for i, block in enumerate(self.blocks):
-            x, st = block(x, None if states is None else states[i])
-            new_states.append(st)
+        for r in range(self.cfg.n_loops):
+            if self.cfg.n_loops > 1:
+                x = x + self.loop_embed[r]
+            for block in self.blocks:
+                x, st = block(x, None if states is None else states[len(new_states)])
+                new_states.append(st)
         logits = self.lm_head(self.norm(x))
         loss = None
         if targets is not None:

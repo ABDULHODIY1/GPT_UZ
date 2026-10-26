@@ -10,6 +10,11 @@ def tiny_model(**kw):
     return UmidLM(cfg).double().eval()
 
 
+# Arxitektura variantlari: kanal bo'yicha unutish, ko'p yozish, fikrlash halqasi
+VARIANTS = [dict(), dict(decay="channel"), dict(n_writes=2), dict(n_writes=3, decay="channel"), dict(n_loops=2),
+            dict(mixer="optimal")]
+
+
 def test_forward_shapes_and_loss():
     m = tiny_model()
     idx = torch.randint(0, 97, (3, 50))
@@ -19,9 +24,10 @@ def test_forward_shapes_and_loss():
     assert torch.isfinite(loss) and loss.item() < 2 * torch.log(torch.tensor(97.0)).item()
 
 
-def test_causality():
+@pytest.mark.parametrize("variant", VARIANTS)
+def test_causality(variant):
     """Kelajakdagi tokenlar o'tmishdagi chiqishlarga ta'sir qilmasligi kerak."""
-    m = tiny_model()
+    m = tiny_model(**variant)
     idx = torch.randint(0, 97, (1, 40))
     a, _ = m(idx)
     idx2 = idx.clone()
@@ -31,11 +37,11 @@ def test_causality():
     assert not torch.allclose(a[:, 25:], b[:, 25:])
 
 
-@pytest.mark.parametrize("decay", ["head", "channel"])
+@pytest.mark.parametrize("variant", VARIANTS)
 @pytest.mark.parametrize("split", [1, 17, 33])
-def test_incremental_decoding_matches_full_forward(split, decay):
+def test_incremental_decoding_matches_full_forward(split, variant):
     """Prefill + token-ma-token generatsiya (O(1) holat) = to'liq forward."""
-    m = tiny_model(decay=decay)
+    m = tiny_model(**variant)
     idx = torch.randint(0, 97, (2, 45))
     full, _ = m(idx)
     logits, _, states = m(idx[:, :split], return_states=True)
@@ -62,9 +68,9 @@ def test_runs_beyond_any_training_length():
     assert torch.isfinite(logits).all()
 
 
-@pytest.mark.parametrize("decay", ["head", "channel"])
-def test_backward_reaches_all_parameters(decay):
-    m = tiny_model(decay=decay).train()
+@pytest.mark.parametrize("variant", VARIANTS)
+def test_backward_reaches_all_parameters(variant):
+    m = tiny_model(**variant).train()
     idx = torch.randint(0, 97, (2, 30))
     _, loss = m(idx, targets=idx)
     loss.backward()

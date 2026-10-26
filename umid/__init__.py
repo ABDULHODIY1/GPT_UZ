@@ -2,6 +2,7 @@
 
 from .delta import delta_rule_chunked, delta_rule_recurrent, delta_rule_step
 from .model import PRESETS, UmidConfig, UmidLM
+from .optimal import optimal_memory_chunked, optimal_memory_recurrent, optimal_memory_step
 from .tokenizer import BPETokenizer
 
 __all__ = [
@@ -12,4 +13,7 @@ __all__ = [
     "delta_rule_chunked",
     "delta_rule_recurrent",
     "delta_rule_step",
+    "optimal_memory_chunked",
+    "optimal_memory_recurrent",
+    "optimal_memory_step",
 ]
