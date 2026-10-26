@@ -124,6 +124,7 @@ def cosine_lr(step, total, peak, warmup, min_ratio=0.1):
 
 
 def default_threads():
-    n = os.cpu_count() or 1
+    """OMP_NUM_THREADS berilgan bo'lsa shuni, aks holda barcha yadrolarni ishlatadi."""
+    n = int(os.environ.get("OMP_NUM_THREADS") or os.cpu_count() or 1)
     torch.set_num_threads(n)
     return n
