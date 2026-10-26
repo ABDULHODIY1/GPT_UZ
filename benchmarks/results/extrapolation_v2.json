@@ -1,0 +1,33 @@
+{
+  "args": {
+    "data": "chat-data/Data.txt",
+    "tokenizer": "checkpoints/tokenizer.json",
+    "models": "umid",
+    "steps": 800,
+    "batch_size": 16,
+    "train_len": 128,
+    "eval_lens": "128,256,512,1024,2048",
+    "d_model": 256,
+    "n_layers": 4,
+    "n_heads": 4,
+    "lr": 0.002,
+    "seed": 0,
+    "eval_every": 50,
+    "tag": "v2"
+  },
+  "models": {
+    "umid": {
+      "params": 4681280,
+      "train_loss": 2.8497024822235106,
+      "best_step": 800,
+      "sec_per_step": 1.5211923852562905,
+      "val_loss": {
+        "128": 4.25974203470185,
+        "256": 4.2116631174844406,
+        "512": 4.162412997215025,
+        "1024": 4.098879178365071,
+        "2048": 3.9669992923736572
+      }
+    }
+  }
+}
