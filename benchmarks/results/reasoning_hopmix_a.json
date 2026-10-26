@@ -1,0 +1,39 @@
+{
+  "args": {
+    "task": "hopmix",
+    "models": "gpt,umid",
+    "steps": 3000,
+    "lr": 0.001,
+    "seed": 0,
+    "threads": 1,
+    "tag": "a"
+  },
+  "models": {
+    "gpt": {
+      "params": 431104,
+      "train_loss": 2.2948954010009768,
+      "sec_per_step": 0.3142366477648417,
+      "acc": {
+        "1 bosqich": 0.1822759360074997,
+        "2 bosqich": 0.18246445059776306
+      },
+      "acc_last": {
+        "1 bosqich": 0.068359375,
+        "2 bosqich": 0.0859375
+      }
+    },
+    "umid": {
+      "params": 432216,
+      "train_loss": 1.800785412788391,
+      "sec_per_step": 0.36000651788711546,
+      "acc": {
+        "1 bosqich": 0.5624370574951172,
+        "2 bosqich": 0.19241705536842346
+      },
+      "acc_last": {
+        "1 bosqich": 0.251953125,
+        "2 bosqich": 0.08984375
+      }
+    }
+  }
+}
