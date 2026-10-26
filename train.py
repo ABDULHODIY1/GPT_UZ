@@ -35,6 +35,8 @@ def parse_args():
     ap.add_argument("--n-heads", type=int)
     ap.add_argument("--head-dim", type=int)
     ap.add_argument("--no-neg-eigval", action="store_true", help="β ∈ (0,1) (ablation uchun)")
+    ap.add_argument("--n-reads", type=int, default=None, help="xotiradan qayta so'rashlar soni (v2: 2, v1: 1)")
+    ap.add_argument("--decay", choices=["head", "channel"], default=None)
     ap.add_argument("--seq-len", type=int, default=256)
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--grad-accum", type=int, default=1)
@@ -71,6 +73,10 @@ def build_config(args, vocab_size):
     for key in ("d_model", "n_layers", "n_heads", "head_dim"):
         if getattr(args, key) is not None:
             kw[key] = getattr(args, key)
+    if args.n_reads is not None:
+        kw["n_reads"] = args.n_reads
+    if args.decay is not None:
+        kw["decay"] = args.decay
     return UmidConfig(vocab_size=vocab_size, dropout=args.dropout, allow_neg_eigval=not args.no_neg_eigval, **kw)
 
 
