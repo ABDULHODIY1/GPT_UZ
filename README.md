@@ -56,6 +56,21 @@ o_t = RMSNorm(S_tᵀ q_t) ⊙ SiLU(W_g x)                         # o'qish + chi
 - **Generatsiya**: `delta_rule_step`, ya'ni har token uchun bitta yangilanish. Butun suhbat
   `S` matritsalarida saqlanadi: tiny modelda jami 0.29 MB.
 
+**Fikrlash rejimi — xotiradan qayta so'rash** (`n_reads=2`, ixtiyoriy):
+
+```
+o¹_t = S_tᵀ q_t                        # birinchi o'qish
+q²_t = L2norm(W_r · o¹_t)              # javob yangi so'rovga aylanadi (har head uchun Dv × Dk matritsa)
+o²_t = S_tᵀ q²_t                       # o'sha xotiradan ikkinchi o'qish
+o_t  = softmax(W_m x)₁·o¹_t + softmax(W_m x)₂·o²_t    # har token qaysi o'qish kerakligini tanlaydi
+```
+
+Bitta qatlam ichida "f(q) ni top, keyin f(f(q)) ni top" kabi ikki bosqichli qidiruv bajariladi.
+Xotira hajmi o'zgarmaydi. Barcha o'qishlar chunk'ning bir xil (u, w, S) hisob-kitobidan
+foydalanadi, shuning uchun algoritm aniqligicha qoladi (`test_multi_read_matches_recurrent`).
+Bu rejim mantiqiy masalalarda kuchli, lekin 256 tokenli LM o'qitishda yomonroq. Shu sababli u
+standart emas, `--n-reads 2` bilan yoqiladi ("Aql tadqiqoti" bo'limiga qarang).
+
 Bu g'oyalarning ilmiy asoslari: DeltaNet (Yang va boshq., 2024), Gated DeltaNet (Yang, Kautz,
 Hatamizadeh, ICLR 2025), manfiy xos qiymatlar orqali holat kuzatish (Grazzi va boshq., ICLR 2025),
 Mamba-2 uslubidagi unutish darvozasi. Umid ularni bitta ixcham, tashqi kutubxonasiz
@@ -66,8 +81,9 @@ vositalari ham bor.
 
 ```
 umid/
-  delta.py      # yadro: rekurrent, chunk'li va bir qadamli Gated Delta algoritmi
+  delta.py      # yadro: rekurrent, chunk'li va bir qadamli Gated Delta algoritmi (+ qayta so'rash)
   model.py      # UmidLM: qatlamlar, generatsiya, saqlash/yuklash
+  optimal.py    # tadqiqot: aniq eng kichik kvadratlar xotirasi (Gᵀ(H + Λ)⁻¹q)
   tokenizer.py  # bayt darajasidagi BPE (o‘, g‘, ' belgilari so'z ichida qoladi)
   data.py       # korpus, batch'lar, baholash
   baseline.py   # taqqoslash uchun klassik Transformer (RoPE + softmax attention)
@@ -85,6 +101,7 @@ python train.py --preset small --steps 5000       # 6 qatlam, d=384
 python train.py --data korpus_papkasi/ --preset base --seq-len 1024 --compile   # GPU uchun
 python train.py --stream                          # xotira holatini oynadan oynaga uzatib o'qitish
 python train.py --out checkpoints/umid --resume   # to'xtagan joydan davom ettirish
+python train.py --n-reads 2                       # fikrlash rejimi (xotiradan qayta so'rash)
 ```
 
 - Presetlar: `tiny` (d=256, 4 qatlam), `small` (384, 6), `base` (768, 12), `large` (1024, 24).
@@ -96,9 +113,9 @@ python train.py --out checkpoints/umid --resume   # to'xtagan joydan davom ettir
 - `--resume` bilan `--steps` ni oshirsangiz, lr jadvali yangi uzunlikka cho'ziladi va lr vaqtincha
   ko'tariladi.
 - Standart sozlamalar (`tiny`, 600 qadam) bilan `chat-data/Data.txt` da o'qitish 4 yadroli
-  CPU'da ~10 daqiqa oladi. Natija: val loss **4.03** (perplexity 56), 1024 tokenli kontekstda
-  **3.89**. Standart sozlamalar shu korpusga moslangan: ~1.6M tokendan keyin model matnni
-  yodlay boshlaydi, shuning uchun qadamlar soni cheklangan.
+  CPU'da ~10 daqiqa oladi. Natija (3 seed): val loss **4.04–4.11** (perplexity 57–61), 1024 tokenli
+  kontekstda ~**3.9**. Standart sozlamalar shu korpusga moslangan: ~1.6M tokendan keyin model
+  matnni yodlay boshlaydi, shuning uchun qadamlar soni cheklangan.
 
 ## Suhbat
 
@@ -228,6 +245,98 @@ O'qitish (forward + backward, batch'da 8192 token):
 Generatsiyada Umid'ning xotirasi va tezligi kontekstga bog'liq emas. 16K kontekstda u 5.5×
 tezroq, xotirasi esa 440× kam. Transformer'da ikkalasi ham chiziqli o'sadi.
 
+## Aql tadqiqoti: bir xil parametrda Transformer'dan aqlliroq qatlam izlash
+
+Maqsad: teng parametr sonida Transformer'dan ancha "aqlliroq" qatlam topish. Qoidalar:
+- har bir taqqoslashda parametrlar MLP o'lchami orqali ±1% aniqlikda tenglashtirildi
+  (`benchmarks/bench_reasoning.py`);
+- Transformer'ga bir nechta lr va ko'proq qadam berildi;
+- da'volar faqat bir nechta seed'da takrorlangandagina qabul qilindi;
+- barcha raqamlar `benchmarks/results/` da.
+
+**Qisqa javob: teng parametrda umumiy "10x aqlliroq" model topilmadi.** Bunga erishilgan deb
+da'vo qilinmaydi. Quyida aniq, takrorlangan yutuqlar va ishlamagan g'oyalar keltirilgan.
+
+### Tasdiqlangan yutuqlar
+
+**1. Mantiqiy zanjir (`--task hopmix`, ~430K parametr).** Kontekstda `x f(x)` juftliklari bor,
+so'ng "1 bosqich: f(q)?" yoki "2 bosqich: f(f(q))?" so'raladi.
+
+| model | 1 bosqich | 2 bosqich |
+|---|---:|---:|
+| Transformer (3 xil lr, 6000 qadamgacha, 4 urinish) | 18–21% | 18–20% |
+| Umid (bitta o'qish) | 56% | 19% |
+| **Umid, fikrlash rejimi** (`n_reads=2`), seed 0 / 1 / 2 | **80% / 84% / 74%** | **47%** / 21% / **40%** |
+
+- Bitta qidiruvda fikrlash rejimi Transformer'dan **~4x** ustun, 3 seed'ning uchalasida.
+- Ikki bosqichli kompozitsiyani u **3 seed'dan 2 tasida** o'rgandi (~2.2x).
+- Transformer va bitta o'qishli Umid kompozitsiyani hech qachon o'rganmadi.
+- Sof 2 bosqichli masalada (aralashtirmasdan) 6000 qadamda ham hech bir model o'rganmadi
+  (~20%).
+
+**2. Kattaroq masalaga umumlashtirish — eslab qolish (`--task mqar`, ~115K parametr).** O'qitish
+32 juftlikda, sinov undan ko'p juftlikda. Har ikki model ham 3 seed'dan 2 tasida o'rgandi,
+uchinchisida platoda qoldi. Jadvalda o'rgangan seed'lar:
+
+| | 32 (o'qitilgan) | 48 | 64 |
+|---|---:|---:|---:|
+| Transformer (2 seed) | 100% / 100% | 84.6% / 83.8% | 51.3% / 40.8% |
+| **Umid** (2 seed) | 99.0% / 99.1% | 95.6% / 94.3% | **88.6% / 85.5%** |
+
+O'qitilgan o'lchamda farq yo'q. 2 barobar katta masalada Umid **~1.9x** yaxshiroq.
+
+**3. O'zbekcha matn.** Teng o'lcham, 3 ta Umid seed va 2 ta Transformer seed o'rtachasi. Umid
+qisqa kontekstda ~1.1x, 2048 tokenda **~1.7x** past perplexity beradi (yuqoridagi
+1-jadval).
+
+### Aralash natijalar
+
+- **Fikrlash rejimi o'zbekcha matnda** (`bench_lm_variants.py`, juftlangan seed'lar):
+  - 128 tokenli o'qitishda val loss'ni 3 seed'ning uchalasida pasaytirdi (o'rtacha −0.14 nat);
+  - standart 256 tokenli `train.py` o'qitishida esa uchalasida oshirdi (o'rtacha +0.16 nat,
+    `product_v1_vs_fikr.json`).
+
+  Shuning uchun u standart emas. `read_mix_init` farqni +0.26 dan +0.11 gacha kamaytiradi, lekin
+  yo'qotmaydi.
+- **Kanal bo'yicha unutish** (`decay="channel"`, Kimi Delta Attention g'oyasi):
+  - LM da kichik foyda bor (−0.09 va −0.002, 2 seed);
+  - lekin eslab qolishni 100% dan 45% gacha va parity umumlashtirishini sezilarli tushirdi;
+  - shuning uchun standart emas.
+- **Ko'p qadamli yozish** (`n_writes=2`, Householder ko'paytmasi):
+  - S3 almashtirishlar guruhida 41.5% → 50.6% (Transformer 27.9%), 1 seed;
+  - eslab qolishda o'qitish platoda qolib ketdi.
+
+### Ishlamagan g'oyalar (salbiy natijalar)
+
+- **Optimal xotira** (`mixer="optimal"`, `umid/optimal.py`).
+  - G'oya: xotira har tokenda regulyarizatsiyalangan eng kichik kvadratlar masalasini aniq
+    yechadi: `o = Gᵀ(H + Λ)⁻¹q`.
+  - Mexanizm ishlaydi: kuchli korrelyatsiyalangan 8 kalitda eslash xatosi 0.00003, delta rule'da
+    3.63.
+  - Lekin vazifalarda foyda bermadi: eslab qolishda 64 juftlikda 81.4% (oddiy Umid 85–89%),
+    S3 da 41.9%.
+  - Ustiga 3–10x sekinroq.
+- **Aylanadigan koordinata tizimidagi optimal xotira** (`frame=True`, ushbu loyihada taklif
+  qilingan birikma). S3 da 36.7%, oddiy Umid'dan yomon.
+- **Fikrlash halqasi** (`n_loops=2`, parametrlarni qayta ishlatish). Hech bir vazifada aniq
+  foyda bermadi.
+- **3 marta qayta so'rash**: 2 martadan yomon.
+- **Kattaroq qiymat o'lchami** (`expand_v=2`): +17% parametr evaziga deyarli foyda yo'q.
+- **"Qattiq" darvozalar** (β va α chegaraga aniq yetadi): parity'da seed'ga qarab yaxshi yoki
+  yomon, ishonchsiz.
+
+### Xulosa
+
+Teng o'lchamda Umid ba'zi qobiliyatlarda Transformer'dan bir necha barobar ustun:
+- holatni kuzatish;
+- bitta qidiruv;
+- katta masalaga umumlashtirish;
+- uzun kontekst.
+
+Umumiy aqlda 10x farq esa bu tadqiqotda kuzatilmadi. Fikrlash rejimi eng istiqbolli yo'nalish:
+u ko'p bosqichli mulohazani bitta qatlamga olib kiradi. Lekin uni LM o'qitishda ham foydali
+qilish ochiq vazifa bo'lib qoladi.
+
 ## Halol cheklovlar
 
 - **Qisqa matnlarda o'qitish CPU'da sekinroq**: T ≤ 4096 da Transformer 1.6–1.9× tezroq. Sababi —
@@ -247,9 +356,21 @@ tezroq, xotirasi esa 440× kam. Transformer'da ikkalasi ham chiziqli o'sadi.
   yuzlab million token o'zbekcha matn kerak (masalan, CulturaX/mC4 ning `uz` qismi,
   Vikipediya). Arxitektura va vositalar bunga tayyor: `python train.py --data katta_korpus/
   --preset base`.
-- Bu natijalar kichik modellarda (≤4.5M parametr) olingan. Milliardlab parametrli darajada
+- Bu natijalar kichik modellarda (≤4.7M parametr) olingan. Milliardlab parametrli darajada
   Gated DeltaNet oilasi modellari Transformer bilan raqobatlashishi ilmiy maqolalarda
   ko'rsatilgan. Lekin bu loyihada bunday masshtab sinab ko'rilmagan.
+- **100M vs 100M solishtirish o'tkazilmagan.** Uchta sabab bor:
+  - u GPU talab qiladi;
+  - ~2 milliard token o'zbekcha matn kerak;
+  - ishlab chiqish muhitida faqat 4 ta CPU yadrosi bor edi va Hugging Face'ga kirish yopiq edi.
+
+  Kod bunga tayyor. Masalan:
+
+  ```
+  python train.py --data korpus/ --preset large --seq-len 1024 --compile
+  ```
+
+  Transformer bilan taqqoslash uchun `umid/baseline.py` dan foydalanish mumkin.
 
 ---
 
