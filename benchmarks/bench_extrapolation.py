@@ -4,8 +4,8 @@ so'ng ko'rilmagan matnda 128 … 2048 tokenli oynalarda baholanadi.
 Ma'lumot kichik bo'lgani uchun har bir model uchun eng yaxshi val loss bergan checkpoint
 olinadi (early stopping) — overfitting solishtirishni buzmasligi uchun.
 
-Transformer (RoPE) o'qitilganidan uzun pozitsiyalarni ko'rmagan — loss keskin oshadi.
-Umid'da pozitsiya tushunchasi yo'q, xotira esa qat'iy o'lchamli — loss barqaror qoladi.
+Transformer (RoPE) o'qitilganidan uzun pozitsiyalarni ko'rmagan — loss oshadi.
+Umid'da pozitsiya tushunchasi yo'q, xotira esa qat'iy o'lchamli — uzun kontekstdan foyda oladi.
 
     python -m benchmarks.bench_extrapolation
 """

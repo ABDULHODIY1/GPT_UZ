@@ -127,7 +127,26 @@ qadamlar soni. Taqqoslanadigan model — zamonaviy Transformer (Llama uslubi: Ro
 RMSNorm, `F.scaled_dot_product_attention`). Har bir jadvalni bitta buyruq bilan qayta hosil
 qilish mumkin.
 
-### 1. Holatni kuzatish — parity (`python -m benchmarks.bench_parity`)
+### 1. Uzun kontekst — ekstrapolyatsiya (`python -m benchmarks.bench_extrapolation`)
+
+`chat-data/Data.txt` ning o'zida o'qitildi: ikkala model ham 4.3–4.5M parametr, 128 tokenli
+oynalar, 800 qadam. Baholash ko'rilmagan matnda (korpusning turli joylaridan olingan 16K
+token), uzunroq oynalarda. O'lchov — val loss (nat/token, past = yaxshi), eng yaxshi checkpoint.
+
+| kontekst | **Umid** | Transformer (lr 2e-3) | Transformer (lr 1e-3, eng yaxshi) |
+|---:|---:|---:|---:|
+| 128 (o'qitilgan) | **4.556** | 5.043 | 4.678 |
+| 256 | **4.502** | 5.050 | 4.679 |
+| 512 | **4.457** | 5.099 | 4.718 |
+| 1 024 | **4.399** | 5.176 | 4.774 |
+| 2 048 (16× uzun) | **4.274** | 5.261 | 4.818 |
+
+Transformer o'qitilganidan uzun matnda yomonlashadi: RoPE pozitsiyalari unga notanish.
+Umid esa uzun kontekstdan **foyda oladi**: 2048 tokenda loss 128 tokendagidan 0.28 nat past.
+Transformer'ga ikkita lr berildi va eng yaxshisi ko'rsatildi. Umid o'qitilgan uzunlikda ham
+oldinda.
+
+### 2. Holatni kuzatish — parity (`python -m benchmarks.bench_parity`)
 
 Bitlar ketma-ketligi beriladi, model har bir pozitsiyada "1" lar soni juft yoki toq ekanini
 aytishi kerak. O'qitish 40 uzunlikda, sinov undan uzunroq ketma-ketliklarda. Jadvalda oxirgi
@@ -145,7 +164,23 @@ Transformer o'qitilgan uzunlikda ham masalani yecha olmadi. β∈(0,1) li varian
 DeltaNet/Mamba kabi) o'qitilgan uzunlikni yodlaydi, lekin umumlashtira olmaydi. Umid 4 barobar
 uzun ketma-ketlikkacha deyarli xatosiz ishlaydi. Natija uchala seed'da bir xil.
 
-### 2. Tezlik va xotira (`python -m benchmarks.bench_speed`)
+### 3. Assotsiativ eslab qolish — MQAR (`python -m benchmarks.bench_recall`)
+
+Kontekstda `kalit qiymat` juftliklari, keyin kalitlar bo'yicha so'rovlar beriladi. Bu
+Transformer'ning kuchli tomoni, qat'iy xotirali modellar uchun esa eng qiyin test. O'qitish
+16 juftlikda; 32 va 48 juftlik o'qitishda ko'rilmagan.
+
+| juftliklar | **Umid** (2000 qadam, lr 2e-3) | Transformer (2000 qadam, lr 2e-3) | Transformer (6000 qadam, lr 1e-3) |
+|---:|---:|---:|---:|
+| 16 | **100%** | 12.3% | **100%** |
+| 32 | 99.7% | 7.7% | **99.9%** |
+| 48 | **96.6%** | 6.3% | 95.8% |
+
+Xulosa: **durrang**. To'g'ri lr bilan Transformer ham masalani yechadi. Lekin Umid qat'iy
+o'lchamli xotira bilan Transformer darajasida eslab qoladi. Bunga delta rule'ning eski qiymatni
+almashtirishi sabab. Transformer lr'ga sezgirroq: 2e-3 da u o'rgana olmadi.
+
+### 4. Tezlik va xotira (`python -m benchmarks.bench_speed`)
 
 Har ikki model tiny o'lchamda (d=256, 4 qatlam). Kontekst o'qilgandan keyin har bir yangi
 token uchun:
@@ -165,6 +200,32 @@ O'qitish (forward + backward, batch'da 8192 token):
 | 1 024 | 3 936 | 6 066 |
 | 4 096 | 2 850 | 4 639 |
 | 8 192 | 3 436 | 3 387 |
+
+Generatsiyada Umid'ning xotirasi va tezligi kontekstga bog'liq emas. 16K kontekstda u 5.5×
+tezroq, xotirasi esa 440× kam. Transformer'da ikkalasi ham chiziqli o'sadi.
+
+## Halol cheklovlar
+
+- **Qisqa matnlarda o'qitish CPU'da sekinroq**: T ≤ 4096 da Transformer 1.6–1.9× tezroq. Sababi —
+  attention uchun PyTorch'da tayyor optimallashtirilgan yadro (`scaled_dot_product_attention`)
+  bor, Umid'ning delta algoritmi esa oddiy PyTorch operatsiyalarida yozilgan. GPU'da Triton
+  yadrosi (masalan, `flash-linear-attention` dagi `chunk_gated_delta_rule`) bu farqni yo'qotadi.
+  Hozircha `--compile` qisman yordam beradi. T = 8192 da tezlik tenglashadi, undan uzunda Umid
+  tezroq.
+- **Parity 4× uzunlikkacha deyarli mukammal**, 8× da 74%, 16× da tasodifiy. β aniq 2 ga yetmaydi,
+  shuning uchun aks ettirish juda uzun ketma-ketlikda asta-sekin "so'nadi". Transformer va
+  β∈(0,1) variant esa 2× da ham tasodifiy.
+- **Xotira hajmi cheklangan**: har bir head'da Dk×Dv son bor. Juda ko'p faktni so'zma-so'z eslab
+  qolish (masalan, 10 000 ta telefon raqam) Transformer'ning to'liq KV-cache'idan yomonroq
+  bo'ladi. Buning evaziga xotira va tezlik o'zgarmas.
+- **Ma'lumot kichik**: `Data.txt` atigi ~200K token. Bunday hajmda har qanday model (Transformer
+  ham) faqat jumla bo'laklarini o'rganadi va ma'noli suhbat qura olmaydi. Haqiqiy sifat uchun
+  yuzlab million token o'zbekcha matn kerak (masalan, CulturaX/mC4 ning `uz` qismi,
+  Vikipediya). Arxitektura va vositalar bunga tayyor: `python train.py --data katta_korpus/
+  --preset base`.
+- Bu natijalar kichik modellarda (≤4.5M parametr) olingan. Milliardlab parametrli darajada
+  Gated DeltaNet oilasi modellari Transformer bilan raqobatlashishi ilmiy maqolalarda
+  ko'rsatilgan. Lekin bu loyihada bunday masshtab sinab ko'rilmagan.
 
 ---
 

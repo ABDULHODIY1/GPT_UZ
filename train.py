@@ -38,7 +38,7 @@ def parse_args():
     ap.add_argument("--seq-len", type=int, default=256)
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--grad-accum", type=int, default=1)
-    ap.add_argument("--steps", type=int, default=2000)
+    ap.add_argument("--steps", type=int, default=1000)
     ap.add_argument("--lr", type=float, default=2e-3)
     ap.add_argument("--warmup", type=int, default=100)
     ap.add_argument("--weight-decay", type=float, default=0.1)
