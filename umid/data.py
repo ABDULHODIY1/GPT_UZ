@@ -43,9 +43,18 @@ def prepare_tokens(data_path, tokenizer_path, vocab_size=4096, verbose=True):
     return tok, tokens
 
 
-def split_tokens(tokens, val_frac=0.1):
-    n_val = max(int(len(tokens) * val_frac), 1)
-    return tokens[:-n_val], tokens[-n_val:]
+def split_tokens(tokens, val_frac=0.1, block=8192):
+    """Validatsiya uchun korpusning turli joylaridan bloklar olinadi (faqat oxiridan emas),
+    shunda val loss domen siljishini emas, umumlashtirishni o'lchaydi."""
+    n_blocks = len(tokens) // block
+    every = max(round(1 / val_frac), 2)
+    if n_blocks < every:
+        n_val = max(int(len(tokens) * val_frac), 1)
+        return tokens[:-n_val], tokens[-n_val:]
+    is_val = torch.arange(n_blocks) % every == every // 2
+    blocks = tokens[: n_blocks * block].view(n_blocks, block)
+    train = torch.cat([blocks[~is_val].reshape(-1), tokens[n_blocks * block:]])
+    return train, blocks[is_val].reshape(-1)
 
 
 def random_batch(tokens, batch_size, seq_len, generator=None, device="cpu"):
