@@ -117,6 +117,8 @@ class GatedDeltaMemory(nn.Module):
         self.qkv_proj = nn.Linear(D, H * (dk + n * (dk + dv)), bias=False)
         self.qkv_conv = ShortConv(H * (dk + n * (dk + dv)), cfg.conv_size)
         self.b_proj = nn.Linear(D, n * H, bias=True)  # β — qancha kuch bilan yozish
+        if n > 1:   # qo'shimcha yozishlar deyarli o'chiq boshlanadi (β ≈ 0.1), birinchisini buzmaydi
+            self._bias_init = {"b_proj": torch.cat([torch.zeros(H), torch.full(((n - 1) * H,), -3.0)])}
         n_decay = H * dk if cfg.decay == "channel" else H
         if cfg.decay == "channel":                    # α — qancha unutish (har bir kanal uchun)
             self.a_proj = nn.Sequential(nn.Linear(D, cfg.decay_rank, bias=False),
@@ -206,7 +208,7 @@ class OptimalMemory(nn.Module):
         if cfg.frame:
             # Koordinata tizimi P_t = (I − β_u u uᵀ) P_{t−1}; boshida β_u ≈ 0 (P ≈ I).
             self.frame_proj = nn.Linear(D, H, bias=True)
-            self._frame_bias_init = -4.0
+            self._bias_init = {"frame_proj": torch.full((H,), -4.0)}
 
     def forward(self, x, state=None):
         cfg = self.cfg
@@ -289,8 +291,8 @@ class UmidLM(nn.Module):
         self.lm_head = nn.Linear(cfg.d_model, cfg.vocab_size, bias=False)
         self._init_weights()
         for mod in self.modules():
-            if hasattr(mod, "_frame_bias_init"):
-                nn.init.constant_(mod.frame_proj.bias, mod._frame_bias_init)
+            for name, value in getattr(mod, "_bias_init", {}).items():   # _init_weights biaslarni nolga tushiradi
+                getattr(mod, name).bias.data.copy_(value)
         if cfg.tie_embeddings:
             self.lm_head.weight = self.embed.weight
 
