@@ -104,6 +104,24 @@ python chat.py --ckpt checkpoints/umid/model.pt --prompt "Bir kuni" --max-new-to
 Suhbat davomida model butun suhbatni o'zgarmas hajmli xotirada eslaydi (`/xotira` buyrug'i
 hajmini ko'rsatadi). `/yangi` xotirani tozalaydi, `/chiqish` dasturdan chiqadi.
 
+## Python'dan foydalanish
+
+```python
+import torch
+from umid import BPETokenizer, UmidLM
+
+model, ckpt = UmidLM.load("checkpoints/umid/model.pt")
+tok = BPETokenizer.from_dict(ckpt["tokenizer"])
+
+ids = torch.tensor([tok.encode("Bir kuni")])
+new, state = model.generate(ids, max_new_tokens=60, temperature=0.8)
+print(tok.decode(new[0].tolist()))
+
+# davom ettirish: holat oldingi matnni eslaydi, qaytadan o'qish shart emas
+more, state = model.generate(torch.tensor([tok.encode(" Keyin")]), 40, states=state)
+print(UmidLM.state_bytes(state), "bayt xotira")   # matn qancha uzun bo'lmasin, o'zgarmaydi
+```
+
 ## Testlar
 
 ```bash
