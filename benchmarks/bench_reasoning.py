@@ -89,6 +89,7 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--threads", type=int, default=0)
+    ap.add_argument("--tag", default="", help="natija fayli nomiga qo'shimcha")
     args = ap.parse_args()
     if args.threads:
         torch.set_num_threads(args.threads)
@@ -117,7 +118,7 @@ def main():
     print("model | params | " + " | ".join(tests))
     for kind, r in results["models"].items():
         print(f"{kind} | {r['params'] / 1e3:.0f}K | " + " | ".join(f"{r['acc'][t]:.1%}" for t in tests))
-    save_results(f"reasoning_{args.task}", results)
+    save_results(f"reasoning_{args.task}" + (f"_{args.tag}" if args.tag else ""), results)
 
 
 if __name__ == "__main__":
