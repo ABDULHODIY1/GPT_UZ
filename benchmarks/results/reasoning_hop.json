@@ -1,0 +1,77 @@
+{
+  "args": {
+    "task": "hop",
+    "models": "gpt,umid,umid-w2,umid-loop2,umid-opt",
+    "steps": 2000,
+    "lr": 0.001,
+    "seed": 0,
+    "threads": 1
+  },
+  "models": {
+    "gpt": {
+      "params": 430848,
+      "train_loss": 2.327931966781616,
+      "sec_per_step": 0.14919443941116334,
+      "acc": {
+        "2-hop, 16 juft": 0.18994140625,
+        "2-hop, 24 juft": 0.13232421875
+      },
+      "acc_last": {
+        "2-hop, 16 juft": 0.171875,
+        "2-hop, 24 juft": 0.12109375
+      }
+    },
+    "umid": {
+      "params": 431960,
+      "train_loss": 2.343777070045471,
+      "sec_per_step": 0.30413847661018373,
+      "acc": {
+        "2-hop, 16 juft": 0.189697265625,
+        "2-hop, 24 juft": 0.14306640625
+      },
+      "acc_last": {
+        "2-hop, 16 juft": 0.17578125,
+        "2-hop, 24 juft": 0.140625
+      }
+    },
+    "umid-w2": {
+      "params": 432992,
+      "train_loss": 2.332972650527954,
+      "sec_per_step": 0.4254165157079697,
+      "acc": {
+        "2-hop, 16 juft": 0.194580078125,
+        "2-hop, 24 juft": 0.13623046875
+      },
+      "acc_last": {
+        "2-hop, 16 juft": 0.16796875,
+        "2-hop, 24 juft": 0.140625
+      }
+    },
+    "umid-loop2": {
+      "params": 432216,
+      "train_loss": 2.351047706604004,
+      "sec_per_step": 0.6087566161155701,
+      "acc": {
+        "2-hop, 16 juft": 0.192626953125,
+        "2-hop, 24 juft": 0.141357421875
+      },
+      "acc_last": {
+        "2-hop, 16 juft": 0.181640625,
+        "2-hop, 24 juft": 0.123046875
+      }
+    },
+    "umid-opt": {
+      "params": 432216,
+      "train_loss": 2.308681077957153,
+      "sec_per_step": 1.262691995859146,
+      "acc": {
+        "2-hop, 16 juft": 0.20068359375,
+        "2-hop, 24 juft": 0.14794921875
+      },
+      "acc_last": {
+        "2-hop, 16 juft": 0.177734375,
+        "2-hop, 24 juft": 0.146484375
+      }
+    }
+  }
+}
