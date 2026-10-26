@@ -49,7 +49,7 @@ def parse_args():
     ap.add_argument("--grad-clip", type=float, default=1.0)
     ap.add_argument("--val-frac", type=float, default=0.1)
     ap.add_argument("--eval-every", type=int, default=100)
-    ap.add_argument("--eval-windows", type=int, default=64)
+    ap.add_argument("--eval-windows", type=int, default=0, help="0 = butun val to'plami (katta korpusda cheklang)")
     ap.add_argument("--stream", action="store_true", help="ketma-ket oynalar, xotira holati uzatiladi")
     ap.add_argument("--sample-prompt", default="Salom")
     ap.add_argument("--device", default="auto")
@@ -167,7 +167,7 @@ def main():
 
         if (step + 1) % args.eval_every == 0 or step + 1 == args.steps:
             val = evaluate(model, val_tok, args.seq_len, max_windows=args.eval_windows, device=device, autocast=autocast())
-            val_long = evaluate(model, val_tok, args.seq_len * 4, max_windows=max(args.eval_windows // 4, 1),
+            val_long = evaluate(model, val_tok, args.seq_len * 4, max_windows=max(args.eval_windows // 4, 1) if args.eval_windows else None,
                                 device=device, autocast=autocast())
             mark = ""
             if val < best_val:
