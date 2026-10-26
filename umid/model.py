@@ -134,6 +134,10 @@ class GatedDeltaMemory(nn.Module):
             # javobni yangi so'rovga aylantirish (har head uchun Dv → Dk) va o'qishlarni tanlash
             self.read_proj = nn.Parameter(torch.randn(H, dv, dk) / math.sqrt(dv))
             self.read_mix = nn.Linear(D, H * cfg.n_reads, bias=True)
+            # boshida asosan birinchi o'qish (≈88%): tasodifiy W bilan qilingan qayta so'rov shovqin qo'shmasin
+            mix_bias = torch.zeros(H, cfg.n_reads)
+            mix_bias[:, 0] = 2.0
+            self._bias_init = dict(getattr(self, "_bias_init", {}), read_mix=mix_bias.flatten())
 
         # Ko'p masshtabli xotira: har bir head turli tezlikda unutadi (Mamba2 uslubidagi init).
         A = torch.empty(H).uniform_(1, 16)
