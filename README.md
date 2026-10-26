@@ -93,6 +93,12 @@ python train.py --out checkpoints/umid --resume   # to'xtagan joydan davom ettir
   qadamdan qadamga uzatiladi. Bunda model `--seq-len` dan uzoqroq bog'lanishlarni o'rganadi,
   narx esa oshmaydi.
 - Eng yaxshi model `checkpoints/umid/model.pt` ga saqlanadi (tokenizer ichida).
+- `--resume` bilan `--steps` ni oshirsangiz, lr jadvali yangi uzunlikka cho'ziladi va lr vaqtincha
+  ko'tariladi.
+- Standart sozlamalar (`tiny`, 600 qadam) bilan `chat-data/Data.txt` da o'qitish 4 yadroli
+  CPU'da ~10 daqiqa oladi. Natija: val loss **4.03** (perplexity 56), 1024 tokenli kontekstda
+  **3.89**. Standart sozlamalar shu korpusga moslangan: ~1.6M tokendan keyin model matnni
+  yodlay boshlaydi, shuning uchun qadamlar soni cheklangan.
 
 ## Suhbat
 
