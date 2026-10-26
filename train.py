@@ -37,6 +37,7 @@ def parse_args():
     ap.add_argument("--no-neg-eigval", action="store_true", help="β ∈ (0,1) (ablation uchun)")
     ap.add_argument("--n-reads", type=int, default=None, help="xotiradan qayta so'rashlar soni (v2: 2, v1: 1)")
     ap.add_argument("--decay", choices=["head", "channel"], default=None)
+    ap.add_argument("--read-mix-init", type=float, default=None)
     ap.add_argument("--seq-len", type=int, default=256)
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--grad-accum", type=int, default=1)
@@ -77,6 +78,8 @@ def build_config(args, vocab_size):
         kw["n_reads"] = args.n_reads
     if args.decay is not None:
         kw["decay"] = args.decay
+    if args.read_mix_init is not None:
+        kw["read_mix_init"] = args.read_mix_init
     return UmidConfig(vocab_size=vocab_size, dropout=args.dropout, allow_neg_eigval=not args.no_neg_eigval, **kw)
 
 

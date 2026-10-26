@@ -38,6 +38,7 @@ class UmidConfig:
     decay_rank: int = 32          # "channel" rejimida α proyeksiyasining rangi (D → r → H·Dk)
     n_writes: int = 1             # har token xotiraga necha marta yozadi (Householder ko'paytmasi)
     n_reads: int = 2              # xotiradan qayta so'rash: o¹ = Sᵀq, q² = norm(W·o¹), o² = Sᵀq² (v2; v1 = 1)
+    read_mix_init: float = 0.0    # boshlang'ich holatda birinchi o'qish foydasiga bias (0 → o'qishlar teng)
     n_loops: int = 1              # fikrlash halqasi: qatlamlar steki necha marta qayta ishlatiladi
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
@@ -135,6 +136,10 @@ class GatedDeltaMemory(nn.Module):
             # javobni yangi so'rovga aylantirish (har head uchun Dv → Dk) va o'qishlarni tanlash
             self.read_proj = nn.Parameter(torch.randn(H, dv, dk) / math.sqrt(dv))
             self.read_mix = nn.Linear(D, H * cfg.n_reads, bias=True)
+            if cfg.read_mix_init:
+                mix_bias = torch.zeros(H, cfg.n_reads)
+                mix_bias[:, 0] = cfg.read_mix_init
+                self._bias_init = dict(getattr(self, "_bias_init", {}), read_mix=mix_bias.flatten())
 
         # Ko'p masshtabli xotira: har bir head turli tezlikda unutadi (Mamba2 uslubidagi init).
         A = torch.empty(H).uniform_(1, 16)
