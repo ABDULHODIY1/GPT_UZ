@@ -1,0 +1,26 @@
+{
+  "args": {
+    "task": "hopmix",
+    "models": "umid-r2",
+    "steps": 3000,
+    "lr": 0.001,
+    "seed": 2,
+    "threads": 1,
+    "tag": "r2_seed2"
+  },
+  "models": {
+    "umid-r2": {
+      "params": 430184,
+      "train_loss": 1.176513283252716,
+      "sec_per_step": 0.39274147097269696,
+      "acc": {
+        "1 bosqich": 0.7386707067489624,
+        "2 bosqich": 0.3947867155075073
+      },
+      "acc_last": {
+        "1 bosqich": 0.365234375,
+        "2 bosqich": 0.220703125
+      }
+    }
+  }
+}
