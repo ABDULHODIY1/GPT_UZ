@@ -26,6 +26,8 @@ VARIANTS = {
     "umid-opt": dict(mixer="optimal"),
     "umid-opt-loop2": dict(mixer="optimal", n_loops=2),
     "umid-frame": dict(mixer="optimal", frame=True),   # aylanadigan koordinatalardagi optimal xotira
+    "umid-r2": dict(n_reads=2),                         # xotiradan qayta so'rash (2 bosqich)
+    "umid-r3": dict(n_reads=3),
 }
 
 

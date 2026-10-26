@@ -36,6 +36,7 @@ class UmidConfig:
     decay: str = "head"           # "head": head bo'yicha bitta α; "channel": har bir kalit-kanal o'z α si
     decay_rank: int = 32          # "channel" rejimida α proyeksiyasining rangi (D → r → H·Dk)
     n_writes: int = 1             # har token xotiraga necha marta yozadi (Householder ko'paytmasi)
+    n_reads: int = 1              # xotiradan qayta so'rash: o¹ = Sᵀq, q² = norm(W·o¹), o² = Sᵀq², …
     n_loops: int = 1              # fikrlash halqasi: qatlamlar steki necha marta qayta ishlatiladi
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
@@ -128,6 +129,11 @@ class GatedDeltaMemory(nn.Module):
         self.g_proj = nn.Linear(D, H * dv, bias=False)  # chiqish darvozasi
         self.o_norm = RMSNorm(dv, cfg.norm_eps)
         self.o_proj = nn.Linear(H * dv, D, bias=False)
+        if cfg.n_reads > 1:
+            assert n == 1, "n_reads > 1 faqat n_writes = 1 bilan"
+            # javobni yangi so'rovga aylantirish (har head uchun Dv → Dk) va o'qishlarni tanlash
+            self.read_proj = nn.Parameter(torch.randn(H, dv, dk) / math.sqrt(dv))
+            self.read_mix = nn.Linear(D, H * cfg.n_reads, bias=True)
 
         # Ko'p masshtabli xotira: har bir head turli tezlikda unutadi (Mamba2 uslubidagi init).
         A = torch.empty(H).uniform_(1, 16)
@@ -157,14 +163,20 @@ class GatedDeltaMemory(nn.Module):
             g = (-self.A_log.to(fdt).exp() * g).transpose(1, 2)    # g: [B, H, T] yoki [B, H, T, Dk]
 
         S0 = st.get("S")
+        R = cfg.n_reads
+        read_fn = None
+        if R > 1:
+            W = self.read_proj.to(fdt)
+            read_fn = lambda o_: F.normalize(torch.einsum("bh...v,hvk->bh...k", o_, W), dim=-1)  # noqa: E731
         if T == 1 and S0 is not None:
             S = S0
             for j in range(n):   # unutish faqat birinchi yozishda, o'qish oxirgisidan keyin
                 o, S = delta_rule_step(q[:, :, 0], k[:, :, 0, j], v[:, :, 0, j],
-                                       g[:, :, 0] if j == 0 else torch.zeros_like(g[:, :, 0]), beta[:, :, 0, j], S)
+                                       g[:, :, 0] if j == 0 else torch.zeros_like(g[:, :, 0]), beta[:, :, 0, j], S,
+                                       read_fn, R)
             o = o[:, :, None]
         elif n == 1:
-            o, S = delta_rule_chunked(q, k[:, :, :, 0], v[:, :, :, 0], g, beta[..., 0], cfg.chunk_size, S0)
+            o, S = delta_rule_chunked(q, k[:, :, :, 0], v[:, :, :, 0], g, beta[..., 0], cfg.chunk_size, S0, read_fn, R)
         else:
             # Har bir token n ta ketma-ket "kichik qadam"ga yoyiladi: S ← Π_j (I − β_j k_j k_jᵀ) S + …
             # Bu xotirani aks ettirishlar ko'paytmasi (aylanish, almashtirish) bilan o'zgartirish imkonini beradi.
@@ -175,7 +187,10 @@ class GatedDeltaMemory(nn.Module):
                                       cfg.chunk_size, S0)
             o = o.view(B, H, T, n, dv)[:, :, :, -1]
 
-        o = self.o_norm(o.transpose(1, 2).to(x.dtype))           # [B, T, H, dv]
+        o = self.o_norm(o.transpose(1, 2).to(x.dtype))           # [B, T, H, dv] yoki [B, T, H, R, dv]
+        if R > 1:   # har token qaysi "bosqich" javobi kerakligini o'zi tanlaydi
+            mix = self.read_mix(x).view(B, T, H, R).softmax(-1).to(o.dtype)
+            o = (o * mix[..., None]).sum(3)
         o = o * F.silu(self.g_proj(x)).view(B, T, H, dv)
         out = self.o_proj(o.reshape(B, T, H * dv))
         return out, {"conv": conv_cache, "S": S}

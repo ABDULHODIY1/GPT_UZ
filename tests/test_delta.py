@@ -83,3 +83,21 @@ def test_delta_rule_overwrites_instead_of_accumulating():
     beta = torch.ones(1, 1, 2, dtype=torch.float64)
     o, _ = delta_rule_recurrent(q, k, v, g, beta)
     torch.testing.assert_close(o[0, 0, 1], torch.tensor([0.0, 1.0], dtype=torch.float64))
+
+
+@pytest.mark.parametrize("channel", [False, True])
+def test_multi_read_matches_recurrent(channel):
+    """Xotiradan qayta so'rash: chunk'li algoritm = token-ma-token etalon (natija va gradient)."""
+    q, k, v, g, beta = make_inputs(T=50, channel=channel)
+    W = torch.randn(3, 24, 16, dtype=torch.float64, requires_grad=True)
+
+    def read_fn(o):
+        return F.normalize(torch.einsum("bh...v,hvk->bh...k", o, W), dim=-1)
+
+    o_ref, s_ref = delta_rule_recurrent(q, k, v, g, beta, None, read_fn, 3)
+    (o_ref.sum() + s_ref.sum()).backward()
+    g_ref, W.grad = W.grad.clone(), None
+    o, s = delta_rule_chunked(q, k, v, g, beta, 16, None, read_fn, 3)
+    (o.sum() + s.sum()).backward()
+    torch.testing.assert_close(o, o_ref, rtol=1e-10, atol=1e-10)
+    torch.testing.assert_close(W.grad, g_ref, rtol=1e-8, atol=1e-8)

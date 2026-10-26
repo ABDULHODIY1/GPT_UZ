@@ -29,7 +29,7 @@ import torch
 import torch.nn.functional as F
 
 
-def delta_rule_recurrent(q, k, v, g, beta, initial_state=None):
+def delta_rule_recurrent(q, k, v, g, beta, initial_state=None, read_fn=None, n_reads=1):
     """Etalon (sekin) implementatsiya.
 
     q, k: [B, H, T, Dk]; v: [B, H, T, Dv]; g: [B, H, T] yoki [B, H, T, Dk] (log α, ≤ 0);
@@ -40,24 +40,29 @@ def delta_rule_recurrent(q, k, v, g, beta, initial_state=None):
     S = q.new_zeros(B, H, Dk, Dv) if initial_state is None else initial_state
     outs = []
     for t in range(T):
-        o, S = delta_rule_step(q[:, :, t], k[:, :, t], v[:, :, t], g[:, :, t], beta[:, :, t], S)
+        o, S = delta_rule_step(q[:, :, t], k[:, :, t], v[:, :, t], g[:, :, t], beta[:, :, t], S, read_fn, n_reads)
         outs.append(o)
     return torch.stack(outs, dim=2), S
 
 
-def delta_rule_step(q, k, v, g, beta, state):
+def delta_rule_step(q, k, v, g, beta, state, read_fn=None, n_reads=1):
     """Bitta token uchun yangilanish. q, k: [B, H, Dk]; v: [B, H, Dv]; beta: [B, H];
-    g: [B, H] (head bo'yicha unutish) yoki [B, H, Dk] (har bir kalit-kanal o'z tezligida)."""
+    g: [B, H] (head bo'yicha unutish) yoki [B, H, Dk] (har bir kalit-kanal o'z tezligida).
+
+    n_reads > 1: xotiradan qayta so'rash — o¹ = Sᵀq, q^{r+1} = read_fn(o^r), o^{r+1} = Sᵀq^{r+1};
+    natija [B, H, n_reads, Dv]."""
     a = g.exp()
     S = state * (a[..., None, None] if a.dim() == 2 else a[..., :, None])
     pred = torch.einsum("bhkv,bhk->bhv", S, k)            # xotira hozir k uchun nimani "eslaydi"
     delta = (v - pred) * beta[..., None]                 # xato bo'yicha tuzatish (delta rule)
     S = S + k[..., :, None] * delta[..., None, :]
-    o = torch.einsum("bhkv,bhk->bhv", S, q)
-    return o, S
+    outs = [torch.einsum("bhkv,bhk->bhv", S, q)]
+    for _ in range(n_reads - 1):
+        outs.append(torch.einsum("bhkv,bhk->bhv", S, read_fn(outs[-1])))
+    return (outs[0] if n_reads == 1 else torch.stack(outs, 2)), S
 
 
-def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None):
+def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None, read_fn=None, n_reads=1):
     """Chunk'li parallel algoritm (WY/UT ko'rinishi), vaqt O(T·C), xotira O(T·C).
 
     Chunk ichida rekurrensiyani uchburchak tenglamalar sistemasi orqali yechamiz:
@@ -68,6 +73,9 @@ def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None):
     g: [B, H, T] (head bo'yicha) yoki [B, H, T, Dk] (kanal bo'yicha). Kanal rejimida γ_t/γ_s
     ko'paytuvchilarga ajratiladi (exp(gc_t)·exp(−gc_s)), shuning uchun chunk 16 tokendan
     oshmaydi va har token uchun g ≥ −5 bo'lishi kerak (fp32 da toshib ketmaslik uchun).
+
+    n_reads > 1 (xotiradan qayta so'rash): har bir chunk'da bir xil (u, w, S) bilan yangi so'rovlar
+    q^{r+1} = read_fn(o^r) o'qiladi; natija [B, H, T, n_reads, Dv].
     """
     in_dtype = v.dtype
     dtype = torch.promote_types(in_dtype, torch.float32)   # bf16/fp16 bo'lsa ham fp32 da hisoblaymiz
@@ -110,11 +118,27 @@ def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None):
     u, w = uw.split([Dv, Dk], dim=-1)
 
     S = q.new_zeros(B, H, Dk, Dv) if initial_state is None else initial_state.to(dtype)
+    if n_reads > 1:   # qayta so'rovlar uchun chunk'ning "o'qish" ma'lumotlari
+        read_parts = (eg, k_in) if channel else (gc.exp()[..., None], k, decay)
+    else:
+        read_parts = ()
     outs = []
     # unbind (indekslash emas): backward'da har bir chunk uchun to'liq nol tensor yaratilmaydi
-    for u_n, w_n, qd_n, qk_n, ke_n, cd_n in zip(*(x.unbind(2) for x in (u, w, q_decay, qk, k_to_end, chunk_decay))):
+    for u_n, w_n, qd_n, qk_n, ke_n, cd_n, *rp in zip(*(x.unbind(2) for x in (u, w, q_decay, qk, k_to_end, chunk_decay,
+                                                                            *read_parts))):
         new = u_n - w_n @ S
-        outs.append(qd_n @ S + qk_n @ new)
+        o_n = [qd_n @ S + qk_n @ new]
+        for _ in range(n_reads - 1):
+            qr = read_fn(o_n[-1])
+            if channel:
+                qr_decay = qr * rp[0]
+                qr_k = (qr_decay @ rp[1].transpose(-1, -2)).masked_fill(~tril, 0.0)
+            else:
+                qr_decay = qr * rp[0]
+                qr_k = (qr @ rp[1].transpose(-1, -2)) * rp[2]
+            o_n.append(qr_decay @ S + qr_k @ new)
+        outs.append(o_n[0] if n_reads == 1 else torch.stack(o_n, 3))
         S = S * cd_n + ke_n.transpose(-1, -2) @ new
-    o = torch.stack(outs, dim=2).reshape(B, H, N * C, Dv)[:, :, :T]
+    o = torch.stack(outs, dim=2)
+    o = o.reshape(B, H, N * C, *o.shape[4:])[:, :, :T]
     return o.to(in_dtype), S
