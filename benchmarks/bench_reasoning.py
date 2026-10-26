@@ -19,15 +19,17 @@ from umid.data import default_threads
 from . import tasks
 from .common import save_results, train
 
+V1 = dict(decay="head", n_reads=1)   # saqlangan natijalardagi "umid" = v1
 VARIANTS = {
-    "umid": dict(),
-    "umid-w2": dict(n_writes=2),
-    "umid-loop2": dict(n_loops=2),
+    "umid": V1,
+    "umid-w2": dict(V1, n_writes=2),
+    "umid-loop2": dict(V1, n_loops=2),
     "umid-opt": dict(mixer="optimal"),
     "umid-opt-loop2": dict(mixer="optimal", n_loops=2),
     "umid-frame": dict(mixer="optimal", frame=True),   # aylanadigan koordinatalardagi optimal xotira
-    "umid-r2": dict(n_reads=2),                         # xotiradan qayta so'rash (2 bosqich)
-    "umid-r3": dict(n_reads=3),
+    "umid-r2": dict(V1, n_reads=2),                     # xotiradan qayta so'rash (2 bosqich)
+    "umid-r3": dict(V1, n_reads=3),
+    "umid-v2": dict(),                                  # standart v2: kanal bo'yicha unutish + 2 o'qish
 }
 
 

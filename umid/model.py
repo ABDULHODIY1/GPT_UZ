@@ -33,10 +33,10 @@ class UmidConfig:
     mlp_ratio: float = 8 / 3
     chunk_size: int = 64
     allow_neg_eigval: bool = True  # β ∈ (0, 2): holatni kuzatish (parity, sanash) imkoniyati
-    decay: str = "head"           # "head": head bo'yicha bitta α; "channel": har bir kalit-kanal o'z α si
+    decay: str = "channel"        # "channel": har bir kalit-kanal o'z α si (v2); "head": head uchun bitta α (v1)
     decay_rank: int = 32          # "channel" rejimida α proyeksiyasining rangi (D → r → H·Dk)
     n_writes: int = 1             # har token xotiraga necha marta yozadi (Householder ko'paytmasi)
-    n_reads: int = 1              # xotiradan qayta so'rash: o¹ = Sᵀq, q² = norm(W·o¹), o² = Sᵀq², …
+    n_reads: int = 2              # xotiradan qayta so'rash: o¹ = Sᵀq, q² = norm(W·o¹), o² = Sᵀq² (v2; v1 = 1)
     n_loops: int = 1              # fikrlash halqasi: qatlamlar steki necha marta qayta ishlatiladi
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda

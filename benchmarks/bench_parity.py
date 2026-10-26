@@ -61,6 +61,7 @@ def main():
     ap.add_argument("--n-heads", type=int, default=2)
     ap.add_argument("--lr", type=float, default=3e-3)
     ap.add_argument("--seeds", default="0,1,2")
+    ap.add_argument("--tag", default="", help="natija fayli nomiga qo'shimcha")
     args = ap.parse_args()
     default_threads()
     test_lens = [int(t) for t in args.test_lens.split(",")]
@@ -87,7 +88,7 @@ def main():
     print("uzunlik | " + " | ".join(results["models"]))
     for L in test_lens:
         print(f"{L:>7} | " + " | ".join(f"{r['best']['acc_last'][L]:.1%}" for r in results["models"].values()))
-    save_results("parity", results)
+    save_results("parity" + (f"_{args.tag}" if args.tag else ""), results)
 
 
 if __name__ == "__main__":

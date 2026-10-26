@@ -67,27 +67,30 @@ def main():
     ap.add_argument("--n-layers", type=int, default=4)
     ap.add_argument("--n-heads", type=int, default=4)
     ap.add_argument("--vocab", type=int, default=4096)
+    ap.add_argument("--models", default="umid,gpt")
+    ap.add_argument("--tag", default="", help="natija fayli nomiga qo'shimcha")
     args = ap.parse_args()
     default_threads()
     torch.manual_seed(0)
-    models = {k: build(k, args.vocab, args.d_model, args.n_layers, args.n_heads) for k in ("umid", "gpt")}
+    ap_models = args.models.split(",")
+    models = {k: build(k, args.vocab, args.d_model, args.n_layers, args.n_heads) for k in ap_models}
     results = {"args": vars(args), "decode": {}, "train": {}}
 
-    print("1) Generatsiya: kontekstdan keyin har bir yangi token")
-    print(f"{'kontekst':>9} | {'umid ms/tok':>11} | {'umid xotira':>11} | {'gpt ms/tok':>10} | {'gpt KV-cache':>12}")
+    names = list(models)
+    print("1) Generatsiya: kontekstdan keyin har bir yangi token (ms/token, holat MB)")
+    print(f"{'kontekst':>9} | " + " | ".join(f"{k:>22}" for k in names))
     for L in (int(x) for x in args.ctx_lens.split(",")):
         row = {k: decode_cost(m, L, args.vocab) for k, m in models.items()}
         results["decode"][L] = {k: {"ms_per_token": ms, "state_bytes": b} for k, (ms, b) in row.items()}
-        (um, ub), (gm, gb) = row["umid"], row["gpt"]
-        print(f"{L:>9} | {um:>11.2f} | {ub / 2**20:>8.2f} MB | {gm:>10.2f} | {gb / 2**20:>9.2f} MB", flush=True)
+        print(f"{L:>9} | " + " | ".join(f"{row[k][0]:>8.2f} ms {row[k][1] / 2**20:>8.2f} MB" for k in names), flush=True)
 
-    print(f"\n2) O'qitish (forward+backward), {args.tokens_per_batch} token/batch")
-    print(f"{'T':>6} | {'umid token/s':>12} | {'gpt token/s':>11}")
+    print(f"\n2) O'qitish (forward+backward), {args.tokens_per_batch} token/batch, token/s")
+    print(f"{'T':>6} | " + " | ".join(f"{k:>12}" for k in names))
     for T in (int(x) for x in args.train_lens.split(",")):
         row = {k: train_cost(m, T, args.tokens_per_batch, args.vocab) for k, m in models.items()}
         results["train"][T] = row
-        print(f"{T:>6} | {row['umid']:>12,.0f} | {row['gpt']:>11,.0f}", flush=True)
-    save_results("speed", results)
+        print(f"{T:>6} | " + " | ".join(f"{row[k]:>12,.0f}" for k in names), flush=True)
+    save_results("speed" + (f"_{args.tag}" if args.tag else ""), results)
 
 
 if __name__ == "__main__":

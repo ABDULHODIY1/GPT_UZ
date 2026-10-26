@@ -16,7 +16,10 @@ RESULTS = Path(__file__).parent / "results"
 
 
 def build(kind, vocab_size, d_model, n_layers, n_heads, dropout=0.0, **kw):
-    """kind: 'umid' (β ∈ (0,2)), 'umid-pos' (ablation: β ∈ (0,1)) yoki 'gpt' (Transformer)."""
+    """kind: 'umid' (standart, β ∈ (0,2)), 'umid-v1' (birinchi versiya), 'umid-pos' (ablation: β ∈ (0,1))
+    yoki 'gpt' (Transformer)."""
+    if kind == "umid-v1":
+        kind, kw = "umid", dict(dict(decay="head", n_reads=1), **kw)
     if kind == "gpt":
         return GPT(GPTConfig(vocab_size=vocab_size, d_model=d_model, n_layers=n_layers, n_heads=n_heads, dropout=dropout))
     cfg = UmidConfig(vocab_size=vocab_size, d_model=d_model, n_layers=n_layers, n_heads=n_heads,
