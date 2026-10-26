@@ -221,7 +221,7 @@ class OptimalMemory(nn.Module):
             o, (Hm, G) = optimal_memory_step(q[:, :, 0], k[:, :, 0], v[:, :, 0], g[:, :, 0], beta[:, :, 0], lam, prev)
             o = o[:, :, None]
         else:
-            o, (Hm, G) = optimal_memory_chunked(q, k, v, g, beta, lam, 32, prev)
+            o, (Hm, G) = optimal_memory_chunked(q, k, v, g, beta, lam, 8, prev)
         o = self.o_norm(o.transpose(1, 2).to(x.dtype))
         o = o * F.silu(self.g_proj(x)).view(B, T, H, dv)
         return self.o_proj(o.reshape(B, T, H * dv)), {"conv": conv_cache, "H": Hm, "G": G}
