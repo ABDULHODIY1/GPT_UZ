@@ -31,10 +31,11 @@ def test_causality():
     assert not torch.allclose(a[:, 25:], b[:, 25:])
 
 
+@pytest.mark.parametrize("decay", ["head", "channel"])
 @pytest.mark.parametrize("split", [1, 17, 33])
-def test_incremental_decoding_matches_full_forward(split):
+def test_incremental_decoding_matches_full_forward(split, decay):
     """Prefill + token-ma-token generatsiya (O(1) holat) = to'liq forward."""
-    m = tiny_model()
+    m = tiny_model(decay=decay)
     idx = torch.randint(0, 97, (2, 45))
     full, _ = m(idx)
     logits, _, states = m(idx[:, :split], return_states=True)
@@ -61,8 +62,9 @@ def test_runs_beyond_any_training_length():
     assert torch.isfinite(logits).all()
 
 
-def test_backward_reaches_all_parameters():
-    m = tiny_model().train()
+@pytest.mark.parametrize("decay", ["head", "channel"])
+def test_backward_reaches_all_parameters(decay):
+    m = tiny_model(decay=decay).train()
     idx = torch.randint(0, 97, (2, 30))
     _, loss = m(idx, targets=idx)
     loss.backward()

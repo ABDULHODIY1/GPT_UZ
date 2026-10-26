@@ -32,7 +32,7 @@ import torch.nn.functional as F
 def delta_rule_recurrent(q, k, v, g, beta, initial_state=None):
     """Etalon (sekin) implementatsiya.
 
-    q, k: [B, H, T, Dk]; v: [B, H, T, Dv]; g: [B, H, T] (log α, ≤ 0);
+    q, k: [B, H, T, Dk]; v: [B, H, T, Dv]; g: [B, H, T] yoki [B, H, T, Dk] (log α, ≤ 0);
     beta: [B, H, T]. Qaytaradi: o [B, H, T, Dv], yakuniy holat [B, H, Dk, Dv].
     """
     B, H, T, Dk = k.shape
@@ -46,8 +46,10 @@ def delta_rule_recurrent(q, k, v, g, beta, initial_state=None):
 
 
 def delta_rule_step(q, k, v, g, beta, state):
-    """Bitta token uchun yangilanish. q, k: [B, H, Dk]; v: [B, H, Dv]; g, beta: [B, H]."""
-    S = state * g.exp()[..., None, None]
+    """Bitta token uchun yangilanish. q, k: [B, H, Dk]; v: [B, H, Dv]; beta: [B, H];
+    g: [B, H] (head bo'yicha unutish) yoki [B, H, Dk] (har bir kalit-kanal o'z tezligida)."""
+    a = g.exp()
+    S = state * (a[..., None, None] if a.dim() == 2 else a[..., :, None])
     pred = torch.einsum("bhkv,bhk->bhv", S, k)            # xotira hozir k uchun nimani "eslaydi"
     delta = (v - pred) * beta[..., None]                 # xato bo'yicha tuzatish (delta rule)
     S = S + k[..., :, None] * delta[..., None, :]
@@ -59,40 +61,53 @@ def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None):
     """Chunk'li parallel algoritm (WY/UT ko'rinishi), vaqt O(T·C), xotira O(T·C).
 
     Chunk ichida rekurrensiyani uchburchak tenglamalar sistemasi orqali yechamiz:
-      (I + A) · N = β·V − (β·K ⊙ γ) · S₀,   A[t,s] = β_t (k_t·k_s) γ_t/γ_s  (s < t)
+      (I + A) · N = β·V − (β·K ⊙ γ) · S₀,   A[t,s] = β_t (k_t ⊙ γ_t/γ_s)·k_s  (s < t)
     bu yerda N — har bir token xotiraga yozgan "yangi" qiymat, γ — chunk boshidan
     to'plangan unutish koeffitsienti. Natija delta_rule_recurrent bilan bir xil.
+
+    g: [B, H, T] (head bo'yicha) yoki [B, H, T, Dk] (kanal bo'yicha). Kanal rejimida γ_t/γ_s
+    ko'paytuvchilarga ajratiladi (exp(gc_t)·exp(−gc_s)), shuning uchun chunk 16 tokendan
+    oshmaydi va har token uchun g ≥ −5 bo'lishi kerak (fp32 da toshib ketmaslik uchun).
     """
     in_dtype = v.dtype
     dtype = torch.promote_types(in_dtype, torch.float32)   # bf16/fp16 bo'lsa ham fp32 da hisoblaymiz
     q, k, v, g, beta = (x.to(dtype) for x in (q, k, v, g, beta))
+    channel = g.dim() == 4
     B, H, T, Dk = k.shape
     Dv = v.shape[-1]
-    C = chunk_size
+    C = min(chunk_size, 16) if channel else chunk_size
     pad = (C - T % C) % C
     if pad:
         # Bo'sh tokenlar: k=0, β=0 (hech narsa yozmaydi), g=0 (unutmaydi) → holat o'zgarmaydi.
         q, k, v = (F.pad(x, (0, 0, 0, pad)) for x in (q, k, v))
-        g, beta = (F.pad(x, (0, pad)) for x in (g, beta))
+        g = F.pad(g, (0, 0, 0, pad) if channel else (0, pad))
+        beta = F.pad(beta, (0, pad))
     N = (T + pad) // C
     q, k, v = (x.reshape(B, H, N, C, -1) for x in (q, k, v))
-    g, beta = g.reshape(B, H, N, C), beta.reshape(B, H, N, C)
+    g, beta = g.reshape(B, H, N, C, *g.shape[3:]), beta.reshape(B, H, N, C)
 
-    gc = g.cumsum(-1)                                       # log γ_t
+    gc = g.cumsum(3)                                        # log γ_t
     tril = torch.ones(C, C, dtype=torch.bool, device=q.device).tril()
-    decay = torch.where(tril, gc[..., :, None] - gc[..., None, :], float("-inf")).exp()
-
     k_beta = k * beta[..., None]
-    strict = torch.ones(C, C, dtype=torch.bool, device=q.device).tril(-1)
-    A = ((k_beta @ k.transpose(-1, -2)) * decay).masked_fill(~strict, 0.0)
+    if channel:
+        eg = gc.exp()
+        k_in = k * (-gc).exp()
+        A = (k_beta * eg) @ k_in.transpose(-1, -2)
+        qk = ((q * eg) @ k_in.transpose(-1, -2)).masked_fill(~tril, 0.0)
+        w_rhs, q_decay = k_beta * eg, q * eg
+        k_to_end = k * (gc[..., -1:, :] - gc).exp()
+        chunk_decay = gc[..., -1, :].exp()[..., :, None]     # [B, H, N, Dk, 1]
+    else:
+        decay = torch.where(tril, gc[..., :, None] - gc[..., None, :], float("-inf")).exp()
+        A = (k_beta @ k.transpose(-1, -2)) * decay
+        qk = (q @ k.transpose(-1, -2)) * decay              # chunk ichidagi o'qish
+        w_rhs, q_decay = k_beta * gc.exp()[..., None], q * gc.exp()[..., None]
+        k_to_end = k * (gc[..., -1:] - gc).exp()[..., None]
+        chunk_decay = gc[..., -1].exp()[..., None, None]     # [B, H, N, 1, 1]
+    A = A.masked_fill(~torch.ones(C, C, dtype=torch.bool, device=q.device).tril(-1), 0.0)
     L = torch.eye(C, dtype=q.dtype, device=q.device) + A    # pastki uchburchak, diagonal = 1
-    u = torch.linalg.solve_triangular(L, v * beta[..., None], upper=False, unitriangular=True)
-    w = torch.linalg.solve_triangular(L, k_beta * gc.exp()[..., None], upper=False, unitriangular=True)
-
-    qk = (q @ k.transpose(-1, -2)) * decay                  # chunk ichidagi o'qish
-    q_decay = q * gc.exp()[..., None]
-    k_to_end = k * (gc[..., -1:] - gc).exp()[..., None]
-    chunk_decay = gc[..., -1].exp()
+    uw = torch.linalg.solve_triangular(L, torch.cat([v * beta[..., None], w_rhs], -1), upper=False, unitriangular=True)
+    u, w = uw.split([Dv, Dk], dim=-1)
 
     S = q.new_zeros(B, H, Dk, Dv) if initial_state is None else initial_state.to(dtype)
     outs = []
@@ -100,6 +115,6 @@ def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None):
     for u_n, w_n, qd_n, qk_n, ke_n, cd_n in zip(*(x.unbind(2) for x in (u, w, q_decay, qk, k_to_end, chunk_decay))):
         new = u_n - w_n @ S
         outs.append(qd_n @ S + qk_n @ new)
-        S = S * cd_n[..., None, None] + ke_n.transpose(-1, -2) @ new
+        S = S * cd_n + ke_n.transpose(-1, -2) @ new
     o = torch.stack(outs, dim=2).reshape(B, H, N * C, Dv)[:, :, :T]
     return o.to(in_dtype), S

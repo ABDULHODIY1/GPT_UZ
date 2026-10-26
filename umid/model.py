@@ -32,6 +32,8 @@ class UmidConfig:
     mlp_ratio: float = 8 / 3
     chunk_size: int = 64
     allow_neg_eigval: bool = True  # β ∈ (0, 2): holatni kuzatish (parity, sanash) imkoniyati
+    decay: str = "head"           # "head": head bo'yicha bitta α; "channel": har bir kalit-kanal o'z α si
+    decay_rank: int = 32          # "channel" rejimida α proyeksiyasining rangi (D → r → H·Dk)
     dropout: float = 0.0
     norm_eps: float = 1e-6
     tie_embeddings: bool = True
@@ -61,7 +63,10 @@ class RMSNorm(nn.Module):
 
     def forward(self, x):
         xf = x.to(torch.promote_types(x.dtype, torch.float32))
-        xf = xf * torch.rsqrt(xf.pow(2).mean(-1, keepdim=True) + self.eps)
+        if hasattr(F, "rms_norm"):                     # torch ≥ 2.4: bitta fused yadro
+            xf = F.rms_norm(xf, (xf.shape[-1],), eps=self.eps)
+        else:
+            xf = xf * torch.rsqrt(xf.pow(2).mean(-1, keepdim=True) + self.eps)
         return xf.to(x.dtype) * self.weight
 
 
@@ -79,12 +84,18 @@ class ShortConv(nn.Module):
 
     def forward(self, x, cache=None):
         B, T, C = x.shape
+        K = self.kernel_size
         x = x.transpose(1, 2)
+        w = self.weight.to(x.dtype)
         if cache is None:
-            cache = x.new_zeros(B, C, self.kernel_size - 1)
-        xx = torch.cat([cache.to(x.dtype), x], dim=-1)
-        y = F.conv1d(xx, self.weight.to(x.dtype), groups=C)
-        return F.silu(y).transpose(1, 2), xx[..., xx.shape[-1] - (self.kernel_size - 1):]
+            # o'qitish: chapdan nol bilan to'ldirish conv1d ichida (qo'shimcha nusxasiz)
+            y = F.conv1d(x, w, padding=K - 1, groups=C)[..., :T]
+            tail = F.pad(x[..., -(K - 1):], (max(K - 1 - T, 0), 0))
+        else:
+            xx = torch.cat([cache.to(x.dtype), x], dim=-1)
+            y = F.conv1d(xx, w, groups=C)
+            tail = xx[..., xx.shape[-1] - (K - 1):]
+        return F.silu(y).transpose(1, 2), tail
 
 
 class GatedDeltaMemory(nn.Module):
@@ -97,7 +108,12 @@ class GatedDeltaMemory(nn.Module):
         self.qkv_proj = nn.Linear(D, H * (2 * dk + dv), bias=False)
         self.qkv_conv = ShortConv(H * (2 * dk + dv), cfg.conv_size)
         self.b_proj = nn.Linear(D, H, bias=True)      # β — qancha kuch bilan yozish
-        self.a_proj = nn.Linear(D, H, bias=False)     # α — qancha unutish
+        n_decay = H * dk if cfg.decay == "channel" else H
+        if cfg.decay == "channel":                    # α — qancha unutish (har bir kanal uchun)
+            self.a_proj = nn.Sequential(nn.Linear(D, cfg.decay_rank, bias=False),
+                                        nn.Linear(cfg.decay_rank, n_decay, bias=False))
+        else:                                         # α — qancha unutish (head uchun bitta)
+            self.a_proj = nn.Linear(D, H, bias=False)
         self.g_proj = nn.Linear(D, H * dv, bias=False)  # chiqish darvozasi
         self.o_norm = RMSNorm(dv, cfg.norm_eps)
         self.o_proj = nn.Linear(H * dv, D, bias=False)
@@ -105,7 +121,7 @@ class GatedDeltaMemory(nn.Module):
         # Ko'p masshtabli xotira: har bir head turli tezlikda unutadi (Mamba2 uslubidagi init).
         A = torch.empty(H).uniform_(1, 16)
         self.A_log = nn.Parameter(torch.log(A))
-        dt = torch.exp(torch.rand(H) * (math.log(0.1) - math.log(0.001)) + math.log(0.001))
+        dt = torch.exp(torch.rand(n_decay) * (math.log(0.1) - math.log(0.001)) + math.log(0.001))
         self.dt_bias = nn.Parameter(dt + torch.log(-torch.expm1(-dt)))  # softplus⁻¹(dt)
 
     def forward(self, x, state=None):
@@ -123,8 +139,12 @@ class GatedDeltaMemory(nn.Module):
         beta = torch.sigmoid(self.b_proj(x).to(fdt))
         if cfg.allow_neg_eigval:
             beta = beta * 2.0
-        g = -self.A_log.to(fdt).exp() * F.softplus(self.a_proj(x).to(fdt) + self.dt_bias.to(fdt))
-        beta, g = beta.transpose(1, 2), g.transpose(1, 2)    # [B, H, T]
+        g = F.softplus(self.a_proj(x).to(fdt) + self.dt_bias.to(fdt))
+        if cfg.decay == "channel":
+            g = (-self.A_log.to(fdt).exp()[:, None] * g.view(B, T, H, dk)).clamp(min=-5.0).transpose(1, 2)
+        else:
+            g = (-self.A_log.to(fdt).exp() * g).transpose(1, 2)
+        beta = beta.transpose(1, 2)                          # [B, H, T]; g: [B, H, T] yoki [B, H, T, Dk]
 
         S0 = st.get("S")
         if T == 1 and S0 is not None:

@@ -5,20 +5,21 @@ import torch.nn.functional as F
 from umid.delta import delta_rule_chunked, delta_rule_recurrent
 
 
-def make_inputs(B=2, H=3, T=150, Dk=16, Dv=24, dtype=torch.float64, seed=0, neg=True):
+def make_inputs(B=2, H=3, T=150, Dk=16, Dv=24, dtype=torch.float64, seed=0, neg=True, channel=False, decay=0.5):
     g = torch.Generator().manual_seed(seed)
     q = F.normalize(torch.randn(B, H, T, Dk, generator=g, dtype=dtype), dim=-1)
     k = F.normalize(torch.randn(B, H, T, Dk, generator=g, dtype=dtype), dim=-1)
     v = torch.randn(B, H, T, Dv, generator=g, dtype=dtype)
-    logα = -torch.rand(B, H, T, generator=g, dtype=dtype) * 0.5
+    logα = -torch.rand(B, H, T, *((Dk,) if channel else ()), generator=g, dtype=dtype) * decay
     beta = torch.rand(B, H, T, generator=g, dtype=dtype) * (2.0 if neg else 1.0)
     return q, k, v, logα, beta
 
 
+@pytest.mark.parametrize("channel", [False, True])
 @pytest.mark.parametrize("chunk", [1, 7, 16, 64])
 @pytest.mark.parametrize("T", [1, 63, 64, 150])
-def test_chunked_matches_recurrent(chunk, T):
-    q, k, v, g, beta = make_inputs(T=T)
+def test_chunked_matches_recurrent(chunk, T, channel):
+    q, k, v, g, beta = make_inputs(T=T, channel=channel)
     S0 = torch.randn(2, 3, 16, 24, dtype=torch.float64)
     o_ref, s_ref = delta_rule_recurrent(q, k, v, g, beta, S0)
     o, s = delta_rule_chunked(q, k, v, g, beta, chunk, S0)
@@ -26,8 +27,9 @@ def test_chunked_matches_recurrent(chunk, T):
     torch.testing.assert_close(s, s_ref, rtol=1e-10, atol=1e-10)
 
 
-def test_gradients_match_recurrent():
-    inputs = [x.requires_grad_() for x in make_inputs(T=40)]
+@pytest.mark.parametrize("channel", [False, True])
+def test_gradients_match_recurrent(channel):
+    inputs = [x.requires_grad_() for x in make_inputs(T=40, channel=channel)]
     o, s = delta_rule_recurrent(*inputs)
     (o.sum() + s.square().sum()).backward()
     ref = [x.grad.clone() for x in inputs]
@@ -39,9 +41,10 @@ def test_gradients_match_recurrent():
         torch.testing.assert_close(b.grad, a, rtol=1e-8, atol=1e-8)
 
 
-def test_streaming_equals_full():
+@pytest.mark.parametrize("channel", [False, True])
+def test_streaming_equals_full(channel):
     """Uzun matnni bo'laklab (holatni uzatib) ishlatish = birdaniga ishlatish."""
-    q, k, v, g, beta = make_inputs(T=200)
+    q, k, v, g, beta = make_inputs(T=200, channel=channel)
     o_full, s_full = delta_rule_chunked(q, k, v, g, beta, 32)
     S, outs = None, []
     for a, b in [(0, 70), (70, 71), (71, 200)]:
@@ -59,8 +62,10 @@ def test_state_is_bounded_on_long_sequences():
     assert o.abs().max() < 50 and S.abs().max() < 50
 
 
-def test_fp32_close_to_fp64():
-    q, k, v, g, beta = make_inputs(T=300)
+@pytest.mark.parametrize("channel,decay", [(False, 0.5), (True, 0.5), (True, 5.0)])
+def test_fp32_close_to_fp64(channel, decay):
+    """Kanal rejimida kuchli unutishda ham (g = −5) fp32 toshib ketmaydi."""
+    q, k, v, g, beta = make_inputs(T=300, channel=channel, decay=decay)
     o64, _ = delta_rule_chunked(q, k, v, g, beta, 64)
     o32, _ = delta_rule_chunked(*(x.float() for x in (q, k, v, g, beta)), chunk_size=64)
     torch.testing.assert_close(o32.double(), o64, rtol=1e-4, atol=1e-4)
