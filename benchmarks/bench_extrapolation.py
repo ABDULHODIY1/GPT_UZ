@@ -35,6 +35,7 @@ def main():
     ap.add_argument("--lr", type=float, default=2e-3)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--eval-every", type=int, default=50)
+    ap.add_argument("--tag", default="", help="natija fayli nomiga qo'shimcha")
     args = ap.parse_args()
     default_threads()
 
@@ -69,7 +70,7 @@ def main():
     print("\nKontekst uzunligi | " + " | ".join(results["models"]))
     for L in eval_lens:
         print(f"{L:>17} | " + " | ".join(f"{r['val_loss'][L]:.4f}" for r in results["models"].values()))
-    save_results("extrapolation", results)
+    save_results("extrapolation" + (f"_{args.tag}" if args.tag else ""), results)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,28 @@
+{
+  "args": {
+    "models": "gpt",
+    "train_pairs": 16,
+    "test_pairs": "16,32,48",
+    "n_keys": 64,
+    "n_values": 64,
+    "steps": 6000,
+    "batch_size": 64,
+    "d_model": 128,
+    "n_layers": 2,
+    "n_heads": 2,
+    "lr": 0.001,
+    "seed": 0,
+    "tag": "gpt_6000steps_lr1e-3"
+  },
+  "models": {
+    "gpt": {
+      "params": 443136,
+      "train_loss": 8.330679639456662e-09,
+      "acc": {
+        "16": 1.0,
+        "32": 0.999267578125,
+        "48": 0.95751953125
+      }
+    }
+  }
+}
