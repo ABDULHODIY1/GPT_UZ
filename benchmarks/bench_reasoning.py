@@ -25,6 +25,7 @@ VARIANTS = {
     "umid-loop2": dict(n_loops=2),
     "umid-opt": dict(mixer="optimal"),
     "umid-opt-loop2": dict(mixer="optimal", n_loops=2),
+    "umid-frame": dict(mixer="optimal", frame=True),   # aylanadigan koordinatalardagi optimal xotira
 }
 
 

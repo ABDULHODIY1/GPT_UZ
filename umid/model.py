@@ -38,6 +38,7 @@ class UmidConfig:
     n_writes: int = 1             # har token xotiraga necha marta yozadi (Householder ko'paytmasi)
     n_loops: int = 1              # fikrlash halqasi: qatlamlar steki necha marta qayta ishlatiladi
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
+    frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
     mlp_hidden_size: int = 0      # 0 bo'lmasa MLP o'lchamini aniq belgilaydi (parametrlarni tenglashtirish uchun)
     dropout: float = 0.0
     norm_eps: float = 1e-6
@@ -189,8 +190,9 @@ class OptimalMemory(nn.Module):
         super().__init__()
         self.cfg = cfg
         D, H, dk, dv = cfg.d_model, cfg.n_heads, cfg.head_dim, cfg.value_dim
-        self.qkv_proj = nn.Linear(D, H * (2 * dk + dv), bias=False)
-        self.qkv_conv = ShortConv(H * (2 * dk + dv), cfg.conv_size)
+        n_in = H * (2 * dk + dv) + (H * dk if cfg.frame else 0)
+        self.qkv_proj = nn.Linear(D, n_in, bias=False)
+        self.qkv_conv = ShortConv(n_in, cfg.conv_size)
         self.b_proj = nn.Linear(D, H, bias=True)
         self.a_proj = nn.Linear(D, H, bias=False)
         self.g_proj = nn.Linear(D, H * dv, bias=False)
@@ -201,6 +203,10 @@ class OptimalMemory(nn.Module):
         dt = torch.exp(torch.rand(H) * (math.log(0.1) - math.log(0.001)) + math.log(0.001))
         self.dt_bias = nn.Parameter(dt + torch.log(-torch.expm1(-dt)))
         self.lam_raw = nn.Parameter(torch.full((H, dk), math.log(math.e - 1)))   # softplus → Λ = 1
+        if cfg.frame:
+            # Koordinata tizimi P_t = (I − β_u u uᵀ) P_{t−1}; boshida β_u ≈ 0 (P ≈ I).
+            self.frame_proj = nn.Linear(D, H, bias=True)
+            self._frame_bias_init = -4.0
 
     def forward(self, x, state=None):
         cfg = self.cfg
@@ -209,7 +215,7 @@ class OptimalMemory(nn.Module):
         st = state or {}
         fdt = torch.promote_types(x.dtype, torch.float32)
         qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"))
-        q, k, v = qkv.split([H * dk, H * dk, H * dv], dim=-1)
+        q, k, v, u = qkv.split([H * dk, H * dk, H * dv, H * dk if cfg.frame else 0], dim=-1)
         q = F.normalize(q.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
         k = F.normalize(k.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
         v = v.reshape(B, T, H, dv).transpose(1, 2).to(fdt)
@@ -217,6 +223,21 @@ class OptimalMemory(nn.Module):
         g = (-self.A_log.to(fdt).exp() * F.softplus(self.a_proj(x).to(fdt) + self.dt_bias.to(fdt))).transpose(1, 2)
         lam = F.softplus(self.lam_raw.to(fdt)) + 1e-4
         prev = (st["H"], st["G"]) if "H" in st else None
+        new_state = {"conv": conv_cache}
+        if cfg.frame:
+            u = F.normalize(u.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
+            bu = (2.0 * torch.sigmoid(self.frame_proj(x).to(fdt))).transpose(1, 2)
+            P0 = st["P"] if "P" in st else torch.eye(dk, dtype=fdt, device=x.device).expand(B, H, dk, dk)
+            # q̂_t = P_tᵀ q_t, k̂_t = P_tᵀ k_t — delta yadrosi bilan (S₀ = P, v = 0, unutishsiz)
+            zeros = torch.zeros_like(bu)
+            if T == 1 and "P" in st:
+                P = P0 - bu[:, :, 0, None, None] * u[:, :, 0, :, None] * (u[:, :, 0, None, :] @ P0)
+                q, k = (torch.einsum("bhij,bhti->bhtj", P, z) for z in (q, k))
+            else:
+                qk, P = delta_rule_chunked(torch.cat([q, k]), u.repeat(2, 1, 1, 1), torch.zeros_like(k).repeat(2, 1, 1, 1),
+                                           zeros.repeat(2, 1, 1), bu.repeat(2, 1, 1), cfg.chunk_size, P0.repeat(2, 1, 1, 1))
+                q, k, P = qk[:B], qk[B:], P[:B]
+            new_state["P"] = P
         if T == 1 and prev is not None:
             o, (Hm, G) = optimal_memory_step(q[:, :, 0], k[:, :, 0], v[:, :, 0], g[:, :, 0], beta[:, :, 0], lam, prev)
             o = o[:, :, None]
@@ -224,7 +245,8 @@ class OptimalMemory(nn.Module):
             o, (Hm, G) = optimal_memory_chunked(q, k, v, g, beta, lam, 8, prev)
         o = self.o_norm(o.transpose(1, 2).to(x.dtype))
         o = o * F.silu(self.g_proj(x)).view(B, T, H, dv)
-        return self.o_proj(o.reshape(B, T, H * dv)), {"conv": conv_cache, "H": Hm, "G": G}
+        new_state.update(H=Hm, G=G)
+        return self.o_proj(o.reshape(B, T, H * dv)), new_state
 
 
 class SwiGLU(nn.Module):
@@ -266,6 +288,9 @@ class UmidLM(nn.Module):
         self.norm = RMSNorm(cfg.d_model, cfg.norm_eps)
         self.lm_head = nn.Linear(cfg.d_model, cfg.vocab_size, bias=False)
         self._init_weights()
+        for mod in self.modules():
+            if hasattr(mod, "_frame_bias_init"):
+                nn.init.constant_(mod.frame_proj.bias, mod._frame_bias_init)
         if cfg.tie_embeddings:
             self.lm_head.weight = self.embed.weight
 
