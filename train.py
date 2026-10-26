@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import json
 import time
 from dataclasses import asdict
 from pathlib import Path
@@ -175,7 +176,7 @@ def main():
 
     print(f"Tayyor. Eng yaxshi val loss: {best_val:.4f}. Model: {best_path}")
     print(f"Suhbat: python chat.py --ckpt {best_path}")
-    (out / "config.json").write_text(__import__("json").dumps(asdict(cfg), indent=2))
+    (out / "config.json").write_text(json.dumps(asdict(cfg), indent=2))
 
 
 if __name__ == "__main__":
