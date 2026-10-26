@@ -31,8 +31,10 @@ def make_optimizer(model, lr, weight_decay=0.1):
                               {"params": no_decay, "weight_decay": 0.0}], lr=lr, betas=(0.9, 0.95))
 
 
-def train(model, sample_batch, steps, lr, warmup=50, log_every=100, name="", loss_fn=None):
-    """sample_batch(step) -> (x, y). Qaytaradi: (oxirgi loss'lar o'rtachasi, sekund/qadam)."""
+def train(model, sample_batch, steps, lr, warmup=50, log_every=100, name="", loss_fn=None,
+          callback=None, callback_every=0):
+    """sample_batch(step) -> (x, y). callback(step) har callback_every qadamda chaqiriladi.
+    Qaytaradi: (oxirgi loss'lar o'rtachasi, sekund/qadam)."""
     opt = make_optimizer(model, lr)
     model.train()
     t0, recent = time.time(), []
@@ -52,6 +54,8 @@ def train(model, sample_batch, steps, lr, warmup=50, log_every=100, name="", los
         if log_every and (step + 1) % log_every == 0:
             print(f"  [{name}] qadam {step + 1}/{steps}  loss {sum(recent) / len(recent):.4f}  "
                   f"{(time.time() - t0) / (step + 1):.3f}s/qadam", flush=True)
+        if callback is not None and callback_every and (step + 1) % callback_every == 0:
+            callback(step + 1)
     return sum(recent) / len(recent), (time.time() - t0) / steps
 
 
