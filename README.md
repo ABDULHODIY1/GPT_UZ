@@ -469,8 +469,16 @@ ikkala model ham shu formatda qayta o'qitilgan; retsept, ma'lumot va tokenizer b
 | **Tanlov, sof, teng parametr** (`--mlp-hidden 616`) | **4.26M** | **4.124, 4.130, 4.126** | **58, 57, 50%** | **58, 57, 50%** |
 | Transformer (hujjat maskasi) | 4.26M | 4.189, 4.145, 4.149 | 52, 53, 52% | 53, 55, 55% |
 
-- Teng parametrda val loss bo'yicha uchala Tanlov seed'i uchala Transformer seed'idan past
-  (o'rtacha 4.127 ga qarshi 4.161).
+- **Tuzatish:** jadvaldagi hamma model lr 2e-3 da o'qitilgan. Bu Transformer uchun noqulay ekan:
+  Transformer lr 1e-3 da 4.066 ga tushadi (lr 3e-3 da 4.323). Shuning uchun "val loss da Tanlov
+  yaxshiroq" degan xulosa noto'g'ri. Har model o'zining eng yaxshi lr ida solishtirilishi kerak
+  (pastdagi lr jadvaliga qarang).
+- Val loss va o'rganish tezligi (teng parametr 4.26M, seed 1337):
+
+  | lr | 5e-4 | 1e-3 | 2e-3 | 3e-3 |
+  |---|---|---|---|---|
+  | Transformer | … | 4.066 | 4.189 | 4.323 |
+  | Tanlov, sof | … | … | 4.124 | — |
 - Savol-javobda o'rtacha 55% ga qarshi 52% (jarima bilan) va 54% (jarimasiz). 60 ta savolda bitta natijaning
   statistik xatosi ~±6 ball, Tanlov seed'lari esa 50–58% oralig'ida. Shuning uchun bu farq **ishonchli
   emas** — savol-javobda ikkalasi teng deb hisoblanadi.
