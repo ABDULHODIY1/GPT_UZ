@@ -16,17 +16,20 @@ import torch
 
 from umid import BPETokenizer, load_model
 from umid.data import default_threads, qa_prompt
-from umid.model import generate
+from umid.model import beam_search, generate
 
 from .common import RESULTS
 
 HERE = Path(__file__).parent
 
 
-def answer(model, tok, question, max_new_tokens=60, repetition_penalty=1.15):
+def answer(model, tok, question, max_new_tokens=60, repetition_penalty=1.15, penalize_prompt=True, beams=1):
     ids = torch.tensor([tok.encode(qa_prompt(question))])
-    out, _ = generate(model, ids, max_new_tokens, temperature=0.0, repetition_penalty=repetition_penalty,
-                      eos_id=tok.eot_id, on_token=None)
+    if beams > 1:   # jarima beam'da faqat javob tokenlariga
+        out = beam_search(model, ids, max_new_tokens, beams, tok.eot_id, repetition_penalty)
+    else:
+        out, _ = generate(model, ids, max_new_tokens, temperature=0.0, repetition_penalty=repetition_penalty,
+                          eos_id=tok.eot_id, on_token=None, penalize_prompt=penalize_prompt)
     return tok.decode(out[0].tolist()).split("\n")[0].replace("<|endoftext|>", "").strip()
 
 
@@ -64,19 +67,24 @@ def main():
     ap.add_argument("--seen", type=int, default=15)
     ap.add_argument("--tag", default="")
     ap.add_argument("--rep-penalty", type=float, default=1.15, help="takrorlash jarimasi (1.0 — yo'q)")
+    ap.add_argument("--penalty-answer-only", action="store_true", help="jarima faqat javob tokenlariga")
+    ap.add_argument("--beams", type=int, default=1, help=">1 — beam search (greedy o'rniga)")
     args = ap.parse_args()
     default_threads()
     model, ck = load_model(args.ckpt)
     model.eval()
     tok = BPETokenizer.from_dict(ck["tokenizer"])
 
-    report = {"ckpt": args.ckpt, "rep_penalty": args.rep_penalty, "heldout": [], "seen": []}
+    report = {"ckpt": args.ckpt, "rep_penalty": args.rep_penalty, "penalty_answer_only": args.penalty_answer_only,
+              "beams": args.beams,
+              "heldout": [], "seen": []}
     for name in HELDOUT_SETS:
         hits = 0
         print(f"=== O'qitishda bo'lmagan savollar ({name}) ===")
         rows = load_heldout(name)
         for q, keys in rows:
-            a = answer(model, tok, q, repetition_penalty=args.rep_penalty)
+            a = answer(model, tok, q, repetition_penalty=args.rep_penalty, penalize_prompt=not args.penalty_answer_only,
+                       beams=args.beams)
             ok = is_correct(a, keys)
             hits += ok
             report["heldout"].append({"toplam": name, "savol": q, "javob": a, "kalit": keys, "togri": ok})
@@ -91,7 +99,8 @@ def main():
     exact = 0
     print("\n=== O'qitishda bo'lgan savollardan namuna ===")
     for q, ref in load_seen(args.seen):
-        a = answer(model, tok, q, repetition_penalty=args.rep_penalty)
+        a = answer(model, tok, q, repetition_penalty=args.rep_penalty, penalize_prompt=not args.penalty_answer_only,
+                       beams=args.beams)
         same = a.strip() == ref.strip()
         exact += same
         report["seen"].append({"savol": q, "javob": a, "asl": ref, "aynan": same})
