@@ -458,6 +458,26 @@ qilish ochiq vazifa bo'lib qoladi.
   - Umid natijasi seed'ga kuchli bog'liq (35–57%), Transformer'niki barqaror.
   - Canon Umid'da bitta seed'da +8 ball berdi, ikkinchisida tasdiqlanmadi.
 
+**Tanlov xotirasi va Transformer** (yangi SFT formati: javob `"\n"` bilan tugaydi, EOT dialog oxirida;
+ikkala model ham shu formatda qayta o'qitilgan; retsept, ma'lumot va tokenizer bir xil):
+
+| model (tiny) | parametr | val loss (seed'lar) | QA, jarima 1.15 | QA, jarimasiz |
+|---|---|---|---|---|
+| Tanlov + qkv conv | 4.54M | 4.205, 4.162 | 48, 48% | 52, 52% |
+| Tanlov + o'qib boyitish | 4.80M | 4.180, 4.157 | 48, 50% | 50, 53% |
+| Tanlov, sof (conv'siz) | 4.53M | 4.162, 4.146 | 55, 53% | 55, 55% |
+| **Tanlov, sof, teng parametr** (`--mlp-hidden 616`) | **4.26M** | **4.124, 4.130, 4.126** | **58, 57, 50%** | **58, 57, 50%** |
+| Transformer (hujjat maskasi) | 4.26M | 4.189, 4.145, 4.149 | 52, 53, 52% | 53, 55, 55% |
+
+- Teng parametrda val loss bo'yicha uchala Tanlov seed'i uchala Transformer seed'idan past
+  (o'rtacha 4.127 ga qarshi 4.161).
+- Savol-javobda o'rtacha 55% ga qarshi 52% (jarima bilan) va 54% (jarimasiz). 60 ta savolda bitta natijaning
+  statistik xatosi ~±6 ball, Tanlov seed'lari esa 50–58% oralig'ida. Shuning uchun bu farq **ishonchli
+  emas** — savol-javobda ikkalasi teng deb hisoblanadi.
+- Ma'lumot juda kichik (~250K token): val loss farqi sig'imdan ko'ra ortiqcha moslashishga ham bog'liq
+  bo'lishi mumkin (kichikroq MLP li 4.26M model 4.53M dan yaxshiroq chiqdi). Katta ma'lumotda GPU da
+  tekshirish kerak.
+
 **Sinab ko'rilgan, foyda bermagan g'oyalar** (kodi olib tashlangan yoki standart emas):
 - "Just read twice" (savolni ikki marta o'qish): Umid 45→42%, Transformer 52→48%;
 - beam search;
@@ -481,9 +501,10 @@ bog'lanishini o'rganishning bir gradient qadamiga teng.
   - dialog bilan fine-tuning qilingan ikkala model ham kontekstdan ko'chirmaydi (0–6%);
   - ular o'qitishda ko'p uchragan qiymatni taxmin qiladi;
   - faqat "aytmagansiz" holatini to'g'ri o'rganadi.
-- Keyingi qadam:
-  - har qadamda yangi dialoglar yaratish (yodlab bo'lmaydi);
-  - dialog bosqichini uzaytirish (ko'chirish mexanizmini noldan o'rganish uchun 600 qadam kam).
+- Har qadamda yangi dialoglar bilan ham (`--dialog-frac 0.5`, 1500 qadam, `icl_eval_v3.json`) ikkala model
+  pol darajasida qoldi: Tanlov 1–4%, Transformer 1–6%. Bu o'lchamda (4M, 250K token) test hech qaysi
+  modelni ajrata olmaydi.
+- Keyingi qadam: kattaroq model va ma'lumotda (GPU) qayta sinash.
 
 ## Halol cheklovlar
 
