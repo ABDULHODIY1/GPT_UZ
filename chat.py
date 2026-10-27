@@ -17,13 +17,14 @@ import sys
 import torch
 
 from umid import BPETokenizer, load_model
+from umid.data import qa_prompt, qa_repeat
 from umid.model import generate
 
 
 def load(ckpt_path, device):
     model, ckpt = load_model(ckpt_path, map_location=device)
     tok = BPETokenizer.from_dict(ckpt["tokenizer"])
-    return model.to(device).eval(), tok
+    return model.to(device).eval(), tok, qa_repeat(ckpt)
 
 
 class Streamer:
@@ -65,7 +66,7 @@ def main():
     if args.seed is not None:
         torch.manual_seed(args.seed)
 
-    model, tok = load(args.ckpt, args.device)
+    model, tok, repeat = load(args.ckpt, args.device)
     gen_kw = dict(temperature=args.temperature, top_k=args.top_k, top_p=args.top_p,
                   repetition_penalty=args.repetition_penalty, eos_id=tok.eot_id)
 
@@ -99,7 +100,7 @@ def main():
             continue
         # O'qitish formati (chat-data/savol-javob, sft.py): "Savol: …\nJavob: …<|endoftext|>". Javob EOT bilan
         # tugamagan bo'lsa (qator oxiri yoki token chegarasi), keyingi savol oldidan EOT qo'yiladi.
-        ids = ([] if ended else [tok.eot_id]) + tok.encode(f"Savol: {user}\nJavob:")
+        ids = ([] if ended else [tok.eot_id]) + tok.encode(qa_prompt(user, repeat))
         ids = torch.tensor([ids], device=args.device)
         print("Umid: ", end="", flush=True)
         new, states = generate(model, ids, args.max_new_tokens, states=states,

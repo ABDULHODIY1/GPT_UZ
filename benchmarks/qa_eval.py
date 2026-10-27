@@ -15,7 +15,7 @@ from pathlib import Path
 import torch
 
 from umid import BPETokenizer, load_model
-from umid.data import default_threads
+from umid.data import default_threads, qa_prompt, qa_repeat
 from umid.model import generate
 
 from .common import RESULTS
@@ -23,8 +23,8 @@ from .common import RESULTS
 HERE = Path(__file__).parent
 
 
-def answer(model, tok, question, max_new_tokens=60, repetition_penalty=1.15):
-    ids = torch.tensor([tok.encode(f"Savol: {question}\nJavob:")])
+def answer(model, tok, question, max_new_tokens=60, repetition_penalty=1.15, repeat=1):
+    ids = torch.tensor([tok.encode(qa_prompt(question, repeat))])
     out, _ = generate(model, ids, max_new_tokens, temperature=0.0, repetition_penalty=repetition_penalty,
                       eos_id=tok.eot_id, on_token=None)
     return tok.decode(out[0].tolist()).split("\n")[0].replace("<|endoftext|>", "").strip()
@@ -76,7 +76,7 @@ def main():
         print(f"=== O'qitishda bo'lmagan savollar ({name}) ===")
         rows = load_heldout(name)
         for q, keys in rows:
-            a = answer(model, tok, q, repetition_penalty=args.rep_penalty)
+            a = answer(model, tok, q, repetition_penalty=args.rep_penalty, repeat=qa_repeat(ck))
             ok = is_correct(a, keys)
             hits += ok
             report["heldout"].append({"toplam": name, "savol": q, "javob": a, "kalit": keys, "togri": ok})
@@ -91,7 +91,7 @@ def main():
     exact = 0
     print("\n=== O'qitishda bo'lgan savollardan namuna ===")
     for q, ref in load_seen(args.seen):
-        a = answer(model, tok, q, repetition_penalty=args.rep_penalty)
+        a = answer(model, tok, q, repetition_penalty=args.rep_penalty, repeat=qa_repeat(ck))
         same = a.strip() == ref.strip()
         exact += same
         report["seen"].append({"savol": q, "javob": a, "asl": ref, "aynan": same})

@@ -14,7 +14,8 @@ def tiny_model(**kw):
 VARIANTS = [dict(), dict(decay="head", n_reads=1), dict(decay="channel", n_reads=1), dict(n_writes=2, n_reads=1), dict(n_writes=3, n_reads=1), dict(n_loops=2),
             dict(mixer="optimal"), dict(mixer="optimal", frame=True), dict(n_reads=2), dict(n_reads=3, decay="channel"),
             dict(decouple_erase=True), dict(decouple_erase=True, n_writes=2, n_reads=1), dict(decouple_erase=True, n_reads=2),
-            dict(persistent_heads=1, reset_on_eot=True), dict(persistent_heads=1, decay="channel")]
+            dict(persistent_heads=1, reset_on_eot=True), dict(persistent_heads=1, decay="channel"),
+            dict(canon="ACD"), dict(canon="ACD", reset_on_eot=True, persistent_heads=2)]
 
 
 def test_forward_shapes_and_loss():
@@ -139,12 +140,15 @@ def test_load_model_dispatches_on_arch(tmp_path):
     assert torch.allclose(g2(x)[0], gpt(x)[0]) and torch.allclose(u2(x)[0], umid.eval()(x)[0])
 
 
-@pytest.mark.parametrize("mixer", ["delta", "optimal"])
-def test_reset_on_eot_isolates_documents(mixer):
+@pytest.mark.parametrize("mixer,canon", [("delta", ""), ("optimal", ""), ("delta", "ACD")])
+def test_reset_on_eot_isolates_documents(mixer, canon):
     torch.manual_seed(0)
     cfg = UmidConfig(vocab_size=64, d_model=32, n_layers=2, n_heads=2, head_dim=16, chunk_size=8, mixer=mixer,
-                     reset_on_eot=True)
+                     reset_on_eot=True, canon=canon)
     model = UmidLM(cfg).eval()
+    for mod in model.modules():   # Canon noldan boshlanadi — test uchun tasodifiy og'irliklar
+        if type(mod).__name__ == "Canon":
+            torch.nn.init.normal_(mod.conv.weight, std=0.3)
     eot, tail, doc2 = 63, torch.randint(0, 60, (1, 3)), torch.randint(0, 60, (1, 13))
     seqs = [torch.cat([torch.randint(0, 60, (1, n)), tail, torch.tensor([[eot]]), doc2], 1) for n in (5, 21)]
     outs = [model(s)[0][:, -doc2.size(1):] for s in seqs]

@@ -49,6 +49,9 @@ class UmidConfig:
                                   # delta (almashtirish), b < β — yig'ish (savol so'zlarining xulosasi uchun)
     persistent_heads: int = 0     # har qatlamdagi shuncha head unutmaydi (α = 1, faqat EOT da tozalanadi): savolning
                                   # boshidagi so'z javob boshlanguncha so'nib ketmaydi
+    canon: str = ""               # "Canon" qatlamlari (Allen-Zhu, 2025): qo'shni tokenlarni aralashtiruvchi residual
+                                  # depthwise konvolyutsiya. "A" — xotiradan oldin, "C" — MLP dan oldin, "D" — MLP
+                                  # ichida (gate/up dan keyin). "B" (q, k, v ustida) Umid'da doim bor (qkv_conv).
     reset_on_eot: bool = False    # EOT tokenida xotira (S) tozalanadi: hujjatlar/savol-javoblar bir-biriga
                                   # aralashmaydi (Transformer'dagi hujjat maskasiga o'xshash). Qisqa konvolyutsiya
                                   # (conv_size − 1 token) chegaradan o'tadi.
@@ -97,9 +100,9 @@ class ShortConv(nn.Module):
     cache — oldingi (K−1) ta kirish; generatsiyada holat sifatida uzatiladi.
     """
 
-    def __init__(self, channels: int, kernel_size: int):
+    def __init__(self, channels: int, kernel_size: int, act: bool = True):
         super().__init__()
-        self.kernel_size = kernel_size
+        self.kernel_size, self.act = kernel_size, act
         self.weight = nn.Parameter(torch.empty(channels, 1, kernel_size))
         nn.init.kaiming_uniform_(self.weight, a=math.sqrt(5))
 
@@ -123,7 +126,21 @@ class ShortConv(nn.Module):
             xx = torch.cat([cache.to(x.dtype), x], dim=-1)
             y = F.conv1d(xx, w, groups=C)
             tail = xx[..., xx.shape[-1] - (K - 1):]
-        return F.silu(y).transpose(1, 2), tail
+        return (F.silu(y) if self.act else y).transpose(1, 2), tail
+
+
+class Canon(nn.Module):
+    """Canon qatlami: h + conv(h) — har bir kanal qo'shni (conv_size − 1) tokenni o'ziga qo'shadi.
+    Boshida nol (identik akslantirish), shuning uchun o'qitishni buzmaydi."""
+
+    def __init__(self, channels: int, kernel_size: int):
+        super().__init__()
+        self.conv = ShortConv(channels, kernel_size, act=False)
+        nn.init.zeros_(self.conv.weight)
+
+    def forward(self, x, cache=None, reset=None):
+        y, cache = self.conv(x, cache, reset)
+        return x + y, cache
 
 
 def reset_decay(g, reset):
@@ -315,10 +332,14 @@ class SwiGLU(nn.Module):
         super().__init__()
         self.w_in = nn.Linear(cfg.d_model, 2 * cfg.mlp_hidden, bias=False)
         self.w_out = nn.Linear(cfg.mlp_hidden, cfg.d_model, bias=False)
+        self.canon = Canon(2 * cfg.mlp_hidden, cfg.conv_size) if "D" in cfg.canon else None
 
-    def forward(self, x):
-        a, b = self.w_in(x).chunk(2, dim=-1)
-        return self.w_out(F.silu(a) * b)
+    def forward(self, x, cache=None, reset=None):
+        h = self.w_in(x)
+        if self.canon is not None:
+            h, cache = self.canon(h, cache, reset)
+        a, b = h.chunk(2, dim=-1)
+        return self.w_out(F.silu(a) * b), cache
 
 
 class Block(nn.Module):
@@ -329,12 +350,25 @@ class Block(nn.Module):
         self.norm2 = RMSNorm(cfg.d_model, cfg.norm_eps)
         self.mlp = SwiGLU(cfg)
         self.drop = nn.Dropout(cfg.dropout)
+        self.canon_a = Canon(cfg.d_model, cfg.conv_size) if "A" in cfg.canon else None
+        self.canon_c = Canon(cfg.d_model, cfg.conv_size) if "C" in cfg.canon else None
 
     def forward(self, x, state=None, reset=None):
-        h, state = self.mixer(self.norm1(x), state, reset)
+        st = state or {}
+        extra = {}
+        h = self.norm1(x)
+        if self.canon_a is not None:
+            h, extra["canon_a"] = self.canon_a(h, st.get("canon_a"), reset)
+        h, mixer_state = self.mixer(h, state, reset)
         x = x + self.drop(h)
-        x = x + self.drop(self.mlp(self.norm2(x)))
-        return x, state
+        h = self.norm2(x)
+        if self.canon_c is not None:
+            h, extra["canon_c"] = self.canon_c(h, st.get("canon_c"), reset)
+        h, cache_d = self.mlp(h, st.get("canon_d"), reset)
+        if cache_d is not None:
+            extra["canon_d"] = cache_d
+        x = x + self.drop(h)
+        return x, {**mixer_state, **extra}
 
 
 class UmidLM(nn.Module):

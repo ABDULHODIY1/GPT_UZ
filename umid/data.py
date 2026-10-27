@@ -106,12 +106,24 @@ def read_qa_pairs(path):
     return pairs
 
 
-def encode_qa(tok, pairs):
+def qa_prompt(question, repeat=1):
+    """Savol-javob formati. repeat=2 — savol ikki marta o'qiladi ("Just read twice", Arora va b., 2024):
+    rekurrent model ikkinchi o'qishda savolning hammasini allaqachon biladi va muhim so'zlarni xotirada
+    saqlab qoladi."""
+    return f"Savol: {question}\n" * repeat + "Javob:"
+
+
+def qa_repeat(ckpt):
+    """Checkpoint qaysi formatda fine-tuning qilingan (sft.py --repeat-question)."""
+    return (ckpt.get("sft_args") or {}).get("repeat_question", 1)
+
+
+def encode_qa(tok, pairs, repeat=1):
     """Har bir juftlik → (tokenlar, maska). Maska faqat javob va undan keyingi EOT'da True:
     model savolni o'qiydi, lekin faqat javobni bashorat qilish uchun o'rganadi."""
     out = []
     for q, a in pairs:
-        prompt, answer = tok.encode(f"Savol: {q}\nJavob:"), tok.encode(f" {a}") + [tok.eot_id]
+        prompt, answer = tok.encode(qa_prompt(q, repeat)), tok.encode(f" {a}") + [tok.eot_id]
         out.append((torch.tensor(prompt + answer), torch.tensor([False] * len(prompt) + [True] * len(answer))))
     return out
 

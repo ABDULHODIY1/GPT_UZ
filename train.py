@@ -44,6 +44,7 @@ def parse_args():
                     help="EOT da xotirani tozalash (Umid) / hujjat maskasi (gpt): hujjatlar aralashmaydi")
     ap.add_argument("--decouple-erase", action="store_true", help="o'chirish kuchi alohida darvoza (Umid)")
     ap.add_argument("--persistent-heads", type=int, default=0, help="unutmaydigan head'lar soni (Umid)")
+    ap.add_argument("--canon", default="", help="Canon qatlamlari (Umid): masalan ACD")
     ap.add_argument("--n-reads", type=int, default=None, help="fikrlash rejimi: xotiradan qayta so'rashlar soni (standart 1)")
     ap.add_argument("--decay", choices=["head", "channel"], default=None)
     ap.add_argument("--read-mix-init", type=float, default=None)
@@ -95,7 +96,7 @@ def build_config(args, vocab_size):
                          doc_mask=args.reset_on_eot, dropout=args.dropout)
     return UmidConfig(vocab_size=vocab_size, dropout=args.dropout, allow_neg_eigval=not args.no_neg_eigval,
                       reset_on_eot=args.reset_on_eot, decouple_erase=args.decouple_erase,
-                      persistent_heads=args.persistent_heads, **kw)
+                      persistent_heads=args.persistent_heads, canon=args.canon, **kw)
 
 
 def detach_states(states):
