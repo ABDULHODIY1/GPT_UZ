@@ -78,6 +78,71 @@ def positional_loss(model, val_tok, length, spans):
     return {f"{a}-{b}": round(v, 4) for (a, b), v in totals.items()}
 
 
+@torch.no_grad()
+def document_loss(model, val_tok, window, stateful, block=8192):
+    """Val matnini hujjat sifatida boshidan oxirigacha o'qib, har bir token uchun loss.
+
+    stateful=True (Umid): matn `window` lik bo'laklarda o'qiladi, xotira bo'lakdan bo'lakka
+    uzatiladi — model butun oldingi matnni "eslaydi".
+    stateful=False (Transformer): siljuvchi oyna — har bir token o'zidan oldingi ko'pi bilan
+    `window` token kontekst bilan bashorat qilinadi (o'qitilgan uzunlikdan oshmaydi).
+    Val bloklari korpusning turli joylaridan olingani uchun har blok alohida hujjat.
+    """
+    model.eval()
+    total, count = 0.0, 0
+    for b0 in range(0, len(val_tok) - 1, block):
+        doc = val_tok[b0:b0 + block + 1]
+        x_all, y_all = doc[:-1], doc[1:]
+        if stateful:
+            states = None
+            for s in range(0, len(x_all), window):
+                logits, _, states = model(x_all[s:s + window][None], states=states, return_states=True)
+                nll = F.cross_entropy(logits[0].float(), y_all[s:s + window], reduction="sum")
+                total, count = total + nll.item(), count + y_all[s:s + window].numel()
+        else:
+            stride = window // 2
+            for s in range(0, len(x_all), stride):
+                lo = max(0, s + stride - window)
+                logits, _ = model(x_all[lo:s + stride][None])
+                keep = slice(s - lo, None)
+                nll = F.cross_entropy(logits[0, keep].float(), y_all[s:s + stride], reduction="sum")
+                total, count = total + nll.item(), count + y_all[s:s + stride].numel()
+    return round(total / count, 4)
+
+
+@torch.no_grad()
+def generate_long(model, ids, n_new, window, stateful, temperature, seed):
+    """Uzun javob. Umid — butun holat bilan; Transformer — oxirgi `window` token bilan (siljuvchi
+    oyna, har qadamda qayta hisoblash: RoPE pozitsiyalari doim o'qitilgan oraliqda qoladi)."""
+    from umid.model import sample_next
+    torch.manual_seed(seed)
+    model.eval()
+    seq = ids
+    if stateful:
+        logits, _, states = model(ids, return_states=True)
+    else:
+        logits, _ = model(ids[:, -window:])
+    for _ in range(n_new):
+        nxt = sample_next(logits[:, -1], seq, temperature, 50, 0.9, 1.15)
+        seq = torch.cat([seq, nxt], 1)
+        if stateful:
+            logits, _, states = model(nxt, states=states, return_states=True)
+        else:
+            logits, _ = model(seq[:, -window:])
+    return seq[0, ids.size(1):].tolist()
+
+
+def word_stats(text, vocab_words):
+    words = [w.strip(".,!?;:\"'«»()[]").lower() for w in text.split()]
+    words = [w for w in words if w]
+    if not words:
+        return {"valid": 0.0, "distinct2": 0.0}
+    valid = sum(w in vocab_words for w in words) / len(words)
+    bigrams = list(zip(words, words[1:]))
+    distinct2 = len(set(bigrams)) / max(len(bigrams), 1)
+    return {"valid": round(valid, 3), "distinct2": round(distinct2, 3)}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--umid-ckpt", default="checkpoints/umid/model.pt")
@@ -93,6 +158,7 @@ def main():
     ap.add_argument("--max-new-tokens", type=int, default=50)
     ap.add_argument("--temperature", type=float, default=0.8)
     ap.add_argument("--long-context", type=int, default=1536)
+    ap.add_argument("--long-seeds", type=int, default=3)
     args = ap.parse_args()
     default_threads()
 
@@ -133,6 +199,28 @@ def main():
     for name, m in models.items():
         report["val_loss"][name] = {L: round(evaluate(m, val_tok, L), 4) for L in (256, 1024, 2048)}
         report["positional_loss_2048"][name] = positional_loss(m, val_tok, 2048, [(0, 256), (1792, 2048)])
+    report["document_loss"] = {
+        "Umid (butun hujjat, xotira uzatiladi)": document_loss(umid, val_tok, args.seq_len, stateful=True),
+        "Umid (faqat 256 tokenli siljuvchi oyna)": document_loss(umid, val_tok, args.seq_len, stateful=False),
+        "Transformer (256 tokenli siljuvchi oyna)": document_loss(gpt, val_tok, args.seq_len, stateful=False),
+    }
+    print("\nHujjat bo'yicha loss:", json.dumps(report["document_loss"], ensure_ascii=False, indent=1))
+
+    vocab_words = {w.strip(".,!?;:\"'«»()[]").lower() for w in tok.decode(train_tok.tolist()).split()}
+    long_stats = {name: {"boshi (0-250)": [], "oxiri (450-700)": []} for name in models}
+    for prompt in PROMPTS:
+        ids = torch.tensor([tok.encode(prompt)])
+        for seed in range(args.long_seeds):
+            for name, m in models.items():
+                new = generate_long(m, ids, 700, args.seq_len, name == "Umid", args.temperature, seed)
+                for part, sl in (("boshi (0-250)", slice(0, 250)), ("oxiri (450-700)", slice(450, 700))):
+                    long_stats[name][part].append(word_stats(tok.decode(new[sl]), vocab_words))
+    report["long_generation"] = {
+        name: {part: {k: round(sum(r[k] for r in rows) / len(rows), 3) for k in ("valid", "distinct2")}
+               for part, rows in parts.items()} for name, parts in long_stats.items()}
+    print("\nUzun javob (700 token): yaroqli so'zlar ulushi va takrorlanmaslik (distinct-2):")
+    print(json.dumps(report["long_generation"], ensure_ascii=False, indent=1))
+
     print("\nval loss (past = yaxshi):", json.dumps(report["val_loss"], ensure_ascii=False))
     print("2048 tokenli oynada pozitsiya bo'yicha loss:", json.dumps(report["positional_loss_2048"], ensure_ascii=False))
 
