@@ -1,0 +1,289 @@
+{
+  "distances": [
+    0,
+    2,
+    5,
+    10,
+    20,
+    40
+  ],
+  "n": 40,
+  "models": {
+    "Umid": {
+      "by_distance": {
+        "0": {
+          "accuracy": 0.022222222222222223,
+          "mean_tokens": 70.3
+        },
+        "2": {
+          "accuracy": 0.011494252873563218,
+          "mean_tokens": 133.90804597701148
+        },
+        "5": {
+          "accuracy": 0.012048192771084338,
+          "mean_tokens": 230.2289156626506
+        },
+        "10": {
+          "accuracy": 0.012048192771084338,
+          "mean_tokens": 401.34939759036143
+        },
+        "20": {
+          "accuracy": 0.0,
+          "mean_tokens": 753.1379310344828
+        },
+        "40": {
+          "accuracy": 0.0,
+          "mean_tokens": 1409.8068181818182
+        }
+      },
+      "examples": [
+        {
+          "masofa": 0,
+          "kutilgan": "Heqija",
+          "javob": "Sizning ismingiz Nodir.",
+          "togri": false
+        },
+        {
+          "masofa": 0,
+          "kutilgan": "632",
+          "javob": "Xonangiz raqami 499.",
+          "togri": false
+        },
+        {
+          "masofa": 0,
+          "kutilgan": "aytmagansiz",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": true
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Fibo",
+          "javob": "Do'stingizning ismi Lolo.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Xeboqi",
+          "javob": "Mushugingizning ismi Lope.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Jajahe",
+          "javob": "Do'stingizning ismi Lope.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "bog'dagi yumshoq kitob",
+          "javob": "Kompyuter virusi ruxsatsiz tarqaladigan va kompyuterga zarar yetkazadigan zararli dastur. Undan himoyalanish uchun antivirus va ehtiyotkorlik kerak.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "82",
+          "javob": "Siz 52 yoshdasiz.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "Fiqiqi",
+          "javob": "Mushugingizning ismi Viri.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "Denov",
+          "javob": "Siz Nukus shahrida yashaysiz.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "Nargiza",
+          "javob": "Do'stingizning ismi Lope.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "aytmagansiz",
+          "javob": "Xonangiz raqami 476.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "794",
+          "javob": "Xonangiz raqami 499.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "Saida",
+          "javob": "Sizning ismingiz Madina.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "64",
+          "javob": "Siz 52 yoshdasiz.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "863",
+          "javob": "Xonangiz raqami 499.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "Nargiza",
+          "javob": "Do'stingizning ismi Lope.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "73",
+          "javob": "Siz 49 yoshdasiz.",
+          "togri": false
+        }
+      ]
+    },
+    "Transformer": {
+      "by_distance": {
+        "0": {
+          "accuracy": 0.022222222222222223,
+          "mean_tokens": 70.3
+        },
+        "2": {
+          "accuracy": 0.0,
+          "mean_tokens": 133.90804597701148
+        },
+        "5": {
+          "accuracy": 0.024096385542168676,
+          "mean_tokens": 230.2289156626506
+        },
+        "10": {
+          "accuracy": 0.060240963855421686,
+          "mean_tokens": 401.34939759036143
+        },
+        "20": {
+          "accuracy": 0.034482758620689655,
+          "mean_tokens": 753.1379310344828
+        },
+        "40": {
+          "accuracy": 0.03409090909090909,
+          "mean_tokens": 1409.8068181818182
+        }
+      },
+      "examples": [
+        {
+          "masofa": 0,
+          "kutilgan": "Heqija",
+          "javob": "Sizning ismingiz Lolo.",
+          "togri": false
+        },
+        {
+          "masofa": 0,
+          "kutilgan": "632",
+          "javob": "Xonangiz raqami 491.",
+          "togri": false
+        },
+        {
+          "masofa": 0,
+          "kutilgan": "aytmagansiz",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": true
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Fibo",
+          "javob": "Do'stingizning ismi Nodir.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Xeboqi",
+          "javob": "Mushugingizning ismi Riri.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Jajahe",
+          "javob": "Do'stingizning ismi Nodir.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "bog'dagi yumshoq kitob",
+          "javob": "Mening ismim Umid. Men o'zbek tilida suhbatlashadigan sun'iy intellektman.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "82",
+          "javob": "Siz 52 yoshdasiz.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "Fiqiqi",
+          "javob": "Mushugingizning ismi Viri.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "Denov",
+          "javob": "Siz Sata shahrida yashaysiz.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "Nargiza",
+          "javob": "Do'stingizning ismi Nodir.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "aytmagansiz",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": true
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "794",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "Saida",
+          "javob": "Sizning ismingiz Madina.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "64",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "863",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "Nargiza",
+          "javob": "Do'stingizning ismi Viriri.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "73",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": false
+        }
+      ]
+    }
+  }
+}
