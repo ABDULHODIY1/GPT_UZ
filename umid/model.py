@@ -46,6 +46,7 @@ class UmidConfig:
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi;
                                   # "tanlov": eng muhim K ta tokenni saqlovchi xotira (umid/tanlov.py)
     select_k: int = 32            # "tanlov": har head saqlaydigan tokenlar soni (xotira hajmi o'zgarmas)
+    select_conv: bool = True      # "tanlov": q, k, v ustida qisqa konvolyutsiya (False — sof Tanlov, konvolyutsiyasiz)
     select_enrich: bool = False   # "tanlov": o'qib boyitish — o'qigan token o'qilgan yozuvlarga ma'lumot qaytaradi
     select_chunk: int = 128       # "tanlov": o'qitishda bo'lak uzunligi (natijaga ta'sir qilmaydi, faqat tezlik)
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
@@ -341,7 +342,7 @@ class SelectiveMemory(nn.Module):
         self.cfg = cfg
         D, H, dk, dv = cfg.d_model, cfg.n_heads, cfg.head_dim, cfg.value_dim
         self.qkv_proj = nn.Linear(D, H * (2 * dk + dv), bias=False)
-        self.qkv_conv = ShortConv(H * (2 * dk + dv), cfg.conv_size)
+        self.qkv_conv = ShortConv(H * (2 * dk + dv), cfg.conv_size) if cfg.select_conv else None
         self.s_proj = nn.Linear(D, H, bias=True)          # muhimlik; boshida 0 → "oxirgi K ta token" oynasi
         self.g_proj = nn.Linear(D, H * dv, bias=False)
         self.o_norm = RMSNorm(dv, cfg.norm_eps)
@@ -361,7 +362,9 @@ class SelectiveMemory(nn.Module):
         H, dk, dv = cfg.n_heads, cfg.head_dim, cfg.value_dim
         st = state or {}
         fdt = torch.promote_types(x.dtype, torch.float32)
-        qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"), reset)
+        qkv, conv_cache = self.qkv_proj(x), None
+        if self.qkv_conv is not None:
+            qkv, conv_cache = self.qkv_conv(qkv, st.get("conv"), reset)
         q, k, v = qkv.split([H * dk, H * dk, H * dv], dim=-1)
         q = F.normalize(q.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
         k = F.normalize(k.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
@@ -387,7 +390,7 @@ class SelectiveMemory(nn.Module):
             outs.append(o)
         o = torch.cat(outs, 2)
         o = self.o_norm(o.transpose(1, 2).to(x.dtype)) * F.silu(self.g_proj(x)).view(B, T, H, dv)
-        new_state = {"conv": conv_cache, "n": n0 + T}
+        new_state = {"n": n0 + T} if conv_cache is None else {"conv": conv_cache, "n": n0 + T}
         new_state.update(zip(("ck", "cv", "cs", "cp", "cm"), cache))
         return self.o_proj(o.reshape(B, T, H * dv)), new_state
 

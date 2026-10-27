@@ -49,6 +49,7 @@ def parse_args():
                     help="xotira algoritmi: delta (Gated Delta) yoki tanlov (eng muhim K ta token, umid/tanlov.py)")
     ap.add_argument("--select-k", type=int, default=32, help="tanlov: har head saqlaydigan tokenlar soni")
     ap.add_argument("--select-enrich", action="store_true", help="tanlov: o'qib boyitish")
+    ap.add_argument("--select-no-conv", action="store_true", help="tanlov: konvolyutsiyasiz (sof Tanlov)")
     ap.add_argument("--n-reads", type=int, default=None, help="fikrlash rejimi: xotiradan qayta so'rashlar soni (standart 1)")
     ap.add_argument("--decay", choices=["head", "channel"], default=None)
     ap.add_argument("--read-mix-init", type=float, default=None)
@@ -101,7 +102,8 @@ def build_config(args, vocab_size):
     return UmidConfig(vocab_size=vocab_size, dropout=args.dropout, allow_neg_eigval=not args.no_neg_eigval,
                       reset_on_eot=args.reset_on_eot, decouple_erase=args.decouple_erase,
                       persistent_heads=args.persistent_heads, canon=args.canon, mixer=args.mixer,
-                      select_k=args.select_k, select_enrich=args.select_enrich, **kw)
+                      select_k=args.select_k, select_enrich=args.select_enrich,
+                      select_conv=not args.select_no_conv, **kw)
 
 
 def detach_states(states):
