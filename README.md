@@ -29,7 +29,21 @@ holda). U quyidagilarni qiladi:
 
 Checkpoint'lar Google Drive'ga yoki `/kaggle/working` ga saqlanadi. Uzilsa, `--resume` bilan davom etadi.
 
-Hammasi bitta buyruqda. Notebook ham faqat shuni chaqiradi:
+**Hammasi bitta faylda: [`umid_llm.py`](umid_llm.py).** Unda tashqi kod yo'q va quyidagilar bor:
+- tozalash;
+- tokenizer;
+- Tanlov modeli;
+- pretraining;
+- sekin SFT;
+- sinash va suhbat.
+
+Notebook shu faylni ishga tushiradi. Faylning matnini bitta katakka to'liq joylab ham ishlatish mumkin:
+
+```bash
+python umid_llm.py --preset small --max_mb 600 --steps 20000 --sft_steps 6000 --chat
+```
+
+Repo modullari bilan ham shu jarayonni bitta buyruqda bajarish mumkin:
 
 ```bash
 python pipeline.py --save natijalar --preset small --mixer tanlov --max-mb 600 --steps 20000 --sft-steps 6000
@@ -136,6 +150,7 @@ umid/
 train.py        # o'qitish (pretraining); --arch gpt — Transformer'ni aynan shu sharoitda o'qitish
 sft.py          # savol-javob fine-tuning: loss faqat javob tokenlarida
 chat.py         # suhbat / generatsiya
+umid_llm.py     # HAMMASI BITTA FAYLDA (mustaqil): tozalash, tokenizer, Tanlov, pretraining, SFT, sinash, suhbat
 pipeline.py     # hammasi bitta buyruqda: ma'lumot → tokenizer → pretraining → SFT → baholash (Colab/Kaggle)
 prepare_data.py # katta korpus: yuklash, tozalash (umid/clean.py), tokenizer, tokenlar
 chat-data/      # Data.txt (umumiy matn) va savol-javob/ (731 juftlik, shundan 431 tasi qayta ifoda)
