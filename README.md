@@ -7,8 +7,9 @@ qoidasi asosida yangilanadi.
 
 ```
 pip install -r requirements.txt
-python train.py                                  # chat-data/Data.txt da o'qitish
-python chat.py --ckpt checkpoints/umid/model.pt  # suhbat
+python train.py --reset-on-eot --persistent-heads 3 --out checkpoints/umid_base   # 1) til (pretraining)
+python sft.py --init checkpoints/umid_base/model.pt --out checkpoints/umid        # 2) savol-javob (SFT)
+python chat.py --ckpt checkpoints/umid/model.pt                                   # suhbat
 ```
 
 ## Transformer attention'ning qaysi kamchiliklari hal qilindi
@@ -85,18 +86,28 @@ umid/
   model.py      # UmidLM: qatlamlar, generatsiya, saqlash/yuklash
   optimal.py    # tadqiqot: aniq eng kichik kvadratlar xotirasi (Gᵀ(H + Λ)⁻¹q)
   tokenizer.py  # bayt darajasidagi BPE (o‘, g‘, ' belgilari so'z ichida qoladi)
-  data.py       # korpus, batch'lar, baholash
-  baseline.py   # taqqoslash uchun klassik Transformer (RoPE + softmax attention)
-train.py        # o'qitish
+  data.py       # korpus (tozalash, takrorlash), batch'lar, savol-javob/dialog kodlash, baholash
+  dialog.py     # suhbatdan o'rganish uchun sintetik dialoglar (train/test qiymatlari kesishmaydi)
+  baseline.py   # taqqoslash uchun klassik Transformer (RoPE + softmax attention, ixtiyoriy Canon, hujjat maskasi)
+train.py        # o'qitish (pretraining); --arch gpt — Transformer'ni aynan shu sharoitda o'qitish
+sft.py          # savol-javob fine-tuning: loss faqat javob tokenlarida
 chat.py         # suhbat / generatsiya
+chat-data/      # Data.txt (umumiy matn) va savol-javob/ (731 juftlik, shundan 431 tasi qayta ifoda)
 tests/          # pytest testlari
 benchmarks/     # Umid va Transformer'ni solishtirish (natijalar: benchmarks/results/*.json)
+  qa_eval.py      # o'qitishda bo'lmagan 60 savol (qa_heldout.txt, qa_heldout2.txt)
+  qa_nll.py       # javob NLL'i: nazorat savoli va asl savol bilan
+  qa_diagnose.py  # bilim (300 javob ichida o'rin), so'z ta'siri (occlusion), savol tasviri
+  icl_eval.py     # suhbatdan o'rganish: aytilgan yangi faktni masofa bo'yicha eslash
 ```
 
 ## O'qitish
 
 ```bash
-python train.py                                   # tiny (4.5M), chat-data/Data.txt
+python train.py                                   # tiny (4.5M): tozalangan Data.txt + savol-javoblar ×8
+python train.py --reset-on-eot --persistent-heads 3   # suhbat modeli uchun tavsiya ("Savol-javob sifati")
+python train.py --arch gpt --reset-on-eot         # taqqoslash uchun Transformer, aynan shu sharoitda
+python sft.py --init checkpoints/umid/model.pt --out checkpoints/umid_chat   # savol-javob fine-tuning
 python train.py --preset small --steps 5000       # 6 qatlam, d=384
 python train.py --data korpus_papkasi/ --preset base --seq-len 1024 --compile   # GPU uchun
 python train.py --stream                          # xotira holatini oynadan oynaga uzatib o'qitish
@@ -112,10 +123,15 @@ python train.py --n-reads 2                       # fikrlash rejimi (xotiradan q
 - Eng yaxshi model `checkpoints/umid/model.pt` ga saqlanadi (tokenizer ichida).
 - `--resume` bilan `--steps` ni oshirsangiz, lr jadvali yangi uzunlikka cho'ziladi va lr vaqtincha
   ko'tariladi.
-- Standart sozlamalar (`tiny`, 600 qadam) bilan `chat-data/Data.txt` da o'qitish 4 yadroli
-  CPU'da ~10 daqiqa oladi. Natija (3 seed): val loss **4.04–4.11** (perplexity 57–61), 1024 tokenli
-  kontekstda ~**3.9**. Standart sozlamalar shu korpusga moslangan: ~1.6M tokendan keyin model
-  matnni yodlay boshlaydi, shuning uchun qadamlar soni cheklangan.
+- `--data` ro'yxat qabul qiladi: `!` — manbani tozalash (yopishgan so'zlar, manbalar ro'yxati, URL,
+  inglizcha bo'laklar), `*N` — N marta takrorlash (takrorda savol-javob bloklari aralashtiriladi va
+  EOT bilan ajratiladi). Standart: `chat-data/Data.txt!,chat-data/savol-javob*8`.
+- `--reset-on-eot`: EOT da xotira (va qisqa konvolyutsiya chegarasi) tozalanadi, hujjatlar bir-biriga
+  aralashmaydi. `--persistent-heads N`: N ta head unutmaydi (α = 1). `--canon ACD`: Canon qatlamlari.
+- Standart sozlamalar (`tiny`, 600 qadam) bilan o'qitish 4 yadroli CPU'da ~15 daqiqa oladi. Val loss
+  ma'lumotga bog'liq: eski `Data.txt` da 4.04–4.11 (3 seed), hozirgi tozalangan matn + aralashtirilgan
+  savol-javoblarda ~4.18–4.27 (bu raqamlar bir-biri bilan solishtirilmaydi). 1200 qadamda model
+  300-qadamdan keyin yodlay boshlaydi va val loss oshadi, shuning uchun qadamlar soni cheklangan.
 
 ## Suhbat
 
@@ -125,7 +141,10 @@ python chat.py --ckpt checkpoints/umid/model.pt --prompt "Bir kuni" --max-new-to
 ```
 
 Suhbat davomida model butun suhbatni o'zgarmas hajmli xotirada eslaydi (`/xotira` buyrug'i
-hajmini ko'rsatadi). `/yangi` xotirani tozalaydi, `/chiqish` dasturdan chiqadi.
+hajmini ko'rsatadi). `/yangi` xotirani tozalaydi, `/chiqish` dasturdan chiqadi. Format `sft.py` bilan
+bir xil: `Savol: …\nJavob: …\n`. Takrorlash jarimasi faqat javobga qo'llanadi. Model suhbatda siz
+aytgan yangi faktlarni ishlatishi uchun alohida o'qitish kerak. Bu hali ishlamaydi, "Suhbatdan
+o'rganish" bo'limiga qarang.
 
 ## Python'dan foydalanish
 
@@ -337,7 +356,78 @@ Umumiy aqlda 10x farq esa bu tadqiqotda kuzatilmadi. Fikrlash rejimi eng istiqbo
 u ko'p bosqichli mulohazani bitta qatlamga olib kiradi. Lekin uni LM o'qitishda ham foydali
 qilish ochiq vazifa bo'lib qoladi.
 
+## Savol-javob sifati: Umid va Transformer
+
+**Usul.**
+- Ma'lumot: tozalangan `Data.txt` va 731 ta savol-javob (300 asl, 431 qayta ifoda). Savol-javoblar
+  ×4 takrorlanadi va har takrorda aralashtiriladi.
+- Bosqichlar: `train.py` (600 qadam), keyin `sft.py` (300 qadam, loss faqat javobda).
+- Transformer aynan shu retsept, tokenizer va o'lchamda o'qitiladi (`--arch gpt`, 4.26M; Umid 4.55M).
+- Baholash: `qa_eval.py`, o'qitishda bo'lmagan 60 ta savol, greedy. 2-to'plam qayta ifoda
+  ma'lumoti yozilishidan oldin commit qilingan. Nazorat savollari o'qitishga aynan tushmagani
+  tekshirilgan.
+
+**Natijalar** (to'g'ri javoblar ulushi, har raqam alohida seed):
+
+| model (tiny) | takrorlash jarimasi 1.15 | jarimasiz |
+|---|---|---|
+| Umid, eski ma'lumot (tartiblangan savol-javob ×8, SFT'siz) | 5–10% | — |
+| Umid + qayta ifodalar + SFT | 23% | — |
+| + EOT da xotirani tozalash | 32% | 35% |
+| + 2 ta doimiy head | 43, 38% | — |
+| + 3 ta doimiy head | 45, 47, 37% | 53, 50, 47% |
+| + barcha head doimiy | 50, 38% | 57, 48% |
+| + 3 doimiy head + Canon | 53, 35% | 57, 47% |
+| Transformer (hujjat maskasiz) | 45% | — |
+| **Transformer** (hujjat maskasi) | **52, 52, 55%** | **57, 55, 57%** |
+| Transformer + Canon | 53% | 58% |
+
+**Topilmalar** (`qa_diagnose.py`):
+- Asosiy muammo — tez unutish. O'qitilgan Umid savolning birinchi so'zini javob boshlanguncha
+  4–78% saqlab qolardi (birinchi qatlamda 4–30%). Doimiy head'lar (`persistent_heads`, faqat EOT da
+  tozalanadi) buni tuzatdi: Umid savolning bosh so'ziga Transformer'dan 2.3× kuchliroq tayanadi.
+- Bilimda farq kichik. 300 ta javob ichida to'g'risining o'rni:
+  - Transformer: top-1 41%, top-5 53%, median 4;
+  - Umid (3 doimiy head): top-1 39%, top-5 56%, median 2;
+  - Umid + Canon: top-1 44%, top-5 58%, median 2.
+- Takrorlash jarimasi savol so'zlarini ham jazolaydi va Umid'ga ko'proq zarar qiladi. Shuning uchun
+  `chat.py` jarimani faqat javobga qo'llaydi.
+- **Xulosa (halol):**
+  - Oddiy savol-javobda Transformer hali ~5 ball oldinda (jarimasiz o'rtacha ~56% ga qarshi ~51%).
+  - Umid natijasi seed'ga kuchli bog'liq (35–57%), Transformer'niki barqaror.
+  - Canon Umid'da bitta seed'da +8 ball berdi, ikkinchisida tasdiqlanmadi.
+
+**Sinab ko'rilgan, foyda bermagan g'oyalar** (kodi olib tashlangan yoki standart emas):
+- "Just read twice" (savolni ikki marta o'qish): Umid 45→42%, Transformer 52→48%;
+- beam search;
+- lr 3e-3 (30%);
+- 2× uzoq o'qitish (yodlash, 22%);
+- o'chirish darvozasini ajratish (`decouple_erase`, 32–40%);
+- fikrlash rejimi (33%).
+
+## Suhbatdan o'rganish (davom etayotgan ish)
+
+Maqsad: model suhbatda aytilgan yangi faktni eslab qolsin. Fakt — o'qitishda hech uchramagan ism,
+shahar, raqam yoki o'ylab topilgan so'z va uning ta'rifi. Model uni oradagi boshqa savollardan
+keyin ishlatishi kerak. Umid'da bu xotira matritsasida bo'ladi: delta qoidasi kalit-qiymat
+bog'lanishini o'rganishning bir gradient qadamiga teng.
+
+- Vositalar:
+  - `umid/dialog.py`: train va test qiymatlari kesishmaydi;
+  - `sft.py --dialogs N`;
+  - `benchmarks/icl_eval.py`: masofa 0…40 oraliq savol, ~70…1400 token.
+- Hozirgi holat — **ishlamaydi**:
+  - dialog bilan fine-tuning qilingan ikkala model ham kontekstdan ko'chirmaydi (0–6%);
+  - ular o'qitishda ko'p uchragan qiymatni taxmin qiladi;
+  - faqat "aytmagansiz" holatini to'g'ri o'rganadi.
+- Keyingi qadam:
+  - har qadamda yangi dialoglar yaratish (yodlab bo'lmaydi);
+  - dialog bosqichini uzaytirish (ko'chirish mexanizmini noldan o'rganish uchun 600 qadam kam).
+
 ## Halol cheklovlar
+
+- **Oddiy savol-javobda Transformer hali oldinda** (yuqoridagi bo'lim): o'rtacha ~5 ball, Umid'da
+  seed'lar orasidagi tebranish katta. Suhbatdan o'rganish hali ishlamaydi.
 
 - **Qisqa matnlarda o'qitish CPU'da sekinroq**: T ≤ 4096 da Transformer 1.6–1.9× tezroq. Sababi —
   attention uchun PyTorch'da tayyor optimallashtirilgan yadro (`scaled_dot_product_attention`)

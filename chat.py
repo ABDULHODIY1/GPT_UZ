@@ -69,8 +69,10 @@ def main():
         torch.manual_seed(args.seed)
 
     model, tok = load(args.ckpt, args.device)
+    # Takrorlash jarimasi faqat javob tokenlariga: savoldagi so'zni javobda ishlatish jazolanmaydi
+    # (benchmarks/qa_diagnose.py: savol so'zlarini ham jazolash to'g'ri javoblarni kamaytiradi).
     gen_kw = dict(temperature=args.temperature, top_k=args.top_k, top_p=args.top_p,
-                  repetition_penalty=args.repetition_penalty, eos_id=tok.eot_id)
+                  repetition_penalty=args.repetition_penalty, eos_id=tok.eot_id, penalize_prompt=False)
 
     if args.prompt is not None:
         print(args.prompt, end="", flush=True)
