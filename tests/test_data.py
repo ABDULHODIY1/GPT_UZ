@@ -83,3 +83,32 @@ def test_encode_dialog_masks_only_answers():
     ids, mask = encode_dialog(tok, [("Salom", "Assalomu alaykum!"), ("Rahmat", "Arzimaydi!")])
     assert ids[-1] == tok.eot_id and mask[-1]
     assert tok.decode(ids[mask].tolist()).replace("<|endoftext|>", "") == " Assalomu alaykum!\n Arzimaydi!\n"
+
+
+WIKI = """'''Samarqand''' — O‘zbekistondagi eng qadimiy shaharlardan biri. U [[Zarafshon|Zarafshon vodiysida]] joylashgan va <ref>manba</ref> boy tarixga ega.
+{{Infobox shahar | aholi = 551 700}}
+== Tarixi ==
+Shahar Buyuk Ipak yo‘li ustida joylashgan bo‘lib, ko‘p asrlar davomida savdo markazi bo‘lgan. https://example.com/samarqand
+| 1991 | 2000 | 2010 | 2020 |
+Qisqa.
+== Manbalar ==
+Bu qator manbalar bo'limida, olib tashlanishi kerak va u yetarlicha uzun matn.
+"""
+
+
+def test_clean_doc_removes_markup_and_reference_sections():
+    from umid.clean import clean_doc
+    out = clean_doc(WIKI)
+    assert "O'zbekistondagi" in out and "yo'li" in out             # tutuq belgilari bir xil
+    assert "Zarafshon vodiysida" in out and "[[" not in out          # havola matni qoladi
+    assert out.startswith("Samarqand — ")
+    for junk in ("<ref>", "manba boy", "{{", "Infobox", "== Tarixi", "https://", "| 1991", "Qisqa.", "manbalar bo'limida"):
+        assert junk not in out
+
+
+def test_deduper_drops_repeated_documents_and_paragraphs():
+    from umid.clean import Deduper
+    d = Deduper()
+    assert d("Birinchi abzas matni.\nUmumiy abzas.") == "Birinchi abzas matni.\nUmumiy abzas."
+    assert d("Birinchi abzas matni.\nUmumiy abzas.") == ""           # hujjat takrori
+    assert d("Ikkinchi hujjat.\nUmumiy abzas.") == "Ikkinchi hujjat."   # abzas takrori
