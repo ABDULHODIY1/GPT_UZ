@@ -34,6 +34,7 @@ CONFIG = dict(
     sft_mix=0.25,               # va umumiy matn aralashmasi (tilni unutmaslik uchun)
     select_k=32,                # Tanlov: har head saqlaydigan tokenlar soni
     seed=0,
+    allow_cpu=False,            # GPU bo'lmasa o'qitish boshlanmaydi (CPU da kichik sinovdan boshqasi juda uzoq)
 )
 # ========================================================================
 
@@ -619,6 +620,11 @@ def val_loss(model, val, seq_len, dev, dtype, n=50, bs=8):
 
 def pretrain(cfg, tok, tokens, save):
     dev, dtype, scaler = device_and_amp()
+    if dev.type == "cpu" and not cfg["allow_cpu"]:
+        sys.exit("\n!!! GPU topilmadi — o'qitish CPU da kunlab davom etadi, shuning uchun to'xtatildi.\n"
+                 "    Colab: Runtime → Change runtime type → T4 GPU → Save, so'ng katakni qayta ishga tushiring.\n"
+                 "    Kaggle: Settings → Accelerator → GPU. Ma'lumot saqlangan, qayta yuklanmaydi.\n"
+                 "    (Baribir CPU da: --allow_cpu 1)")
     d, L, H = PRESETS[cfg["preset"]]
     mc = ModelConfig(vocab_size=tok.vocab_size, d_model=d, n_layers=L, n_heads=H, select_k=cfg["select_k"])
     model = UmidLM(mc).to(dev)
@@ -763,7 +769,8 @@ def main(argv=None):
     cfg = dict(CONFIG)
     ap = argparse.ArgumentParser(description="Umid LLM: hammasi bitta faylda")
     for k, v in cfg.items():
-        ap.add_argument(f"--{k}", type=type(v), default=v)
+        conv = (lambda x: str(x).lower() in ("1", "true", "yes", "ha")) if isinstance(v, bool) else type(v)
+        ap.add_argument(f"--{k}", type=conv, default=v)
     ap.add_argument("--chat", action="store_true", help="oxirida interaktiv suhbat")
     args, _ = ap.parse_known_args(argv)                 # notebook argumentlari (-f …) e'tiborsiz qoldiriladi
     cfg.update({k: getattr(args, k) for k in cfg})
