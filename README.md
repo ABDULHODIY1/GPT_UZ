@@ -468,6 +468,7 @@ ikkala model ham shu formatda qayta o'qitilgan; retsept, ma'lumot va tokenizer b
 | Tanlov, sof (conv'siz) | 4.53M | 4.162, 4.146 | 55, 53% | 55, 55% |
 | **Tanlov, sof, teng parametr** (`--mlp-hidden 616`) | **4.26M** | **4.124, 4.130, 4.126** | **58, 57, 50%** | **58, 57, 50%** |
 | Transformer (hujjat maskasi) | 4.26M | 4.189, 4.145, 4.149 | 52, 53, 52% | 53, 55, 55% |
+| Transformer, lr 1e-3 (uning eng yaxshi lr i) | 4.26M | 4.066 | 57% | 62% |
 
 - **Tuzatish:** jadvaldagi hamma model lr 2e-3 da o'qitilgan. Bu Transformer uchun noqulay ekan:
   Transformer lr 1e-3 da 4.066 ga tushadi (lr 3e-3 da 4.323). Shuning uchun "val loss da Tanlov
@@ -481,6 +482,7 @@ ikkala model ham shu formatda qayta o'qitilgan; retsept, ma'lumot va tokenizer b
   | Tanlov, sof (K=32) | 4.397 | 4.142 | **4.124** | 4.244 |
 
   Har biri o'zining eng yaxshi lr ida: Transformer 4.066, Tanlov 4.124 — **Transformer 0.058 oldinda**.
+  Savol-javobda (seed 1337) eng yaxshi lr larda: Tanlov 58% / 58%, Transformer 57% / 62% (jarima bilan / jarimasiz).
   Pozitsiya bo'yicha (`val loss`, 256 tokenli oyna): 0–8 tokenda Tanlov biroz yaxshi (4.630 / 4.654),
   8–32 da Transformer +0.04, 32 dan keyin (K=32 xotira to'lgandan so'ng) +0.05…0.08 oldinda. Demak
   yo'qotishning asosiy qismi — K ta tokenlik xotira chegarasi.
