@@ -111,14 +111,21 @@ def qa_prompt(question):
     return f"Savol: {question}\nJavob:"
 
 
+def encode_dialog(tok, turns):
+    """Dialog (bir yoki bir nechta navbat) → (tokenlar, maska). Har javob "\n" bilan tugaydi (suhbat davom
+    etishi mumkin), dialog oxirida EOT. Maska faqat javoblarda (+ "\n" va EOT) True: model savollarni
+    o'qiydi, lekin faqat javob berishni o'rganadi."""
+    ids, mask = [], []
+    for q, a in turns:
+        prompt, answer = tok.encode(qa_prompt(q)), tok.encode(f" {a}\n")
+        ids += prompt + answer
+        mask += [False] * len(prompt) + [True] * len(answer)
+    return torch.tensor(ids + [tok.eot_id]), torch.tensor(mask + [True])
+
+
 def encode_qa(tok, pairs):
-    """Har bir juftlik → (tokenlar, maska). Maska faqat javob va undan keyingi EOT'da True:
-    model savolni o'qiydi, lekin faqat javobni bashorat qilish uchun o'rganadi."""
-    out = []
-    for q, a in pairs:
-        prompt, answer = tok.encode(qa_prompt(q)), tok.encode(f" {a}") + [tok.eot_id]
-        out.append((torch.tensor(prompt + answer), torch.tensor([False] * len(prompt) + [True] * len(answer))))
-    return out
+    """Har bir savol-javob juftligi — bitta navbatli dialog."""
+    return [encode_dialog(tok, [(q, a)]) for q, a in pairs]
 
 
 def qa_batch(examples, batch_size, seq_len, generator=None, device="cpu"):

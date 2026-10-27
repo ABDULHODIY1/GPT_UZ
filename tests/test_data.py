@@ -55,3 +55,29 @@ def test_qa_batch_masks_everything_but_answers(tmp_path):
     assert "Savol" not in text and "Javob" not in text   # savol va "Javob:" uchun loss yo'q
     assert tok.eot_id in targets                          # javob oxirida to'xtashni o'rganadi
     assert torch.equal(x[:, 1:][y[:, :-1] != -100], y[:, :-1][y[:, :-1] != -100])
+
+
+def test_dialog_test_values_never_seen_in_training():
+    import random
+    from umid.dialog import CITIES, COLORS, DEFINITIONS, NAMES, SYLLABLES, make_dialog
+    for pools in (NAMES, CITIES, COLORS, DEFINITIONS, SYLLABLES):
+        assert not set(pools["train"]) & set(pools["test"])
+    fillers = [("Salom", "Assalomu alaykum!"), ("Rahmat", "Arzimaydi!"), ("Xayr", "Xayr!")]
+    train_text = " ".join(q + " " + a for i in range(300)
+                          for q, a in make_dialog(random.Random(i), "train", fillers)[0])
+    for i in range(50):
+        turns, checks = make_dialog(random.Random(10_000 + i), "test", fillers, n_fill=1)
+        assert len(checks) >= 1 and all(0 <= t < len(turns) for t, _ in checks)
+        for t, v in checks:
+            assert v.lower() in turns[t][1].lower()          # to'g'ri javobda qiymat bor
+            if v != "aytmagansiz" and not v.isdigit():
+                assert v not in train_text                   # o'qitishda bu qiymat yo'q
+
+
+def test_encode_dialog_masks_only_answers():
+    from umid.data import encode_dialog
+    from umid.tokenizer import BPETokenizer
+    tok = BPETokenizer.train(QA * 3, 300)
+    ids, mask = encode_dialog(tok, [("Salom", "Assalomu alaykum!"), ("Rahmat", "Arzimaydi!")])
+    assert ids[-1] == tok.eot_id and mask[-1]
+    assert tok.decode(ids[mask].tolist()).replace("<|endoftext|>", "") == " Assalomu alaykum!\n Arzimaydi!\n"

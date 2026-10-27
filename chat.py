@@ -4,7 +4,9 @@
     python chat.py --ckpt checkpoints/umid/model.pt --prompt "Bir kuni" --max-new-tokens 200
 
 Suhbat davomida model butun suhbatni qat'iy o'lchamli xotirada saqlaydi: 1000-xabarda ham
-har bir token uchun xotira va tezlik birinchi xabardagidek (KV-cache o'smaydi).
+har bir token uchun xotira va tezlik birinchi xabardagidek (KV-cache o'smaydi). Siz aytgan yangi
+faktlarni (ismingiz, yangi so'z ta'rifi) shu xotiraga yozib, keyingi savollarda ishlatadi
+(sft.py --dialogs bilan o'qitilgan bo'lsa).
 
 Buyruqlar: /yangi — xotirani tozalash, /xotira — xotira holati, /chiqish — chiqish.
 """
@@ -78,7 +80,7 @@ def main():
         return
 
     print(f"Umid AI ({model.num_params() / 1e6:.1f}M parametr). Buyruqlar: /yangi, /xotira, /chiqish")
-    states, n_tokens, ended = None, 0, True
+    states, n_tokens, line_start = None, 0, True
     while True:
         try:
             user = input("\nSiz: ").strip()
@@ -91,21 +93,21 @@ def main():
             print("Xayr! Siz bilan suhbat qurish yoqimli bo'ldi.")
             break
         if user == "/yangi":
-            states, n_tokens, ended = None, 0, True
+            states, n_tokens, line_start = None, 0, True
             print("Xotira tozalandi.")
             continue
         if user == "/xotira":
             size = type(model).state_bytes(states) if states else 0
             print(f"Suhbatda {n_tokens} token o'qildi; xotira hajmi {size / 1024:.1f} KB.")
             continue
-        # O'qitish formati (chat-data/savol-javob, sft.py): "Savol: …\nJavob: …<|endoftext|>". Javob EOT bilan
-        # tugamagan bo'lsa (qator oxiri yoki token chegarasi), keyingi savol oldidan EOT qo'yiladi.
-        ids = ([] if ended else [tok.eot_id]) + tok.encode(qa_prompt(user))
+        # O'qitish formati (sft.py): "Savol: …\nJavob: …\n" navbatlari, suhbat oxirida EOT. Javob qator oxiri
+        # bilan tugamagan bo'lsa (token chegarasi), keyingi savol oldidan "\n" qo'yiladi. EOT xotirani tozalaydi.
+        ids = ([] if line_start else tok.encode("\n")) + tok.encode(qa_prompt(user))
         ids = torch.tensor([ids], device=args.device)
         print("Umid: ", end="", flush=True)
         new, states = generate(model, ids, args.max_new_tokens, states=states,
                                on_token=Streamer(tok, True), **gen_kw)
-        ended = new.size(1) > 0 and int(new[0, -1]) == tok.eot_id
+        line_start = new.size(1) == 0 or int(new[0, -1]) == tok.eot_id or tok.decode(new[0, -1:].tolist()).endswith("\n")
         n_tokens += ids.size(1) + new.size(1)
         print()
 
