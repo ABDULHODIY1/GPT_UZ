@@ -7,7 +7,7 @@ o'qitish rejimi) solishtirish maqsadida.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 import torch
 import torch.nn as nn
@@ -24,6 +24,8 @@ class GPTConfig:
     n_heads: int = 6
     mlp_ratio: float = 8 / 3
     rope_base: float = 10000.0
+    doc_mask: bool = False        # EOT dan keyingi tokenlar oldingi hujjatga qaramaydi (Umid'ning reset_on_eot'iga mos)
+    eot_id: int = -1              # -1 → vocab_size − 1
     dropout: float = 0.0
     norm_eps: float = 1e-6
 
@@ -50,16 +52,20 @@ class Attention(nn.Module):
         self.qkv = nn.Linear(cfg.d_model, 3 * cfg.d_model, bias=False)
         self.o_proj = nn.Linear(cfg.d_model, cfg.d_model, bias=False)
 
-    def forward(self, x, cache=None):
+    def forward(self, x, cache=None, mask=None):
         B, T, D = x.shape
         q, k, v = self.qkv(x).view(B, T, 3, self.n_heads, D // self.n_heads).permute(2, 0, 3, 1, 4)
-        pos0 = 0 if cache is None else cache[0].shape[2]
+        # kesh: (k, v, keyingi tokenning mutlaq pozitsiyasi) — hujjat maskasi keshni qisqartirganda ham RoPE to'g'ri
+        pos0 = 0 if cache is None else cache[2]
         q, k = rope(q, pos0), rope(k, pos0)
         if cache is not None:
             k = torch.cat([cache[0], k], dim=2)
             v = torch.cat([cache[1], v], dim=2)
-        o = F.scaled_dot_product_attention(q, k, v, is_causal=cache is None)
-        return self.o_proj(o.transpose(1, 2).reshape(B, T, D)), (k, v)
+        past = k.shape[2] - T
+        if mask is None and past and T > 1:   # keshdan keyin bir nechta token: kauzal maska siljigan
+            mask = torch.ones(T, past + T, dtype=torch.bool, device=x.device).tril(past)
+        o = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, is_causal=cache is None and mask is None)
+        return self.o_proj(o.transpose(1, 2).reshape(B, T, D)), (k, v, pos0 + T)
 
 
 class GPTBlock(nn.Module):
@@ -72,8 +78,8 @@ class GPTBlock(nn.Module):
         self.w_out = nn.Linear(cfg.mlp_hidden, cfg.d_model, bias=False)
         self.drop = nn.Dropout(cfg.dropout)
 
-    def forward(self, x, cache=None):
-        h, cache = self.attn(self.norm1(x), cache)
+    def forward(self, x, cache=None, mask=None):
+        h, cache = self.attn(self.norm1(x), cache, mask)
         x = x + self.drop(h)
         a, b = self.w_in(self.norm2(x)).chunk(2, dim=-1)
         return x + self.drop(self.w_out(F.silu(a) * b)), cache
@@ -99,10 +105,11 @@ class GPT(nn.Module):
 
     def forward(self, idx, targets=None, states=None, return_states=False):
         x = self.embed(idx)
+        mask, cut = self._doc_mask(idx, states)
         caches = []
         for i, block in enumerate(self.blocks):
-            x, c = block(x, None if states is None else states[i])
-            caches.append(c)
+            x, c = block(x, None if states is None else states[i], mask)
+            caches.append(c if cut is None else (c[0][:, :, cut:], c[1][:, :, cut:], c[2]))
         logits = self.lm_head(self.norm(x))
         loss = None
         if targets is not None:
@@ -111,6 +118,36 @@ class GPT(nn.Module):
             return logits, loss, caches
         return logits, loss
 
+    def _doc_mask(self, idx, states):
+        """doc_mask: har token faqat o'z hujjatiga (oxirgi EOT dan boshlab) qaraydi. Generatsiyada EOT kelsa,
+        kesh shu EOT dan boshlab qoldiriladi (oldingi hujjat endi kerak emas). Qaytaradi: (maska, kesish joyi)."""
+        if not self.cfg.doc_mask:
+            return None, None
+        eot = idx == (self.cfg.eot_id if self.cfg.eot_id >= 0 else self.cfg.vocab_size - 1)
+        if not bool(eot.any()):
+            return None, None
+        B, T = idx.shape
+        past = 0 if states is None else states[0][0].shape[2]
+        seg = eot.long().cumsum(1)                                   # kesh → 0-segment
+        seg_k = F.pad(seg, (past, 0))
+        causal = torch.ones(T, past + T, dtype=torch.bool, device=idx.device).tril(past)
+        mask = ((seg[:, :, None] == seg_k[:, None, :]) & causal)[:, None]   # [B, 1, T, past + T]
+        if states is None and B > 1:
+            return mask, None
+        if B > 1:
+            raise NotImplementedError("doc_mask bilan keshli generatsiya faqat batch=1 uchun")
+        return mask, past + int(eot[0].nonzero()[-1])
+
+    def save(self, path, **extra):
+        torch.save({"arch": "gpt", "config": asdict(self.cfg), "model": self.state_dict(), **extra}, path)
+
+    @classmethod
+    def load(cls, path, map_location="cpu"):
+        ckpt = torch.load(path, map_location=map_location, weights_only=False)
+        model = cls(GPTConfig(**ckpt["config"]))
+        model.load_state_dict(ckpt["model"])
+        return model, ckpt
+
     @staticmethod
     def state_bytes(caches) -> int:
-        return sum(t.numel() * t.element_size() for kv in caches for t in kv)
+        return sum(t.numel() * t.element_size() for kv in caches for t in kv[:2])

@@ -45,6 +45,10 @@ class UmidConfig:
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
     mlp_hidden_size: int = 0      # 0 bo'lmasa MLP o'lchamini aniq belgilaydi (parametrlarni tenglashtirish uchun)
+    reset_on_eot: bool = False    # EOT tokenida xotira (S) tozalanadi: hujjatlar/savol-javoblar bir-biriga
+                                  # aralashmaydi (Transformer'dagi hujjat maskasiga o'xshash). Qisqa konvolyutsiya
+                                  # (conv_size − 1 token) chegaradan o'tadi.
+    eot_id: int = -1              # -1 → vocab_size − 1 (BPETokenizer'da EOT oxirgi token)
     dropout: float = 0.0
     norm_eps: float = 1e-6
     tie_embeddings: bool = True
@@ -95,12 +99,19 @@ class ShortConv(nn.Module):
         self.weight = nn.Parameter(torch.empty(channels, 1, kernel_size))
         nn.init.kaiming_uniform_(self.weight, a=math.sqrt(5))
 
-    def forward(self, x, cache=None):
+    def forward(self, x, cache=None, reset=None):
         B, T, C = x.shape
         K = self.kernel_size
         x = x.transpose(1, 2)
         w = self.weight.to(x.dtype)
-        if cache is None:
+        if reset is not None and bool(reset.any()):
+            # Hujjat chegarasi: reset tokenidan oldingi kirishlar keyingi tokenlarga qo'shilmaydi.
+            xx = torch.cat([x.new_zeros(B, C, K - 1) if cache is None else cache.to(x.dtype), x], dim=-1)
+            seg = F.pad(reset.long().cumsum(1), (K - 1, 0))          # [B, T + K − 1], kesh → 0-segment
+            y = sum(w[None, :, 0, j, None] * xx[..., j:j + T] * (seg[:, j:j + T] == seg[:, K - 1:])[:, None]
+                    for j in range(K))
+            tail = xx[..., T:] * (seg[:, T:] == seg[:, -1:])[:, None]
+        elif cache is None:
             # o'qitish: chapdan nol bilan to'ldirish conv1d ichida (qo'shimcha nusxasiz)
             y = F.conv1d(x, w, padding=K - 1, groups=C)[..., :T]
             tail = F.pad(x[..., -(K - 1):], (max(K - 1 - T, 0), 0))
@@ -109,6 +120,16 @@ class ShortConv(nn.Module):
             y = F.conv1d(xx, w, groups=C)
             tail = xx[..., xx.shape[-1] - (K - 1):]
         return F.silu(y).transpose(1, 2), tail
+
+
+def reset_decay(g, reset):
+    """reset [B, T] True bo'lgan tokenlarda unutish α = exp(g) ≈ 0: xotira tozalanadi, keyin token yoziladi.
+    Kanal rejimida g ≥ −5 cheklovi tufayli α = e⁻⁵ (deyarli to'liq tozalash)."""
+    if reset is None:
+        return g
+    floor = -5.0 if g.dim() == 4 else -30.0
+    mask = reset[:, None, :, None] if g.dim() == 4 else reset[:, None, :]
+    return g.masked_fill(mask, floor)
 
 
 class GatedDeltaMemory(nn.Module):
@@ -149,13 +170,13 @@ class GatedDeltaMemory(nn.Module):
         dt = torch.exp(torch.rand(n_decay) * (math.log(0.1) - math.log(0.001)) + math.log(0.001))
         self.dt_bias = nn.Parameter(dt + torch.log(-torch.expm1(-dt)))  # softplus⁻¹(dt)
 
-    def forward(self, x, state=None):
+    def forward(self, x, state=None, reset=None):
         cfg = self.cfg
         B, T, _ = x.shape
         H, dk, dv, n = cfg.n_heads, cfg.head_dim, cfg.value_dim, cfg.n_writes
         st = state or {}
         fdt = torch.promote_types(x.dtype, torch.float32)   # xotira hisob-kitobi kamida fp32 da
-        qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"))
+        qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"), reset)
         q, k, v = qkv.split([H * dk, n * H * dk, n * H * dv], dim=-1)
         q = F.normalize(q.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
         k = F.normalize(k.reshape(B, T, n, H, dk).to(fdt), dim=-1).permute(0, 3, 1, 2, 4)  # [B, H, T, n, dk]
@@ -169,6 +190,7 @@ class GatedDeltaMemory(nn.Module):
             g = (-self.A_log.to(fdt).exp()[:, None] * g.view(B, T, H, dk)).clamp(min=-5.0).transpose(1, 2)
         else:
             g = (-self.A_log.to(fdt).exp() * g).transpose(1, 2)    # g: [B, H, T] yoki [B, H, T, Dk]
+        g = reset_decay(g, reset)
 
         S0 = st.get("S")
         R = cfg.n_reads
@@ -233,19 +255,20 @@ class OptimalMemory(nn.Module):
             self.frame_proj = nn.Linear(D, H, bias=True)
             self._bias_init = {"frame_proj": torch.full((H,), -4.0)}
 
-    def forward(self, x, state=None):
+    def forward(self, x, state=None, reset=None):
         cfg = self.cfg
         B, T, _ = x.shape
         H, dk, dv = cfg.n_heads, cfg.head_dim, cfg.value_dim
         st = state or {}
         fdt = torch.promote_types(x.dtype, torch.float32)
-        qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"))
+        qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"), reset)
         q, k, v, u = qkv.split([H * dk, H * dk, H * dv, H * dk if cfg.frame else 0], dim=-1)
         q = F.normalize(q.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
         k = F.normalize(k.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
         v = v.reshape(B, T, H, dv).transpose(1, 2).to(fdt)
         beta = torch.sigmoid(self.b_proj(x).to(fdt)).transpose(1, 2)
         g = (-self.A_log.to(fdt).exp() * F.softplus(self.a_proj(x).to(fdt) + self.dt_bias.to(fdt))).transpose(1, 2)
+        g = reset_decay(g, reset)
         lam = F.softplus(self.lam_raw.to(fdt)) + 1e-4
         prev = (st["H"], st["G"]) if "H" in st else None
         new_state = {"conv": conv_cache}
@@ -294,8 +317,8 @@ class Block(nn.Module):
         self.mlp = SwiGLU(cfg)
         self.drop = nn.Dropout(cfg.dropout)
 
-    def forward(self, x, state=None):
-        h, state = self.mixer(self.norm1(x), state)
+    def forward(self, x, state=None, reset=None):
+        h, state = self.mixer(self.norm1(x), state, reset)
         x = x + self.drop(h)
         x = x + self.drop(self.mlp(self.norm2(x)))
         return x, state
@@ -336,12 +359,15 @@ class UmidLM(nn.Module):
     def forward(self, idx, targets=None, states=None, return_states=False):
         """idx: [B, T]. states — oldingi chaqiruvdan qaytgan xotira (davom ettirish uchun)."""
         x = self.drop(self.embed(idx))
+        reset = None
+        if self.cfg.reset_on_eot:
+            reset = idx == (self.cfg.eot_id if self.cfg.eot_id >= 0 else self.cfg.vocab_size - 1)
         new_states = []
         for r in range(self.cfg.n_loops):
             if self.cfg.n_loops > 1:
                 x = x + self.loop_embed[r]
             for block in self.blocks:
-                x, st = block(x, None if states is None else states[len(new_states)])
+                x, st = block(x, None if states is None else states[len(new_states)], reset)
                 new_states.append(st)
         logits = self.lm_head(self.norm(x))
         loss = None
@@ -370,6 +396,18 @@ class UmidLM(nn.Module):
         model = cls(UmidConfig(**ckpt["config"]))
         model.load_state_dict(ckpt["model"])
         return model, ckpt
+
+
+def load_model(path, map_location="cpu"):
+    """Checkpoint'ni arxitekturasiga qarab yuklaydi: Umid yoki taqqoslash uchun Transformer (baseline.GPT)."""
+    ckpt = torch.load(path, map_location=map_location, weights_only=False)
+    if ckpt.get("arch") == "gpt":
+        from .baseline import GPT, GPTConfig
+        model = GPT(GPTConfig(**ckpt["config"]))
+    else:
+        model = UmidLM(UmidConfig(**ckpt["config"]))
+    model.load_state_dict(ckpt["model"])
+    return model, ckpt
 
 
 @torch.no_grad()

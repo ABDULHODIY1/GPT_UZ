@@ -6,6 +6,7 @@ Misollar:
     python train.py --data mening_matnlarim/ --out checkpoints/katta --preset base --compile
     python train.py --stream                          # holatni uzatib o'qitish (cheksiz kontekst)
     python train.py --out checkpoints/umid --resume   # to'xtagan joydan davom ettirish
+    python train.py --arch gpt --out checkpoints/gpt  # taqqoslash uchun Transformer, aynan shu sharoitda
 """
 
 from __future__ import annotations
@@ -19,7 +20,9 @@ from pathlib import Path
 
 import torch
 
-from umid import PRESETS, BPETokenizer, UmidConfig, UmidLM
+from umid import PRESETS, BPETokenizer, UmidConfig, UmidLM, load_model
+from umid.baseline import GPT, GPTConfig
+from umid.model import generate
 from umid.data import StreamBatcher, cosine_lr, evaluate, prepare_tokens, random_batch, split_tokens
 
 
@@ -30,12 +33,15 @@ def parse_args():
     ap.add_argument("--out", default="checkpoints/umid", help="checkpoint papkasi")
     ap.add_argument("--tokenizer", default=None, help="tayyor tokenizer.json (bo'lmasa o'qitiladi)")
     ap.add_argument("--vocab-size", type=int, default=4096)
+    ap.add_argument("--arch", default="umid", choices=["umid", "gpt"], help="gpt — taqqoslash uchun Transformer")
     ap.add_argument("--preset", default="tiny", choices=list(PRESETS))
     ap.add_argument("--d-model", type=int)
     ap.add_argument("--n-layers", type=int)
     ap.add_argument("--n-heads", type=int)
     ap.add_argument("--head-dim", type=int)
     ap.add_argument("--no-neg-eigval", action="store_true", help="β ∈ (0,1) (ablation uchun)")
+    ap.add_argument("--reset-on-eot", action="store_true",
+                    help="EOT da xotirani tozalash (Umid) / hujjat maskasi (gpt): hujjatlar aralashmaydi")
     ap.add_argument("--n-reads", type=int, default=None, help="fikrlash rejimi: xotiradan qayta so'rashlar soni (standart 1)")
     ap.add_argument("--decay", choices=["head", "channel"], default=None)
     ap.add_argument("--read-mix-init", type=float, default=None)
@@ -82,7 +88,11 @@ def build_config(args, vocab_size):
         kw["decay"] = args.decay
     if args.read_mix_init is not None:
         kw["read_mix_init"] = args.read_mix_init
-    return UmidConfig(vocab_size=vocab_size, dropout=args.dropout, allow_neg_eigval=not args.no_neg_eigval, **kw)
+    if args.arch == "gpt":
+        return GPTConfig(vocab_size=vocab_size, d_model=kw["d_model"], n_layers=kw["n_layers"], n_heads=kw["n_heads"],
+                         doc_mask=args.reset_on_eot, dropout=args.dropout)
+    return UmidConfig(vocab_size=vocab_size, dropout=args.dropout, allow_neg_eigval=not args.no_neg_eigval,
+                      reset_on_eot=args.reset_on_eot, **kw)
 
 
 def detach_states(states):
@@ -91,6 +101,8 @@ def detach_states(states):
 
 def main():
     args = parse_args()
+    if args.stream and args.arch == "gpt":
+        raise SystemExit("--stream faqat Umid uchun: Transformer holati (KV-cache) o'zgarmas hajmli emas")
     torch.manual_seed(args.seed)
     device = pick_device(args.device)
     out = Path(args.out)
@@ -103,7 +115,7 @@ def main():
     tok_path = Path(args.tokenizer) if args.tokenizer else out / "tokenizer.json"
     init_model = None
     if args.init:   # fine-tuning: model va tokenizer tayyor checkpoint'dan
-        init_model, init_ckpt = UmidLM.load(args.init)
+        init_model, init_ckpt = load_model(args.init)
         BPETokenizer.from_dict(init_ckpt["tokenizer"]).save(tok_path)
     tok, tokens = prepare_tokens(args.data, tok_path, args.vocab_size)
     train_tok, val_tok = split_tokens(tokens, args.val_frac)
@@ -112,7 +124,7 @@ def main():
     last_path, best_path = out / "last.pt", out / "model.pt"
     start, best_val = 0, float("inf")
     if args.resume and last_path.exists():
-        model, ckpt = UmidLM.load(last_path)
+        model, ckpt = load_model(last_path)
         start, best_val = ckpt["step"], ckpt.get("best_val", best_val)
         print(f"Davom ettirilmoqda: {start}-qadamdan")
     elif init_model is not None:
@@ -124,11 +136,14 @@ def main():
                     mod.p = args.dropout
         print(f"Boshlang'ich og'irliklar: {args.init}")
     else:
-        model, ckpt = UmidLM(build_config(args, tok.vocab_size)), None
+        cfg = build_config(args, tok.vocab_size)
+        model, ckpt = (GPT(cfg) if args.arch == "gpt" else UmidLM(cfg)), None
     model.to(device)
     cfg = model.cfg
-    print(f"Model: {model.num_params() / 1e6:.2f}M parametr | {cfg.n_layers} qatlam, d={cfg.d_model}, "
-          f"{cfg.n_heads} head × {cfg.head_dim} | β∈(0,{2 if cfg.allow_neg_eigval else 1}) | qurilma: {device}")
+    kind = "Transformer (taqqoslash uchun)" if isinstance(model, GPT) else \
+        f"Umid, β∈(0,{2 if cfg.allow_neg_eigval else 1})"
+    print(f"Model: {model.num_params() / 1e6:.2f}M parametr | {kind} | {cfg.n_layers} qatlam, d={cfg.d_model}, "
+          f"{cfg.n_heads} head | qurilma: {device}")
 
     decay = [p for p in model.parameters() if p.ndim >= 2]
     no_decay = [p for p in model.parameters() if p.ndim < 2]
@@ -193,7 +208,7 @@ def main():
             save(last_path, step + 1, with_opt=True)
             if args.sample_prompt:
                 ids = torch.tensor([tok.encode(args.sample_prompt)], device=device)
-                new, _ = model.generate(ids, 40, temperature=0.8)
+                new, _ = generate(model, ids, 40, temperature=0.8)
                 print(f"   namuna: {args.sample_prompt}{tok.decode(new[0].tolist())}")
             model.train()
 

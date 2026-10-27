@@ -1,10 +1,10 @@
-"""Savol-javob sifatini halol baholash: o'qitishda BO'LMAGAN savollar (benchmarks/qa_heldout.txt)
-va solishtirish uchun o'qitishda bo'lgan savollardan namuna.
+"""Savol-javob sifatini halol baholash: o'qitishda BO'LMAGAN savollar (benchmarks/qa_heldout.txt va
+qa_heldout2.txt) va solishtirish uchun o'qitishda bo'lgan savollardan namuna.
 
     python -m benchmarks.qa_eval --ckpt checkpoints/umid/model.pt
 
-Har bir javob greedy rejimda olinadi; javobda kutilgan kalit so'z (yoki muqobillardan biri) bo'lsa,
-to'g'ri hisoblanadi. Bu qo'pol, lekin avtomatik va takrorlanadigan o'lchov.
+Har bir javob greedy rejimda olinadi; javobda kutilgan kalit so'z (yoki muqobillardan biri; "&" bilan
+yozilganlarning hammasi) bo'lsa, to'g'ri hisoblanadi. Bu qo'pol, lekin avtomatik va takrorlanadigan o'lchov.
 """
 
 import argparse
@@ -14,7 +14,7 @@ from pathlib import Path
 
 import torch
 
-from umid import BPETokenizer, UmidLM
+from umid import BPETokenizer, load_model
 from umid.data import default_threads
 from umid.model import generate
 
@@ -30,13 +30,21 @@ def answer(model, tok, question, max_new_tokens=60):
     return tok.decode(out[0].tolist()).split("\n")[0].replace("<|endoftext|>", "").strip()
 
 
-def load_heldout():
+HELDOUT_SETS = ("qa_heldout.txt", "qa_heldout2.txt")
+
+
+def load_heldout(name="qa_heldout.txt"):
     rows = []
-    for line in (HERE / "qa_heldout.txt").read_text(encoding="utf-8").splitlines():
+    for line in (HERE / name).read_text(encoding="utf-8").splitlines():
         if line.strip() and not line.startswith("#"):
             q, keys = line.split("|")
             rows.append((q.strip(), [k.strip() for k in keys.split("/")]))
     return rows
+
+
+def is_correct(answer, keys):
+    a = answer.lower()
+    return any(all(part.strip().lower() in a for part in k.split("&")) for k in keys)
 
 
 def load_seen(n, seed=0):
@@ -57,22 +65,27 @@ def main():
     ap.add_argument("--tag", default="")
     args = ap.parse_args()
     default_threads()
-    model, ck = UmidLM.load(args.ckpt)
+    model, ck = load_model(args.ckpt)
     model.eval()
     tok = BPETokenizer.from_dict(ck["tokenizer"])
 
     report = {"ckpt": args.ckpt, "heldout": [], "seen": []}
-    hits = 0
-    print("=== O'qitishda bo'lmagan savollar ===")
-    for q, keys in load_heldout():
-        a = answer(model, tok, q)
-        ok = any(k.lower() in a.lower() for k in keys)
-        hits += ok
-        report["heldout"].append({"savol": q, "javob": a, "kalit": keys, "togri": ok})
-        print(f"{'✓' if ok else '✗'} {q}\n    → {a}")
-    n = len(report["heldout"])
-    report["heldout_accuracy"] = hits / n
-    print(f"\nO'qitishda bo'lmagan savollar: {hits}/{n} = {hits / n:.0%}")
+    for name in HELDOUT_SETS:
+        hits = 0
+        print(f"=== O'qitishda bo'lmagan savollar ({name}) ===")
+        rows = load_heldout(name)
+        for q, keys in rows:
+            a = answer(model, tok, q)
+            ok = is_correct(a, keys)
+            hits += ok
+            report["heldout"].append({"toplam": name, "savol": q, "javob": a, "kalit": keys, "togri": ok})
+            print(f"{'✓' if ok else '✗'} {q}\n    → {a}")
+        report[f"accuracy_{name.removesuffix('.txt')}"] = hits / len(rows)
+        print(f"\n{name}: {hits}/{len(rows)} = {hits / len(rows):.0%}\n")
+    total = report["heldout"]
+    report["heldout_accuracy"] = sum(r["togri"] for r in total) / len(total)
+    print(f"Jami o'qitishda bo'lmagan savollar: {sum(r['togri'] for r in total)}/{len(total)} = "
+          f"{report['heldout_accuracy']:.0%}")
 
     exact = 0
     print("\n=== O'qitishda bo'lgan savollardan namuna ===")

@@ -121,3 +121,60 @@ def test_overfits_a_tiny_batch():
         loss.backward()
         opt.step()
     assert loss.item() < 0.1, loss.item()
+
+
+def test_load_model_dispatches_on_arch(tmp_path):
+    from umid import load_model
+    from umid.baseline import GPT, GPTConfig
+    gpt = GPT(GPTConfig(vocab_size=64, d_model=32, n_layers=1, n_heads=2))
+    gpt.save(tmp_path / "gpt.pt", tokenizer={})
+    umid = UmidLM(UmidConfig(vocab_size=64, d_model=32, n_layers=1, n_heads=2, head_dim=16))
+    umid.save(tmp_path / "umid.pt")
+    g2, ck = load_model(tmp_path / "gpt.pt")
+    u2, _ = load_model(tmp_path / "umid.pt")
+    assert isinstance(g2, GPT) and isinstance(u2, UmidLM) and ck["tokenizer"] == {}
+    x = torch.randint(0, 64, (1, 8))
+    assert torch.allclose(g2(x)[0], gpt(x)[0]) and torch.allclose(u2(x)[0], umid.eval()(x)[0])
+
+
+@pytest.mark.parametrize("mixer", ["delta", "optimal"])
+def test_reset_on_eot_isolates_documents(mixer):
+    torch.manual_seed(0)
+    cfg = UmidConfig(vocab_size=64, d_model=32, n_layers=2, n_heads=2, head_dim=16, chunk_size=8, mixer=mixer,
+                     reset_on_eot=True)
+    model = UmidLM(cfg).eval()
+    eot, tail, doc2 = 63, torch.randint(0, 60, (1, 3)), torch.randint(0, 60, (1, 13))
+    seqs = [torch.cat([torch.randint(0, 60, (1, n)), tail, torch.tensor([[eot]]), doc2], 1) for n in (5, 21)]
+    outs = [model(s)[0][:, -doc2.size(1):] for s in seqs]
+    # Ikkinchi hujjat birinchisining mazmuniga bog'liq emas (faqat oxirgi conv_size−1 token konvolyutsiyadan o'tadi)
+    assert torch.allclose(outs[0], outs[1], atol=1e-5)
+    # Tokenma-token (generatsiya rejimi) ham xuddi shunday
+    full = model(seqs[1])[0]
+    _, _, st = model(seqs[1][:, :1], return_states=True)
+    steps = [model(seqs[1][:, :1])[0]]
+    for t in range(1, seqs[1].size(1)):
+        lg, _, st = model(seqs[1][:, t:t + 1], states=st, return_states=True)
+        steps.append(lg)
+    assert torch.allclose(torch.cat(steps, 1), full, atol=1e-4)
+
+
+@pytest.mark.parametrize("doc_mask", [False, True])
+def test_gpt_cache_matches_full_forward(doc_mask):
+    from umid.baseline import GPT, GPTConfig
+    torch.manual_seed(0)
+    gpt = GPT(GPTConfig(vocab_size=64, d_model=32, n_layers=2, n_heads=2, doc_mask=doc_mask)).eval()
+    seq = torch.cat([torch.randint(0, 60, (1, 7)), torch.tensor([[63]]), torch.randint(0, 60, (1, 9))], 1)
+    full = gpt(seq)[0]
+    # bo'laklab: 5 token, keyin 6 token (ichida EOT), keyin tokenma-token
+    lg1, _, st = gpt(seq[:, :5], return_states=True)
+    lg2, _, st = gpt(seq[:, 5:11], states=st, return_states=True)
+    steps = [lg1, lg2]
+    for t in range(11, seq.size(1)):
+        lg, _, st = gpt(seq[:, t:t + 1], states=st, return_states=True)
+        steps.append(lg)
+    assert torch.allclose(torch.cat(steps, 1), full, atol=1e-5)
+    if doc_mask:   # EOT dan keyingi qism birinchi hujjatga bog'liq emas
+        other = seq.clone()
+        other[:, :7] = torch.randint(0, 60, (1, 7))
+        assert torch.allclose(gpt(other)[0][:, 7:], full[:, 7:], atol=1e-5)
+        assert st[0][0].shape[2] == seq.size(1) - 7   # kesh EOT dan boshlab saqlanadi

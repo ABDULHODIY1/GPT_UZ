@@ -1,0 +1,685 @@
+{
+  "ckpt": "/tmp/claude-0/-home-user-GPT-UZ/eaccecd6-fd41-567c-ad2e-fcaf83dd8182/scratchpad/exp/qa_lr3e3/model.pt",
+  "heldout": [
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "O'zbekistonning bosh shahri qaysi?",
+      "javob": "O'zbekistonning davlat tili o'zbek tili.",
+      "kalit": [
+        "Toshkent"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Seni kim yasagan?",
+      "javob": "Rahmat, yaxshi. Siz bilan suhbatlashishdan xursandman. Qanday yordam kerak?",
+      "kalit": [
+        "Abdulhodiy"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Ismingni ayt",
+      "javob": "\"Mehnat, mehnatning tagi rohat.\" Bu maqol mehnat qilgan odam keyin rohat ko'rishini bildiradi.",
+      "kalit": [
+        "Umid"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Quyosh tizimida nechta sayyora mavjud?",
+      "javob": "Quyosh tizimida sakkizta sayyora bor.",
+      "kalit": [
+        "8 ta",
+        "sakkiz"
+      ],
+      "togri": true
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Suvning qaynash harorati qancha?",
+      "javob": "Yo'q, men hamma narsani bilmayman. Bilimim o'qitilgan matnlar bilan cheklangan, shuning uchun muhim ma'lumotlarni boshqa manbalardan ham tekshirib ko'ring.",
+      "kalit": [
+        "100 gradus"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Haftaning kunlari qaysilar?",
+      "javob": "Navro'z mart oyida, 21-martda nishonlanadi. Bundan tashqari Qoraqalpog'iston Respublikasi va Toshkent shahri bor.",
+      "kalit": [
+        "dushanba"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Yil necha oydan iborat?",
+      "javob": "Toshkent O'zbekiston Respublikasining poytaxti.",
+      "kalit": [
+        "12 ta oy",
+        "12 oy",
+        "o'n ikki oy"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Sun'iy intellekt haqida tushuntir",
+      "javob": "Kvadratning yuzi tomonini o'ziga ko'paytirib topiladi. Masalan, tomoni 5 bo'lsa, yuzi 25 ga teng.",
+      "kalit": [
+        "inson aql"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Python tilini kim yaratgan?",
+      "javob": "Mening ismim Umid. Men sun'iy intellekt yordamchisiman.",
+      "kalit": [
+        "Gvido",
+        "Rossum"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Qanday qilib sog'lom yashash mumkin?",
+      "javob": "Yo'q, men hamma narsani bilmayman. Bilimim o'qitilgan matnlar bilan cheklangan, shuning uchun muhim ma'lumotlarni boshqa manbalardan ham tekshirib ko'ring.",
+      "kalit": [
+        "uxla",
+        "ovqat",
+        "harakat",
+        "sport"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Necha soat uxlashim kerak?",
+      "javob": "Men Umid AI man. Muhiddinov Abdulhodiy tomonidan yaratilgan o'zbek tilidagi sun'iy intellekt yordamchisiman.",
+      "kalit": [
+        "7-9",
+        "7 soat",
+        "8 soat",
+        "9 soat"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Amir Temur haqida gapir",
+      "javob": "Amir Temur 1336-1405-yillarda yashagan buyuk davlat arbobi va sarkarda. U poytaxti Samarqand bo'lgan katta davlat barpo etgan.",
+      "kalit": [
+        "sarkarda",
+        "1336"
+      ],
+      "togri": true
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Navro'z bayrami qachon?",
+      "javob": "Mening yoshim yo'q, chunki men inson emasman. Men yaqinda yaratilgan dasturman.",
+      "kalit": [
+        "mart"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Samarqandda qanday yodgorliklar bor?",
+      "javob": "Xiva Xorazm viloyatidagi qadimiy shahar. Uning ichki qismi Ichan qal'a deb ataladi va devorlar bilan o'ralgan ochiq osmon ostidagi muzeyga o'xshaydi.",
+      "kalit": [
+        "Registon",
+        "Bibixonim",
+        "Go'ri"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Mars qanday sayyora?",
+      "javob": "Yer sharsimon shaklda, qutblarda biroz siqilgan.",
+      "kalit": [
+        "qizil",
+        "temir"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Bir yilda necha kun bor?",
+      "javob": "Bir soatda 60 daqiqa bor.",
+      "kalit": [
+        "365"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Assalomu alaykum, yaxshimisiz?",
+      "javob": "Va alaykum assalom! Xush kelibsiz. Qanday savolingiz bor?",
+      "kalit": [
+        "alaykum",
+        "yaxshi",
+        "rahmat"
+      ],
+      "togri": true
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Fotosintez haqida tushuntir",
+      "javob": "\"Mehnat, mehnatning tagi rohat.\" Bu maqol mehnat qilgan odam keyin rohat ko'rishini bildiradi.",
+      "kalit": [
+        "o'simlik",
+        "kislorod"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Alisher Navoiy qanday asar yozgan?",
+      "javob": "Men Umid AI man. Muhiddinov Abdulhodiy tomonidan yaratilgan o'zbek tilidagi sun'iy intellekt yordamchisiman.",
+      "kalit": [
+        "Xamsa",
+        "shoir"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Kitob o'qish nima beradi?",
+      "javob": "Palov uchun qozonda yog' qizdiriladi, go'sht va piyoz qovuriladi, keyin sabzi qo'shiladi. Ziravor va suv solib zirvak tayyorlanadi, so'ng guruch solinib dam beriladi.",
+      "kalit": [
+        "bilim",
+        "so'z boyligi",
+        "fikrlash"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Pulni qanday tejasam bo'ladi?",
+      "javob": "Havo juda sovuq bo'lganda bulutdagi suv bug'i muz kristallariga aylanadi. Bu kristallar qor parchalari bo'lib yerga tushadi.",
+      "kalit": [
+        "xarajat",
+        "jamg'ar",
+        "daromad"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "O'zbekiston qachon mustaqillikka erishdi?",
+      "javob": "Bir haftada 168 soat bor, chunki 7 kunni 24 soatga ko'paytirsak 168 bo'ladi.",
+      "kalit": [
+        "1991&sentabr"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Mustaqillik bayrami qaysi kuni?",
+      "javob": "Quyosh suv 0 gradus Selsiyda muzlaydi.",
+      "kalit": [
+        "1-sentabr"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Osh qanday tayyorlanadi?",
+      "javob": "Men his qilmayman, lekin foydali javob bera olsam, maqsadimga erishgan bo'laman.",
+      "kalit": [
+        "guruch",
+        "sabzi",
+        "go'sht"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Quyosh tizimidagi eng yirik sayyora qanday nomlanadi?",
+      "javob": "Bir kilometrda 1000 metr bor.",
+      "kalit": [
+        "Yupiter"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Bir soat necha daqiqadan iborat?",
+      "javob": "Bir asrda 100 yil bor.",
+      "kalit": [
+        "60 daqiqa",
+        "60 minut"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Ingliz tilini qanday o'rgansam bo'ladi?",
+      "javob": "Har kuni bir vaqtda yoting, kechqurun telefon va kofeni kamaytiring, xonani qorong'i va salqin qiling. Katta yoshdagilarga 7-9 soat uyqu kerak.",
+      "kalit": [
+        "so'z",
+        "har kuni",
+        "mashq"
+      ],
+      "togri": true
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Dasturlashni o'rganmoqchiman, nimadan boshlay?",
+      "javob": "Bir soatda 60 minut, ya'ni 60 daqiqa bor.",
+      "kalit": [
+        "Python"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Uchburchakning burchaklari yig'indisi qancha?",
+      "javob": "To'g'ri to'rtburchakning yuzi bo'yini eniga ko'paytirib topiladi.",
+      "kalit": [
+        "180"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout.txt",
+      "savol": "Kit qanday hayvon?",
+      "javob": "Alisher Navoiyning eng mashhur asari \"Xamsa\". U beshta dostondan iborat.",
+      "kalit": [
+        "sut emizuvchi",
+        "o'pka"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Toshkent qaysi daryo vodiysida joylashgan?",
+      "javob": "O'zbekiston 1991-yil 1-sentabrda mustaqillikka erishgan. Shuning uchun 1-sentabr Mustaqillik kuni sifatida nishonlanadi.",
+      "kalit": [
+        "Chirchiq"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "O'zbekistonning qo'shni davlatlari qaysilar?",
+      "javob": "O'zbekistonning milliy valyutasi so'm.",
+      "kalit": [
+        "Qirg'iziston",
+        "Tojikiston"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "O'zbekistonda qaysi valyuta ishlatiladi?",
+      "javob": "O'zbek tilida savollarga javob beraman, maslahat beraman va suhbatlashaman. Meni Muhiddinov Abdulhodiy yaratgan.",
+      "kalit": [
+        "so'm"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Ulug'bek nima bilan mashhur?",
+      "javob": "Toshkent O'zbekiston Respublikasining poytaxti.",
+      "kalit": [
+        "astronom",
+        "rasadxona"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Ibn Sinoning mashhur kitobi qaysi?",
+      "javob": "Bir yilda 12 ta oy bor.",
+      "kalit": [
+        "Tib qonunlari"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Algebra so'zi kimning nomi bilan bog'liq?",
+      "javob": "Kitob o'qish bilim beradi, fikrlashni rivojlantiradi va so'z boyligini oshiradi.",
+      "kalit": [
+        "Xorazmiy"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Bobur qayerda tug'ilgan?",
+      "javob": "Yorug'lik tovushdan ancha tez tarqaladi. Shuning uchun avval chaqmoqni ko'ramiz, keyin momaqaldiroq ovozini eshitamiz.",
+      "kalit": [
+        "Andijon"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Oyning o'zi yorug'lik chiqaradimi?",
+      "javob": "Yo'q, delfin ham kit kabi sut emizuvchi hayvon. U o'pka bilan nafas oladi.",
+      "kalit": [
+        "qaytar",
+        "nur sochmaydi"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Merkuriy haqida nima bilasan?",
+      "javob": "Xiva Xorazm viloyatidagi qadimiy shahar. Uning ichki qismi Ichan qal'a deb ataladi va devorlar bilan o'ralgan ochiq osmon ostidagi muzeyga o'xshaydi.",
+      "kalit": [
+        "eng yaqin"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Havoning qancha qismi kislorod?",
+      "javob": "O'zbekiston Qozog'iston, Qirg'iziston, Tojikiston, Afg'oniston va Turkmaniston bilan chegaradosh.",
+      "kalit": [
+        "21 foiz"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Osmon nega ko'k rangda?",
+      "javob": "Fevralda odatda 28 kun, kabisa yilida esa 29 kun bo'ladi.",
+      "kalit": [
+        "sochil"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Kamalakda nechta rang bor?",
+      "javob": "Yilda to'rtta fasl bor: bahor, yoz, kuz va qish.",
+      "kalit": [
+        "yettita rang",
+        "yetti rang",
+        "7 ta rang"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Odam tanasida qancha suyak bor?",
+      "javob": "Uzum issiq va quyoshli joylarda yaxshi o'sadi. O'zbekistonda uzumning ko'plab navlari yetishtiriladi.",
+      "kalit": [
+        "206"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Yurakning vazifasi nima?",
+      "javob": "Mehr, shaxsiy namuna, sabr va bolaning gaplarini tinglash muhim. Bolani maqtash va qo'llab-quvvatlash ham kerak.",
+      "kalit": [
+        "qonni"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Everest qanday tog'?",
+      "javob": "Men Umid AI man. Muhiddinov Abdulhodiy tomonidan yaratilgan o'zbek tilidagi sun'iy intellekt yordamchisiman.",
+      "kalit": [
+        "8849",
+        "eng baland tog'"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Okeanlarning eng kattasi qaysi?",
+      "javob": "Elektr toki zaryadlangan zarrachalarning, masalan elektronlarning, o'tkazgich bo'ylab tartibli harakati.",
+      "kalit": [
+        "Tinch"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "RAM nima?",
+      "javob": "Bir soatda 60 daqiqa bor.",
+      "kalit": [
+        "operativ",
+        "vaqtincha"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Kompyuterning miyasi nima?",
+      "javob": "yozi issiq va qora choy eng mashhur turlari. O'zbekistonda ko'k choy ayniqsa sevib ichiladi.",
+      "kalit": [
+        "protsessor"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Ishonchli parol qanday tuziladi?",
+      "javob": "Bir asrda 100 yil bor.",
+      "kalit": [
+        "12",
+        "raqam",
+        "belgi"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Sutka necha soatdan iborat?",
+      "javob": "Hashar odamlarning birgalikda, beg'araz bir-biriga yordam berishi. Masalan, mahalla ahli birga uy quradi yoki ko'chani obodonlashtiradi.",
+      "kalit": [
+        "24"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Dushanbadan oldin qaysi kun keladi?",
+      "javob": "Men Umid deb nomlangan til modeliman. Matnni so'zma-so'z o'qiyman, uni xotiramda saqlayman va keyingi so'zni bashorat qilish orqali javob tuzaman.",
+      "kalit": [
+        "yakshanba keladi"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Qishda qaysi oylar bo'ladi?",
+      "javob": "O'zbekistonda uzum, qovun, tarvuz, anor, olma, o'rik, shaftoli va gilos kabi ko'plab shirin mevalar yetishtiriladi.",
+      "kalit": [
+        "dekabr, yanvar"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Bir kilometr necha metrga teng?",
+      "javob": "Bir asrda 100 yil bor.",
+      "kalit": [
+        "1000 metr"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "7 ni 6 ga ko'paytirsak qancha bo'ladi?",
+      "javob": "100 ni 4 ga bo'lsak 25 bo'ladi.",
+      "kalit": [
+        "42",
+        "qirq ikki"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Tishni qanday asrash kerak?",
+      "javob": "Har kuni bir vaqtda yoting, kechqurun telefon va kofeni kamaytiring, xonani qorong'i va salqin qiling. Katta yoshdagilarga 7-9 soat uyqu kerak.",
+      "kalit": [
+        "ikki marta",
+        "shirinlik",
+        "yuving"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Shamollaganda nima qilish kerak?",
+      "javob": "Ko'proq dam oling, iliq suyuqlik iching va ovqatlanishni unutmang. Isitma baland bo'lsa yoki ahvolingiz yomonlashsa, shifokorga murojaat qiling.",
+      "kalit": [
+        "suyuqlik",
+        "isitma"
+      ],
+      "togri": true
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Kayfiyatni ko'tarish uchun nima qilay?",
+      "javob": "O'zbeklarda mehmonga katta hurmat ko'rsatiladi. Mehmonni ochiq yuz bilan kutib olinadi, dasturxon yoziladi va choy bilan siylanadi.",
+      "kalit": [
+        "sayr",
+        "yaqin insoningiz",
+        "yaqinlaringiz"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Gepard qanchalik tez yuguradi?",
+      "javob": "Bir asrda 100 yil bor.",
+      "kalit": [
+        "soatiga"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Ipak nimadan olinadi?",
+      "javob": "O'zbekiston mustaqilligi 1991-yilda, 1-sentabrda e'lon qilingan.",
+      "kalit": [
+        "qurt",
+        "pilla"
+      ],
+      "togri": false
+    },
+    {
+      "toplam": "qa_heldout2.txt",
+      "savol": "Seni yaratgan odam kim?",
+      "javob": "Men Umid AI man. Muhiddinov Abdulhodiy tomonidan yaratilgan o'zbek tilidagi sun'iy intellekt yordamchisiman.",
+      "kalit": [
+        "Abdulhodiy"
+      ],
+      "togri": true
+    }
+  ],
+  "seen": [
+    {
+      "savol": "Elektr toki nima?",
+      "javob": "Fotosintez o'simliklar quyosh nuri yordamida suv va karbonat angidriddan oziq moddalar hosil qiladigan jarayon. Bunda havoga kislorod chiqariladi.",
+      "asl": "Elektr toki zaryadlangan zarrachalarning, masalan elektronlarning, o'tkazgich bo'ylab tartibli harakati.",
+      "aynan": false
+    },
+    {
+      "savol": "O'zbekistonda qanday tarixiy shaharlar bor?",
+      "javob": "Samarqand, Buxoro, Xiva va Shahrisabz O'zbekistonning eng mashhur tarixiy shaharlari. Ular Buyuk Ipak yo'li ustida joylashgan.",
+      "asl": "Samarqand, Buxoro, Xiva va Shahrisabz O'zbekistonning eng mashhur tarixiy shaharlari. Ular Buyuk Ipak yo'li ustida joylashgan.",
+      "aynan": true
+    },
+    {
+      "savol": "Qalaysiz?",
+      "javob": "Men Umid AI man. Muhiddinov Abdulhodiy tomonidan yaratilgan o'zbek tilidagi sun'iy intellekt yordamchisiman.",
+      "asl": "Rahmat, yaxshi. Siz bilan suhbatlashishdan xursandman. Qanday yordam kerak?",
+      "aynan": false
+    },
+    {
+      "savol": "Men baxtliman",
+      "javob": "Juda yaxshi! Quvonchingiz uzoq bo'lsin. Baxtli lahzalarni yaqinlaringiz bilan baham ko'ring.",
+      "asl": "Juda yaxshi! Quvonchingiz uzoq bo'lsin. Baxtli lahzalarni yaqinlaringiz bilan baham ko'ring.",
+      "aynan": true
+    },
+    {
+      "savol": "Eng kichik tub son qaysi?",
+      "javob": "Eng katta qit'a Osiyo.",
+      "asl": "Eng kichik tub son 2. U yagona juft tub son ham.",
+      "aynan": false
+    },
+    {
+      "savol": "Miya nima vazifani bajaradi?",
+      "javob": "Miya tanani boshqaradi. U fikrlash, xotira, his-tuyg'ular va harakatlar uchun javobgar.",
+      "asl": "Miya tanani boshqaradi. U fikrlash, xotira, his-tuyg'ular va harakatlar uchun javobgar.",
+      "aynan": true
+    },
+    {
+      "savol": "Sun'iy intellekt deganda nimani tushunasan?",
+      "javob": "Miya tanani boshqaradi. U fikrlash, xotira, his-tuyg'ular va harakatlar uchun javobgar.",
+      "asl": "Sun'iy intellekt deganda kompyuterning inson aqliga xos ishlarni bajarishi, masalan o'rganishi, tushunishi va qaror qabul qilishi tushuniladi.",
+      "aynan": false
+    },
+    {
+      "savol": "Suv qachon qaynaydi?",
+      "javob": "Navro'z har yili 21-martda nishonlanadi. Bu bahor va yangi kun bayrami, unda sumalak pishiriladi.",
+      "asl": "Suv 100 gradus Selsiyda qaynaydi.",
+      "aynan": false
+    },
+    {
+      "savol": "Buxoro haqida gapirib ber",
+      "javob": "Buxoro qadimiy savdo va ilm markazi bo'lgan shahar. Ark qal'asi, Minorai Kalon va Ismoil Somoniy maqbarasi uning mashhur yodgorliklari.",
+      "asl": "Buxoro qadimiy savdo va ilm markazi bo'lgan shahar. Ark qal'asi, Minorai Kalon va Ismoil Somoniy maqbarasi uning mashhur yodgorliklari.",
+      "aynan": true
+    },
+    {
+      "savol": "Suv necha gradusda qaynaydi?",
+      "javob": "Toza suv 0 gradus Selsiyda muzlaydi.",
+      "asl": "Toza suv dengiz sathida 100 gradus Selsiyda qaynaydi.",
+      "aynan": false
+    },
+    {
+      "savol": "Inson yuragi nima vazifani bajaradi?",
+      "javob": "Yurak qonni butun tana bo'ylab haydaydi. Qon esa a'zolarga kislorod va oziq moddalarni yetkazadi.",
+      "asl": "Yurak qonni butun tana bo'ylab haydaydi. Qon esa a'zolarga kislorod va oziq moddalarni yetkazadi.",
+      "aynan": true
+    },
+    {
+      "savol": "Sun'iy intellektdan qanday foydalanish mumkin?",
+      "javob": "Bir asrda 100 yil bor.",
+      "asl": "Sun'iy intellektdan tarjima qilish, matn yozish, savollarga javob olish, rasmlarni tahlil qilish va o'qishda yordamchi sifatida foydalanish mumkin.",
+      "aynan": false
+    },
+    {
+      "savol": "Haftada necha kun bor?",
+      "javob": "Haftada 7 kun bor: dushanba, seshanba, chorshanba, payshanba, juma, shanba va yakshanba.",
+      "asl": "Haftada 7 kun bor: dushanba, seshanba, chorshanba, payshanba, juma, shanba va yakshanba.",
+      "aynan": true
+    },
+    {
+      "savol": "Ingliz tilini o'rganish uchun maslahat ber",
+      "javob": "Har kuni yangi so'zlar o'rganing, inglizcha matn o'qing, audio tinglang va gapirishni mashq qiling. Eng muhimi muntazamlik.",
+      "asl": "Har kuni yangi so'zlar o'rganing, inglizcha matn o'qing, audio tinglang va gapirishni mashq qiling. Eng muhimi muntazamlik.",
+      "aynan": true
+    },
+    {
+      "savol": "Bahorda tabiatda nima o'zgaradi?",
+      "javob": "Bahorda havo isiydi, daraxtlar kurtak chiqaradi, gullar ochiladi va qushlar issiq o'lkalardan qaytib keladi.",
+      "asl": "Bahorda havo isiydi, daraxtlar kurtak chiqaradi, gullar ochiladi va qushlar issiq o'lkalardan qaytib keladi.",
+      "aynan": true
+    }
+  ],
+  "accuracy_qa_heldout": 0.13333333333333333,
+  "accuracy_qa_heldout2": 0.06666666666666667,
+  "heldout_accuracy": 0.1,
+  "seen_exact": 0.5333333333333333
+}

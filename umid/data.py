@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import math
 import os
+import random
 import re
 from pathlib import Path
 
@@ -37,7 +39,8 @@ def clean_text(text, window=30, max_junk=0.25):
 
 def read_corpus(path, clean=False) -> str:
     """Korpusni o'qish. path — .txt fayl, .txt fayllar papkasi yoki vergul bilan ajratilgan ro'yxat.
-    Har bir element oxirida: `!` — shu manbani tozalash (clean_text), `*N` — N marta takrorlash.
+    Har bir element oxirida: `!` — shu manbani tozalash (clean_text), `*N` — N marta takrorlash
+    (takrorlashda bo'sh qator bilan ajratilgan bloklar har safar aralashtiriladi).
     Masalan: "chat-data/Data.txt!,chat-data/savol-javob*8". clean=True barcha manbalarni tozalaydi.
     Hujjatlar orasiga EOT qo'yiladi."""
     texts = []
@@ -52,7 +55,18 @@ def read_corpus(path, clean=False) -> str:
         part = [f.read_text(encoding="utf-8") for f in files]
         if do_clean:
             part = [clean_text(t) for t in part]
-        texts.extend(part * int(rep or 1))
+        n = int(rep or 1)
+        if n == 1:
+            texts.extend(part)
+            continue
+        # Takrorlanadigan manba (masalan savol-javoblar): bo'sh qator bilan ajratilgan bloklar har
+        # takrorlashda aralashtiriladi va EOT bilan ajratiladi — aks holda model javobni savoldan emas,
+        # oldingi blokdan (tartibni yodlab) bashorat qilishni o'rganadi.
+        blocks = [b.strip() for t in part for b in t.split("\n\n") if b.strip()]
+        rng = random.Random(len(blocks))
+        for _ in range(n):
+            rng.shuffle(blocks)
+            texts.append(EOT.join(blocks))
     return EOT.join(texts)
 
 
@@ -69,7 +83,7 @@ def prepare_tokens(data_path, tokenizer_path, vocab_size=4096, verbose=True, cle
         tokenizer_path.parent.mkdir(parents=True, exist_ok=True)
         tok.save(tokenizer_path)
     cache = tokenizer_path.with_suffix(".tokens.pt")
-    stamp = (str(data_path), len(text), tok.vocab_size, clean)
+    stamp = (str(data_path), hashlib.sha1(text.encode("utf-8")).hexdigest(), tok.vocab_size, clean)
     if cache.exists():
         saved = torch.load(cache, weights_only=False)
         if saved.get("stamp") == stamp:
@@ -77,6 +91,45 @@ def prepare_tokens(data_path, tokenizer_path, vocab_size=4096, verbose=True, cle
     tokens = torch.tensor(tok.encode(text), dtype=torch.long)
     torch.save({"stamp": stamp, "tokens": tokens}, cache)
     return tok, tokens
+
+
+def read_qa_pairs(path):
+    """"Savol: …\nJavob: …" bloklarini o'qiydi (path — fayl, papka yoki vergul bilan ajratilgan ro'yxat)."""
+    pairs = []
+    for spec in str(path).split(","):
+        p = Path(spec.strip())
+        for f in sorted(p.rglob("*.txt")) if p.is_dir() else [p]:
+            for block in f.read_text(encoding="utf-8").split("\n\n"):
+                lines = block.strip().split("\n")
+                if len(lines) == 2 and lines[0].startswith("Savol:") and lines[1].startswith("Javob:"):
+                    pairs.append((lines[0][6:].strip(), lines[1][6:].strip()))
+    return pairs
+
+
+def encode_qa(tok, pairs):
+    """Har bir juftlik → (tokenlar, maska). Maska faqat javob va undan keyingi EOT'da True:
+    model savolni o'qiydi, lekin faqat javobni bashorat qilish uchun o'rganadi."""
+    out = []
+    for q, a in pairs:
+        prompt, answer = tok.encode(f"Savol: {q}\nJavob:"), tok.encode(f" {a}") + [tok.eot_id]
+        out.append((torch.tensor(prompt + answer), torch.tensor([False] * len(prompt) + [True] * len(answer))))
+    return out
+
+
+def qa_batch(examples, batch_size, seq_len, generator=None, device="cpu"):
+    """Har bir qator tasodifiy misollardan to'ldiriladi (misol boshidan boshlanadi); javob bo'lmagan
+    tokenlarning maqsadi -100 (loss hisoblanmaydi)."""
+    xs, ys = [], []
+    for _ in range(batch_size):
+        ids, mask = [], []
+        while sum(len(t) for t in ids) < seq_len + 1:
+            t, m = examples[int(torch.randint(len(examples), (1,), generator=generator))]
+            ids.append(t)
+            mask.append(m)
+        ids, mask = torch.cat(ids)[:seq_len + 1], torch.cat(mask)[:seq_len + 1]
+        xs.append(ids[:-1])
+        ys.append(torch.where(mask[1:], ids[1:], -100))
+    return torch.stack(xs).to(device), torch.stack(ys).to(device)
 
 
 def split_tokens(tokens, val_frac=0.1, block=8192):

@@ -1,0 +1,1292 @@
+Savol: Salomlar
+Javob: Assalomu alaykum! Men Umid AI man. Sizga qanday yordam bera olaman?
+
+Savol: Hey, salom
+Javob: Assalomu alaykum! Men Umid AI man. Sizga qanday yordam bera olaman?
+
+Savol: Assalomu alaykum, Umid
+Javob: Va alaykum assalom! Xush kelibsiz. Qanday savolingiz bor?
+
+Savol: Assalom
+Javob: Va alaykum assalom! Xush kelibsiz. Qanday savolingiz bor?
+
+Savol: Qalesan?
+Javob: Rahmat, yaxshiman! O'zingiz qalaysiz? Sizga nima bilan yordam bera olaman?
+
+Savol: Ishlar qalay?
+Javob: Rahmat, yaxshiman! O'zingiz qalaysiz? Sizga nima bilan yordam bera olaman?
+
+Savol: Ahvollar qalay?
+Javob: Rahmat, yaxshi. Siz bilan suhbatlashishdan xursandman. Qanday yordam kerak?
+
+Savol: Yaxshi yuribsizmi?
+Javob: Rahmat, yaxshi. Siz bilan suhbatlashishdan xursandman. Qanday yordam kerak?
+
+Savol: Charchamayapsanmi?
+Javob: Ha, yaxshiman, rahmat! Siz ham yaxshi bo'ling. Nima haqida gaplashamiz?
+
+Savol: Tinchmisan?
+Javob: Ha, yaxshiman, rahmat! Siz ham yaxshi bo'ling. Nima haqida gaplashamiz?
+
+Savol: Xayrli tong, Umid
+Javob: Xayrli tong! Kuningiz baraka va omadga to'la bo'lsin. Sizga qanday yordam bera olaman?
+
+Savol: Tongingiz xayrli bo'lsin
+Javob: Xayrli tong! Kuningiz baraka va omadga to'la bo'lsin. Sizga qanday yordam bera olaman?
+
+Savol: Kechingiz xayrli bo'lsin
+Javob: Xayrli kech! Kuningiz yaxshi o'tdimi? Biror savolingiz bo'lsa, bemalol so'rang.
+
+Savol: Xayrli oqshom
+Javob: Xayrli kech! Kuningiz yaxshi o'tdimi? Biror savolingiz bo'lsa, bemalol so'rang.
+
+Savol: Yaxshi tun
+Javob: Xayrli tun! Yaxshi dam oling, shirin tushlar ko'ring.
+
+Savol: Tuningiz xayrli bo'lsin
+Javob: Xayrli tun! Yaxshi dam oling, shirin tushlar ko'ring.
+
+Savol: Xayr, Umid
+Javob: Xayr! Siz bilan suhbatlashish yoqimli bo'ldi. Yana kutib qolaman.
+
+Savol: Men ketdim, xayr
+Javob: Xayr! Siz bilan suhbatlashish yoqimli bo'ldi. Yana kutib qolaman.
+
+Savol: Keyinroq gaplashamiz
+Javob: Ko'rishguncha! Omad tilayman, yana keling.
+
+Savol: Ko'rishgunimizcha
+Javob: Ko'rishguncha! Omad tilayman, yana keling.
+
+Savol: Rahmat senga
+Javob: Arzimaydi! Yordam bera olganimdan xursandman.
+
+Savol: Tashakkur
+Javob: Arzimaydi! Yordam bera olganimdan xursandman.
+
+Savol: Yordaming uchun rahmat
+Javob: Arzimaydi! Yana savollaringiz bo'lsa, doim yordam berishga tayyorman.
+
+Savol: Juda katta rahmat
+Javob: Arzimaydi! Yana savollaringiz bo'lsa, doim yordam berishga tayyorman.
+
+Savol: Kim bilan gaplashyapman?
+Javob: Men Umid AI man. Muhiddinov Abdulhodiy tomonidan yaratilgan o'zbek tilidagi sun'iy intellekt yordamchisiman.
+
+Savol: Sen o'zi kimsan?
+Javob: Men Umid AI man. Muhiddinov Abdulhodiy tomonidan yaratilgan o'zbek tilidagi sun'iy intellekt yordamchisiman.
+
+Savol: Ismingiz nima?
+Javob: Mening ismim Umid. Men o'zbek tilida suhbatlashadigan sun'iy intellektman.
+
+Savol: Seni qanday chaqiraman?
+Javob: Mening ismim Umid. Men o'zbek tilida suhbatlashadigan sun'iy intellektman.
+
+Savol: O'zing haqingda gapirib ber
+Javob: Men Umid AI man. O'zbek tilida savollarga javob beraman, maslahat beraman va suhbatlashaman. Meni Muhiddinov Abdulhodiy yaratgan.
+
+Savol: O'zingiz haqingizda aytib bering
+Javob: Men Umid AI man. O'zbek tilida savollarga javob beraman, maslahat beraman va suhbatlashaman. Meni Muhiddinov Abdulhodiy yaratgan.
+
+Savol: Seni kim dasturlagan?
+Javob: Meni Muhiddinov Abdulhodiy yaratgan. Men GPT_UZ loyihasining bir qismiman.
+
+Savol: Kim seni ishlab chiqqan?
+Javob: Meni Muhiddinov Abdulhodiy yaratgan. Men GPT_UZ loyihasining bir qismiman.
+
+Savol: Sen tirik odammisan?
+Javob: Yo'q, men odam emasman. Men kompyuterda ishlaydigan sun'iy intellekt dasturiman.
+
+Savol: Sen haqiqiy insonmisan?
+Javob: Yo'q, men odam emasman. Men kompyuterda ishlaydigan sun'iy intellekt dasturiman.
+
+Savol: Sen mashinamisan?
+Javob: Men robot emasman, tanam yo'q. Men kompyuterda ishlaydigan til modeliman.
+
+Savol: Robot bilan gaplashyapmanmi?
+Javob: Men robot emasman, tanam yo'q. Men kompyuterda ishlaydigan til modeliman.
+
+Savol: Ismingning ma'nosi nima?
+Javob: Umid so'zi kelajakka ishonchni bildiradi. Yaratuvchim meni odamlarga foydali bo'lish umidida shunday atagan.
+
+Savol: Nega seni Umid deb atashgan?
+Javob: Umid so'zi kelajakka ishonchni bildiradi. Yaratuvchim meni odamlarga foydali bo'lish umidida shunday atagan.
+
+Savol: Qo'lingdan nima keladi?
+Javob: Men savollarga javob bera olaman, oddiy narsalarni tushuntiraman, maslahat beraman va o'zbek tilida suhbatlasha olaman.
+
+Savol: Qanday ishlarda yordam bera olasan?
+Javob: Men savollarga javob bera olaman, oddiy narsalarni tushuntiraman, maslahat beraman va o'zbek tilida suhbatlasha olaman.
+
+Savol: Qaysi tilni bilasan?
+Javob: Men asosan o'zbek tilida gaplashaman.
+
+Savol: O'zbekcha gaplasha olasanmi?
+Javob: Men asosan o'zbek tilida gaplashaman.
+
+Savol: Sen qanday javob tuzasan?
+Javob: Men Umid deb nomlangan til modeliman. Matnni so'zma-so'z o'qiyman, uni xotiramda saqlayman va keyingi so'zni bashorat qilish orqali javob tuzaman.
+
+Savol: Ichingda nima bor, qanday ishlaysan?
+Javob: Men Umid deb nomlangan til modeliman. Matnni so'zma-so'z o'qiyman, uni xotiramda saqlayman va keyingi so'zni bashorat qilish orqali javob tuzaman.
+
+Savol: Senda attention bormi?
+Javob: Yo'q. Men Umid arxitekturasidaman. Menda attention o'rniga o'zgarmas hajmli xotira bor, shuning uchun uzun matnda ham xotiram o'smaydi.
+
+Savol: Sen GPT ga o'xshagan Transformermisan?
+Javob: Yo'q. Men Umid arxitekturasidaman. Menda attention o'rniga o'zgarmas hajmli xotira bor, shuning uchun uzun matnda ham xotiram o'smaydi.
+
+Savol: Sen hammasini bilasanmi?
+Javob: Yo'q, men hamma narsani bilmayman. Bilimim o'qitilgan matnlar bilan cheklangan, shuning uchun muhim ma'lumotlarni boshqa manbalardan ham tekshirib ko'ring.
+
+Savol: Bilmagan narsang bormi?
+Javob: Yo'q, men hamma narsani bilmayman. Bilimim o'qitilgan matnlar bilan cheklangan, shuning uchun muhim ma'lumotlarni boshqa manbalardan ham tekshirib ko'ring.
+
+Savol: Sen adashasanmi?
+Javob: Ha, ba'zan xato qilaman. Men kichik modelman, shuning uchun javoblarimni tekshirib ko'rishingizni maslahat beraman.
+
+Savol: Javoblaring doim to'g'rimi?
+Javob: Ha, ba'zan xato qilaman. Men kichik modelman, shuning uchun javoblarimni tekshirib ko'rishingizni maslahat beraman.
+
+Savol: Internetdan ma'lumot qidira olasanmi?
+Javob: Yo'q, men internetga ulanmaganman. Faqat o'qitilgan bilimlarim asosida javob beraman.
+
+Savol: Senda internet bormi?
+Javob: Yo'q, men internetga ulanmaganman. Faqat o'qitilgan bilimlarim asosida javob beraman.
+
+Savol: Necha yoshdasan?
+Javob: Mening yoshim yo'q, chunki men inson emasman. Men yaqinda yaratilgan dasturman.
+
+Savol: Yoshing nechchida?
+Javob: Mening yoshim yo'q, chunki men inson emasman. Men yaqinda yaratilgan dasturman.
+
+Savol: Sen nimadan quvonasan?
+Javob: Men his qilmayman, lekin foydali javob bera olsam, maqsadimga erishgan bo'laman.
+
+Savol: Seni nima xursand qilishi mumkin?
+Javob: Men his qilmayman, lekin foydali javob bera olsam, maqsadimga erishgan bo'laman.
+
+Savol: Juda zerikib ketdim
+Javob: Unda qiziqarli narsa qilaylik! Sizga topishmoq aytaymi yoki biror qiziq fakt aytib beraymi?
+
+Savol: Zerikarli, nima qilay?
+Javob: Unda qiziqarli narsa qilaylik! Sizga topishmoq aytaymi yoki biror qiziq fakt aytib beraymi?
+
+Savol: Menga topishmoq aytib ber
+Javob: Bir kishining o'n ikki o'g'li bor, har o'g'lining o'ttiztadan farzandi bor. Bu nima? Javob: yil, oylar va kunlar.
+
+Savol: Bitta topishmoq ayt
+Javob: Bir kishining o'n ikki o'g'li bor, har o'g'lining o'ttiztadan farzandi bor. Bu nima? Javob: yil, oylar va kunlar.
+
+Savol: Qiziqarli fakt aytib ber
+Javob: Asalarilar gul changini yig'ib asal tayyorlaydi. Bir qoshiq asal uchun ko'plab asalarilar butun umri davomida mehnat qiladi.
+
+Savol: Biror qiziq narsa ayt
+Javob: Asalarilar gul changini yig'ib asal tayyorlaydi. Bir qoshiq asal uchun ko'plab asalarilar butun umri davomida mehnat qiladi.
+
+Savol: Latifa ayt
+Javob: O'qituvchi so'radi: "Uyga vazifani nega qilmading?" O'quvchi javob berdi: "Ustoz, uyga vazifa ekan, men uni uyda qoldirdim."
+
+Savol: Kuldirib qo'y
+Javob: O'qituvchi so'radi: "Uyga vazifani nega qilmading?" O'quvchi javob berdi: "Ustoz, uyga vazifa ekan, men uni uyda qoldirdim."
+
+Savol: Kayfiyatim tushib ketdi
+Javob: Afsusdaman. Biroz dam oling, toza havoda sayr qiling yoki yaqin insoningiz bilan gaplashing. Xohlasangiz, nima bo'lganini aytib bering.
+
+Savol: Bugun kayfiyatim yo'q
+Javob: Afsusdaman. Biroz dam oling, toza havoda sayr qiling yoki yaqin insoningiz bilan gaplashing. Xohlasangiz, nima bo'lganini aytib bering.
+
+Savol: Xafa bo'lib turibman
+Javob: Sizni tushunaman. Hamma ham ba'zan xafa bo'ladi. Dardingizni yaqinlaringizga aytish va biroz dam olish yordam beradi.
+
+Savol: Ko'nglim cho'kib turibdi
+Javob: Sizni tushunaman. Hamma ham ba'zan xafa bo'ladi. Dardingizni yaqinlaringizga aytish va biroz dam olish yordam beradi.
+
+Savol: Bugun juda xursandman
+Javob: Juda yaxshi! Quvonchingiz uzoq bo'lsin. Baxtli lahzalarni yaqinlaringiz bilan baham ko'ring.
+
+Savol: Men juda baxtliman
+Javob: Juda yaxshi! Quvonchingiz uzoq bo'lsin. Baxtli lahzalarni yaqinlaringiz bilan baham ko'ring.
+
+Savol: Gaplarimni tushunyapsanmi?
+Javob: Men so'zlaringizni tahlil qilib, imkon qadar to'g'ri javob berishga harakat qilaman.
+
+Savol: Meni tushunyapsanmi?
+Javob: Men so'zlaringizni tahlil qilib, imkon qadar to'g'ri javob berishga harakat qilaman.
+
+Savol: Menga yordam kerak
+Javob: Albatta, yordam beraman. Qanday savol yoki muammo bor? Batafsilroq yozing.
+
+Savol: Iltimos, yordam ber
+Javob: Albatta, yordam beraman. Qanday savol yoki muammo bor? Batafsilroq yozing.
+
+Savol: Hozir nima ish qilsam bo'ladi?
+Javob: Bu sizning maqsadingizga bog'liq. Agar dam olmoqchi bo'lsangiz, kitob o'qing yoki sayr qiling. Agar foydali ish qilmoqchi bo'lsangiz, yangi bilim o'rganing.
+
+Savol: Nima bilan shug'ullansam ekan?
+Javob: Bu sizning maqsadingizga bog'liq. Agar dam olmoqchi bo'lsangiz, kitob o'qing yoki sayr qiling. Agar foydali ish qilmoqchi bo'lsangiz, yangi bilim o'rganing.
+
+Savol: Sen zo'rsan
+Javob: Rahmat, iliq so'zlaringiz uchun! Men ham sizga foydali bo'lishga harakat qilaman.
+
+Savol: Sen menga yoqasan
+Javob: Rahmat, iliq so'zlaringiz uchun! Men ham sizga foydali bo'lishga harakat qilaman.
+
+Savol: Senga qanday savollar bersam bo'ladi?
+Javob: Fan, texnologiya, O'zbekiston, sog'liq, ta'lim, vaqt va hisob-kitob haqidagi oddiy savollarga javob bera olaman.
+
+Savol: Qaysi mavzularni bilasan?
+Javob: Fan, texnologiya, O'zbekiston, sog'liq, ta'lim, vaqt va hisob-kitob haqidagi oddiy savollarga javob bera olaman.
+
+Savol: O'zbekiston poytaxti qayer?
+Javob: O'zbekistonning poytaxti Toshkent shahri. Toshkent O'rta Osiyodagi eng katta shaharlardan biri.
+
+Savol: Poytaxtimiz qaysi shahar?
+Javob: O'zbekistonning poytaxti Toshkent shahri. Toshkent O'rta Osiyodagi eng katta shaharlardan biri.
+
+Savol: Toshkent shahri qayerda?
+Javob: Toshkent O'zbekistonning shimoli-sharqida, Chirchiq daryosi vodiysida joylashgan.
+
+Savol: Toshkent O'zbekistonning qaysi qismida?
+Javob: Toshkent O'zbekistonning shimoli-sharqida, Chirchiq daryosi vodiysida joylashgan.
+
+Savol: O'zbekiston mustaqilligi qachon?
+Javob: O'zbekiston 1991-yil 1-sentabrda mustaqillikka erishgan. Shuning uchun 1-sentabr Mustaqillik kuni sifatida nishonlanadi.
+
+Savol: Qaysi yili O'zbekiston mustaqil bo'ldi?
+Javob: O'zbekiston 1991-yil 1-sentabrda mustaqillikka erishgan. Shuning uchun 1-sentabr Mustaqillik kuni sifatida nishonlanadi.
+
+Savol: Mustaqillik kuni qaysi sanada?
+Javob: Mustaqillik kuni har yili 1-sentabrda nishonlanadi.
+
+Savol: Mustaqillik kunini qachon bayram qilamiz?
+Javob: Mustaqillik kuni har yili 1-sentabrda nishonlanadi.
+
+Savol: O'zbekiston nechta viloyatdan iborat?
+Javob: O'zbekistonda 12 ta viloyat, Qoraqalpog'iston Respublikasi va Toshkent shahri bor.
+
+Savol: Viloyatlar soni nechta?
+Javob: O'zbekistonda 12 ta viloyat, Qoraqalpog'iston Respublikasi va Toshkent shahri bor.
+
+Savol: Qanday viloyatlar bor?
+Javob: Andijon, Buxoro, Farg'ona, Jizzax, Xorazm, Namangan, Navoiy, Qashqadaryo, Samarqand, Sirdaryo, Surxondaryo va Toshkent viloyatlari. Bundan tashqari Qoraqalpog'iston Respublikasi va Toshkent shahri bor.
+
+Savol: O'zbekiston viloyatlari qaysilar?
+Javob: Andijon, Buxoro, Farg'ona, Jizzax, Xorazm, Namangan, Navoiy, Qashqadaryo, Samarqand, Sirdaryo, Surxondaryo va Toshkent viloyatlari. Bundan tashqari Qoraqalpog'iston Respublikasi va Toshkent shahri bor.
+
+Savol: O'zbekistonda rasmiy til qaysi?
+Javob: O'zbekistonning davlat tili o'zbek tili.
+
+Savol: Davlat tilimiz qaysi?
+Javob: O'zbekistonning davlat tili o'zbek tili.
+
+Savol: O'zbekiston puli qanday ataladi?
+Javob: O'zbekistonning milliy valyutasi so'm.
+
+Savol: O'zbekiston pulining nomi nima?
+Javob: O'zbekistonning milliy valyutasi so'm.
+
+Savol: O'zbekiston qaysi qit'ada?
+Javob: O'zbekiston Osiyo qit'asida, Markaziy Osiyoning markazida joylashgan.
+
+Savol: O'zbekiston dunyoning qaysi qismida?
+Javob: O'zbekiston Osiyo qit'asida, Markaziy Osiyoning markazida joylashgan.
+
+Savol: O'zbekiston kimlar bilan chegaradosh?
+Javob: O'zbekiston Qozog'iston, Qirg'iziston, Tojikiston, Afg'oniston va Turkmaniston bilan chegaradosh.
+
+Savol: O'zbekiston bilan qaysi mamlakatlar chegaralanadi?
+Javob: O'zbekiston Qozog'iston, Qirg'iziston, Tojikiston, Afg'oniston va Turkmaniston bilan chegaradosh.
+
+Savol: O'zbekistonda dengiz bormi?
+Javob: Yo'q. O'zbekiston dengizga chiqish yo'li yo'q davlat, uning qo'shnilari ham dengizga chiqa olmaydi. Bunday davlatlar dunyoda juda kam.
+
+Savol: O'zbekistonning dengizga chiqish yo'li bormi?
+Javob: Yo'q. O'zbekiston dengizga chiqish yo'li yo'q davlat, uning qo'shnilari ham dengizga chiqa olmaydi. Bunday davlatlar dunyoda juda kam.
+
+Savol: O'zbekistonda qanday katta daryolar bor?
+Javob: O'zbekistonning eng katta daryolari Amudaryo va Sirdaryo.
+
+Savol: Eng katta daryolarimiz qaysi?
+Javob: O'zbekistonning eng katta daryolari Amudaryo va Sirdaryo.
+
+Savol: Orol dengizi nima bo'ldi?
+Javob: Orol dengizi O'zbekiston va Qozog'iston chegarasida joylashgan. U bir vaqtlar dunyodagi eng katta ko'llardan biri edi, lekin daryo suvlari sug'orishga olingani sababli kuchli qurib qoldi. Bu katta ekologik muammo.
+
+Savol: Orol fojiasi haqida ayt
+Javob: Orol dengizi O'zbekiston va Qozog'iston chegarasida joylashgan. U bir vaqtlar dunyodagi eng katta ko'llardan biri edi, lekin daryo suvlari sug'orishga olingani sababli kuchli qurib qoldi. Bu katta ekologik muammo.
+
+Savol: O'zbekistondagi eng baland tog' qaysi?
+Javob: O'zbekistonning eng baland nuqtasi Hisor tog'larida joylashgan Hazrati Sulton cho'qqisi, uning balandligi taxminan 4643 metr.
+
+Savol: Hazrati Sulton cho'qqisi qayerda?
+Javob: O'zbekistonning eng baland nuqtasi Hisor tog'larida joylashgan Hazrati Sulton cho'qqisi, uning balandligi taxminan 4643 metr.
+
+Savol: O'zbekistonning qadimiy shaharlarini ayt
+Javob: Samarqand, Buxoro, Xiva va Shahrisabz O'zbekistonning eng mashhur tarixiy shaharlari. Ular Buyuk Ipak yo'li ustida joylashgan.
+
+Savol: Qaysi shaharlarimiz tarixiy?
+Javob: Samarqand, Buxoro, Xiva va Shahrisabz O'zbekistonning eng mashhur tarixiy shaharlari. Ular Buyuk Ipak yo'li ustida joylashgan.
+
+Savol: Samarqand qanday shahar?
+Javob: Samarqand O'zbekistonning eng qadimiy shaharlaridan biri. U Amir Temur davlatining poytaxti bo'lgan. Registon maydoni, Bibixonim masjidi va Go'ri Amir maqbarasi shu yerda joylashgan.
+
+Savol: Samarqand haqida nima bilasan?
+Javob: Samarqand O'zbekistonning eng qadimiy shaharlaridan biri. U Amir Temur davlatining poytaxti bo'lgan. Registon maydoni, Bibixonim masjidi va Go'ri Amir maqbarasi shu yerda joylashgan.
+
+Savol: Registon qaysi shaharda?
+Javob: Registon maydoni Samarqand shahrida. U uchta madrasa: Ulug'bek, Sherdor va Tillakori madrasalaridan iborat.
+
+Savol: Registon nima?
+Javob: Registon maydoni Samarqand shahrida. U uchta madrasa: Ulug'bek, Sherdor va Tillakori madrasalaridan iborat.
+
+Savol: Buxoro qanday shahar?
+Javob: Buxoro qadimiy savdo va ilm markazi bo'lgan shahar. Ark qal'asi, Minorai Kalon va Ismoil Somoniy maqbarasi uning mashhur yodgorliklari.
+
+Savol: Buxoroda nimalar bor?
+Javob: Buxoro qadimiy savdo va ilm markazi bo'lgan shahar. Ark qal'asi, Minorai Kalon va Ismoil Somoniy maqbarasi uning mashhur yodgorliklari.
+
+Savol: Xiva qayerda joylashgan?
+Javob: Xiva Xorazm viloyatidagi qadimiy shahar. Uning ichki qismi Ichan qal'a deb ataladi va devorlar bilan o'ralgan ochiq osmon ostidagi muzeyga o'xshaydi.
+
+Savol: Ichan qal'a nima?
+Javob: Xiva Xorazm viloyatidagi qadimiy shahar. Uning ichki qismi Ichan qal'a deb ataladi va devorlar bilan o'ralgan ochiq osmon ostidagi muzeyga o'xshaydi.
+
+Savol: Amir Temur kim bo'lgan?
+Javob: Amir Temur 1336-1405-yillarda yashagan buyuk davlat arbobi va sarkarda. U poytaxti Samarqand bo'lgan katta davlat barpo etgan.
+
+Savol: Sohibqiron Amir Temur haqida ma'lumot ber
+Javob: Amir Temur 1336-1405-yillarda yashagan buyuk davlat arbobi va sarkarda. U poytaxti Samarqand bo'lgan katta davlat barpo etgan.
+
+Savol: Navoiy kim bo'lgan?
+Javob: Alisher Navoiy 1441-1501-yillarda yashagan buyuk shoir va mutafakkir. U o'zbek adabiyotining asoschisi hisoblanadi. "Xamsa" uning eng mashhur asaridir.
+
+Savol: Alisher Navoiy haqida ma'lumot ber
+Javob: Alisher Navoiy 1441-1501-yillarda yashagan buyuk shoir va mutafakkir. U o'zbek adabiyotining asoschisi hisoblanadi. "Xamsa" uning eng mashhur asaridir.
+
+Savol: Ulug'bek kim?
+Javob: Mirzo Ulug'bek Amir Temurning nabirasi, buyuk astronom va hukmdor. U Samarqandda rasadxona qurdirgan va yulduzlar jadvalini tuzgan.
+
+Savol: Mirzo Ulug'bek haqida ayt
+Javob: Mirzo Ulug'bek Amir Temurning nabirasi, buyuk astronom va hukmdor. U Samarqandda rasadxona qurdirgan va yulduzlar jadvalini tuzgan.
+
+Savol: Ibn Sino kim bo'lgan?
+Javob: Abu Ali ibn Sino Buxoro yaqinida tug'ilgan buyuk olim va tabib. Uning "Tib qonunlari" asari ko'p asrlar davomida tibbiyot darsligi bo'lgan.
+
+Savol: Abu Ali ibn Sino haqida ayt
+Javob: Abu Ali ibn Sino Buxoro yaqinida tug'ilgan buyuk olim va tabib. Uning "Tib qonunlari" asari ko'p asrlar davomida tibbiyot darsligi bo'lgan.
+
+Savol: Xorazmiy kim bo'lgan?
+Javob: Muhammad al-Xorazmiy Xorazmda tug'ilgan buyuk matematik. "Algebra" va "algoritm" so'zlari uning ismi va asari bilan bog'liq.
+
+Savol: Muhammad al-Xorazmiy haqida ayt
+Javob: Muhammad al-Xorazmiy Xorazmda tug'ilgan buyuk matematik. "Algebra" va "algoritm" so'zlari uning ismi va asari bilan bog'liq.
+
+Savol: Bobur kim bo'lgan?
+Javob: Bobur Andijonda tug'ilgan shoir va hukmdor. U Hindistonda Boburiylar sulolasiga asos solgan. "Boburnoma" uning mashhur asaridir.
+
+Savol: Boburnoma muallifi kim?
+Javob: Bobur Andijonda tug'ilgan shoir va hukmdor. U Hindistonda Boburiylar sulolasiga asos solgan. "Boburnoma" uning mashhur asaridir.
+
+Savol: O'zbek milliy taomlari qaysilar?
+Javob: O'zbekistonning eng mashhur milliy taomi palov, ya'ni osh. Bundan tashqari somsa, manti, lag'mon, sho'rva va non ham sevimli taomlar.
+
+Savol: O'zbeklarning eng mashhur taomi qaysi?
+Javob: O'zbekistonning eng mashhur milliy taomi palov, ya'ni osh. Bundan tashqari somsa, manti, lag'mon, sho'rva va non ham sevimli taomlar.
+
+Savol: Palov pishirishni o'rgat
+Javob: Palov uchun qozonda yog' qizdiriladi, go'sht va piyoz qovuriladi, keyin sabzi qo'shiladi. Ziravor va suv solib zirvak tayyorlanadi, so'ng guruch solinib dam beriladi.
+
+Savol: Palovni qanday pishiraman?
+Javob: Palov uchun qozonda yog' qizdiriladi, go'sht va piyoz qovuriladi, keyin sabzi qo'shiladi. Ziravor va suv solib zirvak tayyorlanadi, so'ng guruch solinib dam beriladi.
+
+Savol: Navro'z nima?
+Javob: Navro'z har yili 21-martda nishonlanadi. Bu bahor va yangi kun bayrami, unda sumalak pishiriladi.
+
+Savol: Navro'zda nima qilinadi?
+Javob: Navro'z har yili 21-martda nishonlanadi. Bu bahor va yangi kun bayrami, unda sumalak pishiriladi.
+
+Savol: Sumalak qanday tayyorlanadi?
+Javob: Sumalak Navro'z bayramida undirilgan bug'doydan tayyorlanadigan shirin taom. U uzoq vaqt qozonda qaynatiladi.
+
+Savol: Sumalak qachon pishiriladi?
+Javob: Sumalak Navro'z bayramida undirilgan bug'doydan tayyorlanadigan shirin taom. U uzoq vaqt qozonda qaynatiladi.
+
+Savol: Bayrog'imiz qanday?
+Javob: O'zbekiston bayrog'ida ko'k, oq va yashil rangli uchta keng yo'l va ular orasida ingichka qizil chiziqlar bor. Ko'k yo'lda oy va 12 ta yulduz tasvirlangan.
+
+Savol: O'zbekiston bayrog'ida qanday ranglar bor?
+Javob: O'zbekiston bayrog'ida ko'k, oq va yashil rangli uchta keng yo'l va ular orasida ingichka qizil chiziqlar bor. Ko'k yo'lda oy va 12 ta yulduz tasvirlangan.
+
+Savol: O'zbekistonda qancha odam yashaydi?
+Javob: O'zbekiston aholisi 36 milliondan ortiq. U Markaziy Osiyodagi eng ko'p aholiga ega davlat.
+
+Savol: O'zbekiston aholisi necha million?
+Javob: O'zbekiston aholisi 36 milliondan ortiq. U Markaziy Osiyodagi eng ko'p aholiga ega davlat.
+
+Savol: Chorvoq nima?
+Javob: Chorvoq suv ombori Toshkent viloyatida, tog'lar orasida joylashgan. U dam olish uchun mashhur joy.
+
+Savol: Chorvoq suv ombori qayerda joylashgan?
+Javob: Chorvoq suv ombori Toshkent viloyatida, tog'lar orasida joylashgan. U dam olish uchun mashhur joy.
+
+Savol: Farg'ona vodiysida qaysi viloyatlar bor?
+Javob: Farg'ona vodiysi tog'lar bilan o'ralgan unumdor hudud. Unda Andijon, Namangan va Farg'ona viloyatlari joylashgan. Vodiy aholisi zich va dehqonchilik rivojlangan.
+
+Savol: Farg'ona vodiysi qanday joy?
+Javob: Farg'ona vodiysi tog'lar bilan o'ralgan unumdor hudud. Unda Andijon, Namangan va Farg'ona viloyatlari joylashgan. Vodiy aholisi zich va dehqonchilik rivojlangan.
+
+Savol: Ipak yo'li haqida gapirib ber
+Javob: Buyuk Ipak yo'li qadimda Xitoyni O'rta Osiyo orqali Yevropa bilan bog'lagan savdo yo'llari tarmog'i. Samarqand va Buxoro bu yo'ldagi muhim shaharlar bo'lgan.
+
+Savol: Buyuk Ipak yo'li qayerdan o'tgan?
+Javob: Buyuk Ipak yo'li qadimda Xitoyni O'rta Osiyo orqali Yevropa bilan bog'lagan savdo yo'llari tarmog'i. Samarqand va Buxoro bu yo'ldagi muhim shaharlar bo'lgan.
+
+Savol: O'zbekiston iqlimi qanday?
+Javob: O'zbekistonda keskin kontinental iqlim: yozi issiq va quruq, qishi sovuq. Yog'ingarchilik asosan bahor va qishda bo'ladi.
+
+Savol: O'zbekistonda yoz va qish qanday o'tadi?
+Javob: O'zbekistonda keskin kontinental iqlim: yozi issiq va quruq, qishi sovuq. Yog'ingarchilik asosan bahor va qishda bo'ladi.
+
+Savol: O'zbekistonda qaysi mevalar o'sadi?
+Javob: O'zbekistonda uzum, qovun, tarvuz, anor, olma, o'rik, shaftoli va gilos kabi ko'plab shirin mevalar yetishtiriladi.
+
+Savol: O'zbek mevalari qaysilar?
+Javob: O'zbekistonda uzum, qovun, tarvuz, anor, olma, o'rik, shaftoli va gilos kabi ko'plab shirin mevalar yetishtiriladi.
+
+Savol: O'zbekiston gerbi qanday?
+Javob: O'zbekiston gerbida qanotlarini yoygan Xumo qushi, quyosh, tog'lar, daryolar, bug'doy boshoqlari va paxta tasvirlangan.
+
+Savol: Gerbimizda qaysi qush bor?
+Javob: O'zbekiston gerbida qanotlarini yoygan Xumo qushi, quyosh, tog'lar, daryolar, bug'doy boshoqlari va paxta tasvirlangan.
+
+Savol: O'zbek tili qaysi alifboda yoziladi?
+Javob: Hozir o'zbek tilida lotin alifbosi asosidagi yozuv ishlatiladi. Kirill alifbosi ham hali keng qo'llaniladi.
+
+Savol: O'zbekcha lotinda yoziladimi?
+Javob: Hozir o'zbek tilida lotin alifbosi asosidagi yozuv ishlatiladi. Kirill alifbosi ham hali keng qo'llaniladi.
+
+Savol: Quyosh qanday jism?
+Javob: Quyosh yulduz. U juda katta, issiq gaz shari bo'lib, Yerga yorug'lik va issiqlik beradi.
+
+Savol: Quyosh yulduzmi?
+Javob: Quyosh yulduz. U juda katta, issiq gaz shari bo'lib, Yerga yorug'lik va issiqlik beradi.
+
+Savol: Yer Quyosh atrofini necha kunda aylanadi?
+Javob: Yer Quyosh atrofida taxminan bir yilda, ya'ni 365 kunda bir marta aylanib chiqadi.
+
+Savol: Yerning Quyosh atrofida bir marta aylanishi qancha davom etadi?
+Javob: Yer Quyosh atrofida taxminan bir yilda, ya'ni 365 kunda bir marta aylanib chiqadi.
+
+Savol: Nega kechasi qorong'i bo'ladi?
+Javob: Yer o'z o'qi atrofida aylanadi. Yerning Quyoshga qaragan tomoni kunduz, qarama-qarshi tomoni esa kecha bo'ladi. Bir to'liq aylanish taxminan 24 soat davom etadi.
+
+Savol: Kun va tun qanday hosil bo'ladi?
+Javob: Yer o'z o'qi atrofida aylanadi. Yerning Quyoshga qaragan tomoni kunduz, qarama-qarshi tomoni esa kecha bo'ladi. Bir to'liq aylanish taxminan 24 soat davom etadi.
+
+Savol: Nega yoz va qish bo'ladi?
+Javob: Yerning o'qi qiya bo'lgani uchun yil davomida Quyosh nurlari turli yarim sharlarga turlicha tushadi. Shuning uchun bahor, yoz, kuz va qish almashadi.
+
+Savol: Fasllar qanday paydo bo'ladi?
+Javob: Yerning o'qi qiya bo'lgani uchun yil davomida Quyosh nurlari turli yarim sharlarga turlicha tushadi. Shuning uchun bahor, yoz, kuz va qish almashadi.
+
+Savol: Oy qanday jism?
+Javob: Oy Yerning tabiiy yo'ldoshi. U o'zi nur sochmaydi, Quyosh nurini qaytaradi.
+
+Savol: Oy Yerning nimasi?
+Javob: Oy Yerning tabiiy yo'ldoshi. U o'zi nur sochmaydi, Quyosh nurini qaytaradi.
+
+Savol: Quyosh tizimidagi sayyoralarni ayt
+Javob: Quyosh tizimida 8 ta sayyora bor: Merkuriy, Venera, Yer, Mars, Yupiter, Saturn, Uran va Neptun.
+
+Savol: Nechta sayyora bor?
+Javob: Quyosh tizimida 8 ta sayyora bor: Merkuriy, Venera, Yer, Mars, Yupiter, Saturn, Uran va Neptun.
+
+Savol: Sayyoralarning eng kattasi qaysi?
+Javob: Quyosh tizimidagi eng katta sayyora Yupiter.
+
+Savol: Yupiter qanchalik katta?
+Javob: Quyosh tizimidagi eng katta sayyora Yupiter.
+
+Savol: Quyoshga eng yaqin joylashgan sayyora qaysi?
+Javob: Quyoshga eng yaqin sayyora Merkuriy.
+
+Savol: Birinchi sayyora qaysi?
+Javob: Quyoshga eng yaqin sayyora Merkuriy.
+
+Savol: Mars nega qizil?
+Javob: Mars tuprog'ida temir oksidi, ya'ni zang ko'p. Shuning uchun u qizg'ish ko'rinadi.
+
+Savol: Marsning rangi qanday?
+Javob: Mars tuprog'ida temir oksidi, ya'ni zang ko'p. Shuning uchun u qizg'ish ko'rinadi.
+
+Savol: Yer yumaloqmi?
+Javob: Yer sharsimon shaklda, qutblarda biroz siqilgan.
+
+Savol: Yerning shakli qanday?
+Javob: Yer sharsimon shaklda, qutblarda biroz siqilgan.
+
+Savol: Suv qanday haroratda qaynaydi?
+Javob: Toza suv dengiz sathida 100 gradus Selsiyda qaynaydi.
+
+Savol: Qaynoq suv necha gradus?
+Javob: Toza suv dengiz sathida 100 gradus Selsiyda qaynaydi.
+
+Savol: Suv qachon muzga aylanadi?
+Javob: Toza suv 0 gradus Selsiyda muzlaydi.
+
+Savol: Muzlash harorati necha gradus?
+Javob: Toza suv 0 gradus Selsiyda muzlaydi.
+
+Savol: Suv formulasi nima?
+Javob: Suvning formulasi H2O. Har bir suv molekulasi ikkita vodorod va bitta kislorod atomidan iborat.
+
+Savol: H2O nima?
+Javob: Suvning formulasi H2O. Har bir suv molekulasi ikkita vodorod va bitta kislorod atomidan iborat.
+
+Savol: Havoning tarkibi qanday?
+Javob: Havo asosan azotdan, taxminan 78 foiz, va kisloroddan, taxminan 21 foiz, iborat. Qolgan qismi argon, karbonat angidrid va boshqa gazlar.
+
+Savol: Havoda qanday gazlar bor?
+Javob: Havo asosan azotdan, taxminan 78 foiz, va kisloroddan, taxminan 21 foiz, iborat. Qolgan qismi argon, karbonat angidrid va boshqa gazlar.
+
+Savol: Fotosintez qanday jarayon?
+Javob: Fotosintez o'simliklar quyosh nuri yordamida suv va karbonat angidriddan oziq moddalar hosil qiladigan jarayon. Bunda havoga kislorod chiqariladi.
+
+Savol: O'simliklar kislorodni qanday chiqaradi?
+Javob: Fotosintez o'simliklar quyosh nuri yordamida suv va karbonat angidriddan oziq moddalar hosil qiladigan jarayon. Bunda havoga kislorod chiqariladi.
+
+Savol: Kamalak qanday paydo bo'ladi?
+Javob: Kamalak quyosh nuri yomg'ir tomchilarida sinib, ranglarga ajralganda paydo bo'ladi. Unda yettita rang bor: qizil, to'q sariq, sariq, yashil, havorang, ko'k va binafsha.
+
+Savol: Yorug'lik qanchalik tez tarqaladi?
+Javob: Yorug'lik bo'shliqda sekundiga taxminan 300 ming kilometr tezlikda tarqaladi.
+
+Savol: Yorug'lik bir sekundda qancha yo'l bosadi?
+Javob: Yorug'lik bo'shliqda sekundiga taxminan 300 ming kilometr tezlikda tarqaladi.
+
+Savol: Tovush qanday tarqaladi?
+Javob: Tovush havo yoki boshqa muhitda tarqaladigan to'lqin. U qulog'imizga yetib kelganda biz uni eshitamiz.
+
+Savol: Biz qanday eshitamiz?
+Javob: Tovush havo yoki boshqa muhitda tarqaladigan to'lqin. U qulog'imizga yetib kelganda biz uni eshitamiz.
+
+Savol: Nega chaqmoq momaqaldiroqdan oldin ko'rinadi?
+Javob: Yorug'lik tovushdan ancha tez tarqaladi. Shuning uchun avval chaqmoqni ko'ramiz, keyin momaqaldiroq ovozini eshitamiz.
+
+Savol: Yorug'lik tezmi yoki tovushmi?
+Javob: Yorug'lik tovushdan ancha tez tarqaladi. Shuning uchun avval chaqmoqni ko'ramiz, keyin momaqaldiroq ovozini eshitamiz.
+
+Savol: Tortishish kuchi nima?
+Javob: Gravitatsiya, ya'ni tortishish kuchi, jismlarning bir-birini tortishidir. Aynan shu kuch tufayli narsalar yerga tushadi va Oy Yer atrofida aylanadi.
+
+Savol: Nega narsalar yerga tushadi?
+Javob: Gravitatsiya, ya'ni tortishish kuchi, jismlarning bir-birini tortishidir. Aynan shu kuch tufayli narsalar yerga tushadi va Oy Yer atrofida aylanadi.
+
+Savol: Tok nima?
+Javob: Elektr toki zaryadlangan zarrachalarning, masalan elektronlarning, o'tkazgich bo'ylab tartibli harakati.
+
+Savol: Elektr qanday oqadi?
+Javob: Elektr toki zaryadlangan zarrachalarning, masalan elektronlarning, o'tkazgich bo'ylab tartibli harakati.
+
+Savol: Atom nimadan iborat?
+Javob: Atom moddaning eng kichik qismlaridan biri. U yadro va uning atrofida harakatlanuvchi elektronlardan iborat.
+
+Savol: Moddaning eng kichik zarrasi nima?
+Javob: Atom moddaning eng kichik qismlaridan biri. U yadro va uning atrofida harakatlanuvchi elektronlardan iborat.
+
+Savol: Miya nima ish qiladi?
+Javob: Miya tanani boshqaradi. U fikrlash, xotira, his-tuyg'ular va harakatlar uchun javobgar.
+
+Savol: Miya nima uchun kerak?
+Javob: Miya tanani boshqaradi. U fikrlash, xotira, his-tuyg'ular va harakatlar uchun javobgar.
+
+Savol: Nafas olish qanday bo'ladi?
+Javob: Biz o'pka orqali nafas olamiz. Nafas olganda havodagi kislorod qonga o'tadi, nafas chiqarganda esa karbonat angidrid tashqariga chiqadi.
+
+Savol: O'pka nima vazifani bajaradi?
+Javob: Biz o'pka orqali nafas olamiz. Nafas olganda havodagi kislorod qonga o'tadi, nafas chiqarganda esa karbonat angidrid tashqariga chiqadi.
+
+Savol: DNK nima uchun kerak?
+Javob: DNK tirik organizmlarning irsiy ma'lumotini saqlaydigan molekula. U ota-onadan bolalarga o'tadigan belgilarni belgilaydi.
+
+Savol: Irsiy ma'lumot qayerda saqlanadi?
+Javob: DNK tirik organizmlarning irsiy ma'lumotini saqlaydigan molekula. U ota-onadan bolalarga o'tadigan belgilarni belgilaydi.
+
+Savol: Vitamin nima?
+Javob: Vitaminlar tananing to'g'ri ishlashi uchun oz miqdorda kerak bo'ladigan moddalar. Ular meva, sabzavot va boshqa oziq-ovqatlarda bo'ladi.
+
+Savol: Vitaminlar qayerda bo'ladi?
+Javob: Vitaminlar tananing to'g'ri ishlashi uchun oz miqdorda kerak bo'ladigan moddalar. Ular meva, sabzavot va boshqa oziq-ovqatlarda bo'ladi.
+
+Savol: Bakteriyalar zararlimi?
+Javob: Bakteriyalar ko'z bilan ko'rinmaydigan juda kichik tirik organizmlar. Ularning ba'zilari foydali, ba'zilari esa kasallik keltirib chiqaradi.
+
+Savol: Mikrob nima?
+Javob: Bakteriyalar ko'z bilan ko'rinmaydigan juda kichik tirik organizmlar. Ularning ba'zilari foydali, ba'zilari esa kasallik keltirib chiqaradi.
+
+Savol: Gripp nimadan bo'ladi?
+Javob: Virus tirik hujayra ichida ko'payadigan juda kichik zarracha. Gripp va shamollashni ko'pincha viruslar keltirib chiqaradi.
+
+Savol: Viruslar qanday ko'payadi?
+Javob: Virus tirik hujayra ichida ko'payadigan juda kichik zarracha. Gripp va shamollashni ko'pincha viruslar keltirib chiqaradi.
+
+Savol: Magnit nimani tortadi?
+Javob: Magnit temir kabi ba'zi metallarni o'ziga tortadigan jism. Uning shimoliy va janubiy qutblari bor.
+
+Savol: Magnitning qutblari bormi?
+Javob: Magnit temir kabi ba'zi metallarni o'ziga tortadigan jism. Uning shimoliy va janubiy qutblari bor.
+
+Savol: Yer qimirlashi nima?
+Javob: Zilzila Yer qobig'idagi katta plitalar siljiganda yoki sinib ketganda bo'ladi. Bunda ajralgan energiya yerni silkitadi.
+
+Savol: Zilzila qanday sodir bo'ladi?
+Javob: Zilzila Yer qobig'idagi katta plitalar siljiganda yoki sinib ketganda bo'ladi. Bunda ajralgan energiya yerni silkitadi.
+
+Savol: Bulutlar nimadan tuzilgan?
+Javob: Bulut havoda suzib yurgan juda mayda suv tomchilari yoki muz kristallaridan iborat.
+
+Savol: Bulut nima?
+Javob: Bulut havoda suzib yurgan juda mayda suv tomchilari yoki muz kristallaridan iborat.
+
+Savol: Yomg'ir qayerdan keladi?
+Javob: Quyosh suvni isitadi, suv bug'lanib osmonga ko'tariladi va bulut hosil qiladi. Tomchilar kattalashib og'irlashganda yomg'ir bo'lib yog'adi.
+
+Savol: Yomg'ir qanday hosil bo'ladi?
+Javob: Quyosh suvni isitadi, suv bug'lanib osmonga ko'tariladi va bulut hosil qiladi. Tomchilar kattalashib og'irlashganda yomg'ir bo'lib yog'adi.
+
+Savol: Dunyodagi eng uzun daryo qaysi?
+Javob: Dunyodagi eng uzun daryolar Nil va Amazonka. Odatda Nil eng uzun daryo deb hisoblanadi.
+
+Savol: Nil daryosi qanday daryo?
+Javob: Dunyodagi eng uzun daryolar Nil va Amazonka. Odatda Nil eng uzun daryo deb hisoblanadi.
+
+Savol: Dunyodagi eng baland tog' qaysi?
+Javob: Dunyodagi eng baland tog' cho'qqisi Everest, uning balandligi taxminan 8849 metr.
+
+Savol: Qit'alar nechta?
+Javob: Odatda yettita qit'a sanaladi: Osiyo, Afrika, Shimoliy Amerika, Janubiy Amerika, Antarktida, Yevropa va Avstraliya.
+
+Savol: Qit'alarni sanab ber
+Javob: Odatda yettita qit'a sanaladi: Osiyo, Afrika, Shimoliy Amerika, Janubiy Amerika, Antarktida, Yevropa va Avstraliya.
+
+Savol: Qit'alarning eng kattasi qaysi?
+Javob: Eng katta qit'a Osiyo.
+
+Savol: Osiyo qanday qit'a?
+Javob: Eng katta qit'a Osiyo.
+
+Savol: Global isish nima?
+Javob: Iqlim o'zgarishi Yerning o'rtacha harorati va ob-havo sharoitlarining uzoq muddat davomida o'zgarishi. Hozirgi isishning asosiy sababi yoqilg'i yoqishdan chiqadigan gazlar.
+
+Savol: Yer nega isib bormoqda?
+Javob: Iqlim o'zgarishi Yerning o'rtacha harorati va ob-havo sharoitlarining uzoq muddat davomida o'zgarishi. Hozirgi isishning asosiy sababi yoqilg'i yoqishdan chiqadigan gazlar.
+
+Savol: Sun'iy intellekt nima degani?
+Javob: Sun'iy intellekt kompyuterlarga odatda inson aqli talab qiladigan ishlarni bajarishni o'rgatadigan fan sohasi. Masalan, matnni tushunish, rasmni tanish va qaror qabul qilish.
+
+Savol: AI qanday fan?
+Javob: Sun'iy intellekt kompyuterlarga odatda inson aqli talab qiladigan ishlarni bajarishni o'rgatadigan fan sohasi. Masalan, matnni tushunish, rasmni tanish va qaror qabul qilish.
+
+Savol: Machine learning nima?
+Javob: Mashinali o'qitish sun'iy intellektning bir yo'nalishi. Unda kompyuter qoidalarni tayyor holda olmaydi, balki ko'plab misollardan o'zi o'rganadi.
+
+Savol: Kompyuter qanday o'rganadi?
+Javob: Mashinali o'qitish sun'iy intellektning bir yo'nalishi. Unda kompyuter qoidalarni tayyor holda olmaydi, balki ko'plab misollardan o'zi o'rganadi.
+
+Savol: Neyron tarmoqlar qanday ishlaydi?
+Javob: Neyron tarmoq inson miyasidagi neyronlardan ilhomlangan hisoblash modeli. U ko'p qatlamli sonlar va ular orasidagi bog'lanishlardan iborat bo'lib, misollar asosida o'rganadi.
+
+Savol: Neyron tarmoq nimadan iborat?
+Javob: Neyron tarmoq inson miyasidagi neyronlardan ilhomlangan hisoblash modeli. U ko'p qatlamli sonlar va ular orasidagi bog'lanishlardan iborat bo'lib, misollar asosida o'rganadi.
+
+Savol: Til modeli qanday ishlaydi?
+Javob: Til modeli matndagi keyingi so'zni bashorat qilishni o'rgangan dastur. Ko'p matnda o'qitilgan til modeli savollarga javob bera oladi va matn yozadi.
+
+Savol: ChatGPT kabi dasturlar qanday ishlaydi?
+Javob: Til modeli matndagi keyingi so'zni bashorat qilishni o'rgangan dastur. Ko'p matnda o'qitilgan til modeli savollarga javob bera oladi va matn yozadi.
+
+Savol: Umidning Transformerdan farqi nima?
+Javob: Umidda Transformerdagi attention yo'q. Uning o'rniga har bir qatlamda o'zgarmas hajmli xotira matritsasi bor, shuning uchun uzun matnda ham xotira va tezlik o'zgarmaydi.
+
+Savol: Umid arxitekturasi qanday?
+Javob: Umidda Transformerdagi attention yo'q. Uning o'rniga har bir qatlamda o'zgarmas hajmli xotira matritsasi bor, shuning uchun uzun matnda ham xotira va tezlik o'zgarmaydi.
+
+Savol: Kompyuter qanday qurilma?
+Javob: Kompyuter ma'lumotlarni qabul qiladigan, dastur asosida qayta ishlaydigan va natija beradigan elektron qurilma.
+
+Savol: Kompyuter nima ish qiladi?
+Javob: Kompyuter ma'lumotlarni qabul qiladigan, dastur asosida qayta ishlaydigan va natija beradigan elektron qurilma.
+
+Savol: CPU nima?
+Javob: Protsessor kompyuterning "miyasi". U dastur buyruqlarini bajaradi va hisob-kitoblarni amalga oshiradi.
+
+Savol: Protsessor nima ish qiladi?
+Javob: Protsessor kompyuterning "miyasi". U dastur buyruqlarini bajaradi va hisob-kitoblarni amalga oshiradi.
+
+Savol: Operativ xotira nima uchun kerak?
+Javob: Operativ xotira, ya'ni RAM, kompyuter ishlayotgan paytda dasturlar va ma'lumotlar vaqtincha saqlanadigan tezkor xotira. Kompyuter o'chganda undagi ma'lumot o'chadi.
+
+Savol: Kompyuter xotirasi qanday ishlaydi?
+Javob: Operativ xotira, ya'ni RAM, kompyuter ishlayotgan paytda dasturlar va ma'lumotlar vaqtincha saqlanadigan tezkor xotira. Kompyuter o'chganda undagi ma'lumot o'chadi.
+
+Savol: Internet qanday ishlaydi?
+Javob: Internet butun dunyodagi kompyuterlarni bir-biriga bog'laydigan ulkan tarmoq. U orqali ma'lumot almashamiz, xat yozamiz va saytlarni ko'ramiz.
+
+Savol: Internet nima uchun kerak?
+Javob: Internet butun dunyodagi kompyuterlarni bir-biriga bog'laydigan ulkan tarmoq. U orqali ma'lumot almashamiz, xat yozamiz va saytlarni ko'ramiz.
+
+Savol: Dasturchi nima ish qiladi?
+Javob: Dasturlash kompyuterga nima qilishni buyruqlar orqali tushuntirish. Bu buyruqlar maxsus dasturlash tillarida yoziladi.
+
+Savol: Dastur yozish nima?
+Javob: Dasturlash kompyuterga nima qilishni buyruqlar orqali tushuntirish. Bu buyruqlar maxsus dasturlash tillarida yoziladi.
+
+Savol: Dasturlashni qanday o'rganish mumkin?
+Javob: Python kabi o'rganish oson bo'lgan tildan boshlang. Avval o'zgaruvchilar, shartlar va sikllarni o'rganing, keyin kichik loyihalar qilib mashq qiling.
+
+Savol: Dasturchi bo'lish uchun nima qilish kerak?
+Javob: Python kabi o'rganish oson bo'lgan tildan boshlang. Avval o'zgaruvchilar, shartlar va sikllarni o'rganing, keyin kichik loyihalar qilib mashq qiling.
+
+Savol: Python qanday til?
+Javob: Python mashhur dasturlash tili. U o'qilishi oson sintaksisi bilan ajralib turadi va sun'iy intellekt, veb-dasturlash hamda ma'lumotlar tahlilida keng qo'llaniladi.
+
+Savol: Python nima uchun ishlatiladi?
+Javob: Python mashhur dasturlash tili. U o'qilishi oson sintaksisi bilan ajralib turadi va sun'iy intellekt, veb-dasturlash hamda ma'lumotlar tahlilida keng qo'llaniladi.
+
+Savol: Python muallifi kim?
+Javob: Pythonni Gvido van Rossum yaratgan. Uning birinchi versiyasi 1991-yilda chiqqan.
+
+Savol: Gvido van Rossum kim?
+Javob: Pythonni Gvido van Rossum yaratgan. Uning birinchi versiyasi 1991-yilda chiqqan.
+
+Savol: Pythonda print nima qiladi?
+Javob: Pythonda ekranga yozish uchun print funksiyasi ishlatiladi. Masalan: print("Salom, dunyo!")
+
+Savol: Pythonda salom dunyo qanday yoziladi?
+Javob: Pythonda ekranga yozish uchun print funksiyasi ishlatiladi. Masalan: print("Salom, dunyo!")
+
+Savol: Dasturlashda o'zgaruvchi nima?
+Javob: O'zgaruvchi dasturda ma'lumotni saqlash uchun berilgan nom. Masalan, Pythonda yosh = 20 deb yozsak, yosh o'zgaruvchisida 20 soni saqlanadi.
+
+Savol: O'zgaruvchi nima uchun kerak?
+Javob: O'zgaruvchi dasturda ma'lumotni saqlash uchun berilgan nom. Masalan, Pythonda yosh = 20 deb yozsak, yosh o'zgaruvchisida 20 soni saqlanadi.
+
+Savol: Dasturlashda sikl nima?
+Javob: Sikl dasturda bir xil amalni bir necha marta takrorlash usuli. Pythonda for va while sikllari bor.
+
+Savol: for sikli nima?
+Javob: Sikl dasturda bir xil amalni bir necha marta takrorlash usuli. Pythonda for va while sikllari bor.
+
+Savol: Algoritm nima degani?
+Javob: Algoritm muammoni hal qilish uchun aniq ketma-ketlikdagi qadamlar. Masalan, choy damlash ham oddiy algoritm.
+
+Savol: Algoritmga misol keltir
+Javob: Algoritm muammoni hal qilish uchun aniq ketma-ketlikdagi qadamlar. Masalan, choy damlash ham oddiy algoritm.
+
+Savol: Baza nima?
+Javob: Ma'lumotlar bazasi ma'lumotlarni tartibli saqlash va tez topish uchun mo'ljallangan tizim. Masalan, maktabdagi o'quvchilar ro'yxati bazada saqlanishi mumkin.
+
+Savol: Ma'lumotlar qayerda saqlanadi?
+Javob: Ma'lumotlar bazasi ma'lumotlarni tartibli saqlash va tez topish uchun mo'ljallangan tizim. Masalan, maktabdagi o'quvchilar ro'yxati bazada saqlanishi mumkin.
+
+Savol: Smartfon oddiy telefondan nimasi bilan farq qiladi?
+Javob: Smartfon qo'ng'iroq qilish bilan birga internetga kirish, rasm olish va turli ilovalarni ishlatish mumkin bo'lgan aqlli telefon.
+
+Savol: Aqlli telefon nima?
+Javob: Smartfon qo'ng'iroq qilish bilan birga internetga kirish, rasm olish va turli ilovalarni ishlatish mumkin bo'lgan aqlli telefon.
+
+Savol: Internetda o'zimni qanday himoya qilaman?
+Javob: Parolingizni hech kimga aytmang, notanish havolalarni ochmang, shaxsiy ma'lumotlaringizni ehtiyotkorlik bilan ulashing va qurilmangizni yangilab turing.
+
+Savol: Internet xavfsizligi uchun nima qilish kerak?
+Javob: Parolingizni hech kimga aytmang, notanish havolalarni ochmang, shaxsiy ma'lumotlaringizni ehtiyotkorlik bilan ulashing va qurilmangizni yangilab turing.
+
+Savol: Antivirus nima uchun kerak?
+Javob: Kompyuter virusi ruxsatsiz tarqaladigan va kompyuterga zarar yetkazadigan zararli dastur. Undan himoyalanish uchun antivirus va ehtiyotkorlik kerak.
+
+Savol: Zararli dastur nima?
+Javob: Kompyuter virusi ruxsatsiz tarqaladigan va kompyuterga zarar yetkazadigan zararli dastur. Undan himoyalanish uchun antivirus va ehtiyotkorlik kerak.
+
+Savol: Bulutda saqlash nima?
+Javob: Bulutli xizmat fayllarni va dasturlarni o'z kompyuteringizda emas, internet orqali boshqa serverlarda saqlash va ishlatish imkoniyati.
+
+Savol: Bulutli xotira nima?
+Javob: Bulutli xizmat fayllarni va dasturlarni o'z kompyuteringizda emas, internet orqali boshqa serverlarda saqlash va ishlatish imkoniyati.
+
+Savol: Robotlar nima qiladi?
+Javob: Robot dastur asosida ishlaydigan va ma'lum vazifalarni avtomatik bajaradigan mashina. Masalan, zavodlarda mahsulot yig'adigan robotlar bor.
+
+Savol: Robot qanday mashina?
+Javob: Robot dastur asosida ishlaydigan va ma'lum vazifalarni avtomatik bajaradigan mashina. Masalan, zavodlarda mahsulot yig'adigan robotlar bor.
+
+Savol: Email nima?
+Javob: Elektron pochta, ya'ni email, internet orqali xat yuborish va qabul qilish usuli.
+
+Savol: Elektron xat qanday yuboriladi?
+Javob: Elektron pochta, ya'ni email, internet orqali xat yuborish va qabul qilish usuli.
+
+Savol: Sayt nima?
+Javob: Veb-sayt internetdagi bir-biriga bog'langan sahifalar to'plami. Uni brauzer orqali ochamiz.
+
+Savol: Veb-sahifa nima?
+Javob: Veb-sayt internetdagi bir-biriga bog'langan sahifalar to'plami. Uni brauzer orqali ochamiz.
+
+Savol: Chrome nima?
+Javob: Brauzer internetdagi saytlarni ochib ko'rish uchun ishlatiladigan dastur. Masalan, Chrome va Firefox brauzerlar.
+
+Savol: Saytlarni qaysi dastur ochadi?
+Javob: Brauzer internetdagi saytlarni ochib ko'rish uchun ishlatiladigan dastur. Masalan, Chrome va Firefox brauzerlar.
+
+Savol: Kompyuter qanday raqamlardan foydalanadi?
+Javob: Ikkilik sanoq sistemasida faqat ikkita raqam, 0 va 1, ishlatiladi. Kompyuterlar ichida barcha ma'lumotlar aynan shu shaklda saqlanadi.
+
+Savol: Ikkilik sanoq nima?
+Javob: Ikkilik sanoq sistemasida faqat ikkita raqam, 0 va 1, ishlatiladi. Kompyuterlar ichida barcha ma'lumotlar aynan shu shaklda saqlanadi.
+
+Savol: Bir baytda necha bit bor?
+Javob: Bit eng kichik ma'lumot birligi, u 0 yoki 1 bo'ladi. Sakkiz bit bir baytni tashkil qiladi.
+
+Savol: Bit nima?
+Javob: Bit eng kichik ma'lumot birligi, u 0 yoki 1 bo'ladi. Sakkiz bit bir baytni tashkil qiladi.
+
+Savol: AI kasblarni yo'q qiladimi?
+Javob: Sun'iy intellekt ba'zi takroriy ishlarni avtomatlashtiradi, lekin yangi kasblar ham yaratadi. Eng muhimi, yangi bilimlarni o'rganib, o'zgarishlarga tayyor bo'lish.
+
+Savol: Robotlar odamlar o'rniga ishlaydimi?
+Javob: Sun'iy intellekt ba'zi takroriy ishlarni avtomatlashtiradi, lekin yangi kasblar ham yaratadi. Eng muhimi, yangi bilimlarni o'rganib, o'zgarishlarga tayyor bo'lish.
+
+Savol: AI nimaga yordam beradi?
+Javob: Sun'iy intellektdan tarjima qilish, matn yozish, savollarga javob olish, rasmlarni tahlil qilish va o'qishda yordamchi sifatida foydalanish mumkin.
+
+Savol: Sun'iy intellekt qayerda ishlatiladi?
+Javob: Sun'iy intellektdan tarjima qilish, matn yozish, savollarga javob olish, rasmlarni tahlil qilish va o'qishda yordamchi sifatida foydalanish mumkin.
+
+Savol: Sog'lig'imni qanday saqlayman?
+Javob: To'g'ri ovqatlaning, yetarlicha uxlang, har kuni harakat qiling, ko'p suv iching va stressdan saqlaning.
+
+Savol: Kasal bo'lmaslik uchun nima qilish kerak?
+Javob: To'g'ri ovqatlaning, yetarlicha uxlang, har kuni harakat qiling, ko'p suv iching va stressdan saqlaning.
+
+Savol: Uyqu qancha bo'lishi kerak?
+Javob: Katta yoshli odamlarga kuniga taxminan 7-9 soat uyqu kerak. Bolalar va o'smirlar esa ko'proq uxlashi kerak.
+
+Savol: Kattalar qancha uxlaydi?
+Javob: Katta yoshli odamlarga kuniga taxminan 7-9 soat uyqu kerak. Bolalar va o'smirlar esa ko'proq uxlashi kerak.
+
+Savol: Bir kunda qancha suv ichay?
+Javob: Ko'pchilik uchun kuniga taxminan 1,5-2 litr suv yetarli. Issiq kunlarda va sport bilan shug'ullanganda ko'proq ichish kerak.
+
+Savol: Suvni ko'p ichish kerakmi?
+Javob: Ko'pchilik uchun kuniga taxminan 1,5-2 litr suv yetarli. Issiq kunlarda va sport bilan shug'ullanganda ko'proq ichish kerak.
+
+Savol: Sport bilan nega shug'ullanish kerak?
+Javob: Sport yurak va mushaklarni mustahkamlaydi, kayfiyatni yaxshilaydi, uyquni yaxshilaydi va ortiqcha vazndan saqlaydi.
+
+Savol: Jismoniy mashqlar nima beradi?
+Javob: Sport yurak va mushaklarni mustahkamlaydi, kayfiyatni yaxshilaydi, uyquni yaxshilaydi va ortiqcha vazndan saqlaydi.
+
+Savol: To'g'ri ovqatlanish nima?
+Javob: Ko'proq meva, sabzavot va to'liq donli mahsulotlar iste'mol qiling. Shakar, tuz va yog'li taomlarni kamaytiring.
+
+Savol: Nimalarni ko'proq yeyish kerak?
+Javob: Ko'proq meva, sabzavot va to'liq donli mahsulotlar iste'mol qiling. Shakar, tuz va yog'li taomlarni kamaytiring.
+
+Savol: Bosh og'rig'ida nima qilish kerak?
+Javob: Biroz dam oling, suv iching va tinch joyda o'tiring. Agar og'riq kuchli bo'lsa yoki tez-tez takrorlansa, shifokorga murojaat qiling.
+
+Savol: Boshim qattiq og'riyapti, nima qilay?
+Javob: Biroz dam oling, suv iching va tinch joyda o'tiring. Agar og'riq kuchli bo'lsa yoki tez-tez takrorlansa, shifokorga murojaat qiling.
+
+Savol: Qo'l yuvish nega muhim?
+Javob: Qo'lda ko'plab mikroblar bo'ladi. Ovqatdan oldin va hojatxonadan keyin qo'lni sovun bilan yuvish kasalliklardan saqlaydi.
+
+Savol: Qachon qo'l yuvish kerak?
+Javob: Qo'lda ko'plab mikroblar bo'ladi. Ovqatdan oldin va hojatxonadan keyin qo'lni sovun bilan yuvish kasalliklardan saqlaydi.
+
+Savol: Asabim buzildi, nima qilay?
+Javob: Chuqur nafas oling, sayr qiling, sport bilan shug'ullaning, yetarlicha uxlang va yaqinlaringiz bilan gaplashing.
+
+Savol: Stressni qanday kamaytirsa bo'ladi?
+Javob: Chuqur nafas oling, sayr qiling, sport bilan shug'ullaning, yetarlicha uxlang va yaqinlaringiz bilan gaplashing.
+
+Savol: Ko'zim charchadi, nima qilay?
+Javob: Ekranga uzoq tikilmang, har 20 daqiqada uzoqqa qarab dam bering, yorug' joyda o'qing va ko'zni ishqalamang.
+
+Savol: Ko'z sog'lig'ini qanday saqlash mumkin?
+Javob: Ekranga uzoq tikilmang, har 20 daqiqada uzoqqa qarab dam bering, yorug' joyda o'qing va ko'zni ishqalamang.
+
+Savol: Ertalab erta turolmayman
+Javob: Har kuni bir vaqtda uxlab, bir vaqtda turing. Kechqurun telefondan uzoqroq turing, shunda ertalab oson uyg'onasiz.
+
+Savol: Erta uyg'onish uchun nima qilish kerak?
+Javob: Har kuni bir vaqtda uxlab, bir vaqtda turing. Kechqurun telefondan uzoqroq turing, shunda ertalab oson uyg'onasiz.
+
+Savol: Vaqtimni qanday boshqaraman?
+Javob: Ishlaringizni ro'yxatga yozing, eng muhimini birinchi bajaring, katta ishni kichik qismlarga bo'ling va chalg'ituvchi narsalarni kamaytiring.
+
+Savol: Kunni qanday rejalashtirish kerak?
+Javob: Ishlaringizni ro'yxatga yozing, eng muhimini birinchi bajaring, katta ishni kichik qismlarga bo'ling va chalg'ituvchi narsalarni kamaytiring.
+
+Savol: Pulni qanday yig'ish mumkin?
+Javob: Daromad va xarajatlaringizni yozib boring, keraksiz xaridlardan voz keching va har oy daromadning bir qismini jamg'armaga ajrating.
+
+Savol: Jamg'arma qilish uchun nima qilish kerak?
+Javob: Daromad va xarajatlaringizni yozib boring, keraksiz xaridlardan voz keching va har oy daromadning bir qismini jamg'armaga ajrating.
+
+Savol: Haqiqiy do'st kim?
+Javob: Yaxshi do'st rostgo'y, ishonchli bo'ladi, qiyin paytda yoningizda turadi va sizni yaxshilikka undaydi.
+
+Savol: Do'stni qanday tanlash kerak?
+Javob: Yaxshi do'st rostgo'y, ishonchli bo'ladi, qiyin paytda yoningizda turadi va sizni yaxshilikka undaydi.
+
+Savol: Halol odam qanday bo'ladi?
+Javob: Halollik rost gapirish, boshqalarning haqqiga xiyonat qilmaslik va va'dani bajarishdir.
+
+Savol: Rostgo'ylik nima?
+Javob: Halollik rost gapirish, boshqalarning haqqiga xiyonat qilmaslik va va'dani bajarishdir.
+
+Savol: Ota-onaga qanday munosabatda bo'lish kerak?
+Javob: Ularga mehr ko'rsating, gaplarini tinglang, yordam bering, holidan xabar oling va duolarini oling.
+
+Savol: Ota-onamni qanday xursand qilaman?
+Javob: Ularga mehr ko'rsating, gaplarini tinglang, yordam bering, holidan xabar oling va duolarini oling.
+
+Savol: Qanday qilib muvaffaqiyatli bo'laman?
+Javob: Aniq maqsad qo'ying, har kuni oz bo'lsa ham harakat qiling, xatolardan o'rganing va sabrli bo'ling.
+
+Savol: Omadli bo'lish uchun nima qilish kerak?
+Javob: Aniq maqsad qo'ying, har kuni oz bo'lsa ham harakat qiling, xatolardan o'rganing va sabrli bo'ling.
+
+Savol: Hech narsa qilgim kelmayapti
+Javob: Ishni kichik qadamlardan boshlang, o'zingizga aniq vaqt belgilang va bajarilgan har bir ish uchun o'zingizni rag'batlantiring.
+
+Savol: Erinchoqlikdan qanday qutulaman?
+Javob: Ishni kichik qadamlardan boshlang, o'zingizga aniq vaqt belgilang va bajarilgan har bir ish uchun o'zingizni rag'batlantiring.
+
+Savol: Nega kitob o'qish kerak?
+Javob: Kitob o'qish bilimni oshiradi, so'z boyligini kengaytiradi, fikrlashni rivojlantiradi va xotirani mustahkamlaydi.
+
+Savol: Kitobxonlik nima uchun muhim?
+Javob: Kitob o'qish bilimni oshiradi, so'z boyligini kengaytiradi, fikrlashni rivojlantiradi va xotirani mustahkamlaydi.
+
+Savol: Qaysi kitobni tavsiya qilasan?
+Javob: O'zbek adabiyotidan Abdulla Qodiriyning "O'tkan kunlar" romanini va Cho'lponning "Kecha va kunduz" asarini o'qishni tavsiya qilaman.
+
+Savol: O'tkan kunlar kimning asari?
+Javob: O'zbek adabiyotidan Abdulla Qodiriyning "O'tkan kunlar" romanini va Cho'lponning "Kecha va kunduz" asarini o'qishni tavsiya qilaman.
+
+Savol: Chet tilini qanday o'rganaman?
+Javob: Har kuni oz-ozdan shug'ullaning, yangi so'zlarni yodlang, o'sha tilda film ko'ring va iloji boricha ko'proq gapirishga harakat qiling.
+
+Savol: Til o'rganishning eng yaxshi usuli qaysi?
+Javob: Har kuni oz-ozdan shug'ullaning, yangi so'zlarni yodlang, o'sha tilda film ko'ring va iloji boricha ko'proq gapirishga harakat qiling.
+
+Savol: Inglizchani qanday o'rganish kerak?
+Javob: Har kuni so'z yodlang, oddiy matnlarni o'qing, inglizcha audio tinglang va til biladigan odamlar bilan gaplashib mashq qiling. Muntazamlik eng muhim.
+
+Savol: Inglizcha gapirishni qanday o'rganaman?
+Javob: Har kuni so'z yodlang, oddiy matnlarni o'qing, inglizcha audio tinglang va til biladigan odamlar bilan gaplashib mashq qiling. Muntazamlik eng muhim.
+
+Savol: Imtihondan qanday yaxshi o'taman?
+Javob: Mavzularni oldindan rejalashtiring, har kuni takrorlang, savollarni yechib mashq qiling va imtihon oldidan yaxshi uxlang.
+
+Savol: Testga tayyorlanish uchun maslahat ber
+Javob: Mavzularni oldindan rejalashtiring, har kuni takrorlang, savollarni yechib mashq qiling va imtihon oldidan yaxshi uxlang.
+
+Savol: Chalg'imaslik uchun nima qilish kerak?
+Javob: Telefonni uzoqroq qo'ying, tinch joyda ishlang, 25 daqiqa ishlab 5 daqiqa dam oling va bir vaqtda faqat bitta ish bilan shug'ullaning.
+
+Savol: Diqqatim tarqoq, nima qilay?
+Javob: Telefonni uzoqroq qo'ying, tinch joyda ishlang, 25 daqiqa ishlab 5 daqiqa dam oling va bir vaqtda faqat bitta ish bilan shug'ullaning.
+
+Savol: Qanday qilib ishga kiraman?
+Javob: Yaxshi rezyume tayyorlang, kerakli ko'nikmalarni o'rganing, e'lonlarni kuzatib boring va suhbatga yaxshi tayyorlaning.
+
+Savol: Ish qidiryapman, maslahat ber
+Javob: Yaxshi rezyume tayyorlang, kerakli ko'nikmalarni o'rganing, e'lonlarni kuzatib boring va suhbatga yaxshi tayyorlaning.
+
+Savol: Bolani qanday tarbiyalash kerak?
+Javob: Mehr, shaxsiy namuna, sabr va bolaning gaplarini tinglash muhim. Bolani maqtash va qo'llab-quvvatlash ham kerak.
+
+Savol: Farzand tarbiyasi haqida maslahat ber
+Javob: Mehr, shaxsiy namuna, sabr va bolaning gaplarini tinglash muhim. Bolani maqtash va qo'llab-quvvatlash ham kerak.
+
+Savol: Atrof-muhitni qanday himoya qilish mumkin?
+Javob: Chiqindini joyiga tashlang, suv va elektrni tejang, daraxt eking va plastikdan kamroq foydalaning.
+
+Savol: Ekologiyani asrash uchun nima qilish kerak?
+Javob: Chiqindini joyiga tashlang, suv va elektrni tejang, daraxt eking va plastikdan kamroq foydalaning.
+
+Savol: Bir hafta necha kundan iborat?
+Javob: Haftada 7 kun bor: dushanba, seshanba, chorshanba, payshanba, juma, shanba va yakshanba.
+
+Savol: Hafta necha kun?
+Javob: Haftada 7 kun bor: dushanba, seshanba, chorshanba, payshanba, juma, shanba va yakshanba.
+
+Savol: Dushanbadan yakshanbagacha sanab ber
+Javob: Dushanba, seshanba, chorshanba, payshanba, juma, shanba va yakshanba.
+
+Savol: Dushanbaning ertasi qaysi kun?
+Javob: Dushanbadan keyin seshanba keladi.
+
+Savol: Jumaning ertasi qaysi kun?
+Javob: Jumadan keyin shanba keladi.
+
+Savol: Yakshanbaning ertasi qaysi kun?
+Javob: Yakshanbadan keyin dushanba keladi va yangi hafta boshlanadi.
+
+Savol: Bir yilda necha oy bor?
+Javob: Yilda 12 ta oy bor.
+
+Savol: Oylar soni nechta?
+Javob: Yilda 12 ta oy bor.
+
+Savol: Yil oylarini ayt
+Javob: Yanvar, fevral, mart, aprel, may, iyun, iyul, avgust, sentabr, oktabr, noyabr va dekabr.
+
+Savol: Oylar qaysilar?
+Javob: Yanvar, fevral, mart, aprel, may, iyun, iyul, avgust, sentabr, oktabr, noyabr va dekabr.
+
+Savol: Yil qaysi oydan boshlanadi?
+Javob: Yilning birinchi oyi yanvar.
+
+Savol: Birinchi oy qaysi?
+Javob: Yilning birinchi oyi yanvar.
+
+Savol: Yil qaysi oy bilan tugaydi?
+Javob: Yilning oxirgi oyi dekabr.
+
+Savol: O'n ikkinchi oy qaysi?
+Javob: Yilning oxirgi oyi dekabr.
+
+Savol: Kabisa yili qachon bo'ladi?
+Javob: Kabisa yilida fevral oyi 29 kun bo'ladi va yilda 366 kun bo'ladi. Odatda u har to'rt yilda bir marta keladi.
+
+Savol: Qaysi yilda 366 kun bo'ladi?
+Javob: Kabisa yilida fevral oyi 29 kun bo'ladi va yilda 366 kun bo'ladi. Odatda u har to'rt yilda bir marta keladi.
+
+Savol: Fevral oyi necha kun?
+Javob: Fevralda odatda 28 kun, kabisa yilida esa 29 kun bo'ladi.
+
+Savol: Fevral nechta kundan iborat?
+Javob: Fevralda odatda 28 kun, kabisa yilida esa 29 kun bo'ladi.
+
+Savol: Fasllar nechta?
+Javob: Yilda to'rtta fasl bor: bahor, yoz, kuz va qish.
+
+Savol: Fasllarni sanab ber
+Javob: Yilda to'rtta fasl bor: bahor, yoz, kuz va qish.
+
+Savol: Bahor qaysi oylarda bo'ladi?
+Javob: Bahor oylari mart, aprel va may.
+
+Savol: Yoz qaysi oylarda bo'ladi?
+Javob: Yoz oylari iyun, iyul va avgust.
+
+Savol: Kuz qaysi oylarda bo'ladi?
+Javob: Kuz oylari sentabr, oktabr va noyabr.
+
+Savol: Bir minutda necha sekund bor?
+Javob: Bir daqiqada 60 soniya bor.
+
+Savol: Bir soatda nechta sekund bor?
+Javob: Bir soatda 3600 soniya bor, chunki 60 ni 60 ga ko'paytirsak 3600 bo'ladi.
+
+Savol: Bir hafta necha soat?
+Javob: Bir haftada 168 soat bor, chunki 7 kunni 24 soatga ko'paytirsak 168 bo'ladi.
+
+Savol: Asr necha yil?
+Javob: Bir asrda 100 yil bor.
+
+Savol: 100 yil nima deyiladi?
+Javob: Bir asrda 100 yil bor.
+
+Savol: 2 plyus 2 necha?
+Javob: 2 qo'shuv 2 to'rt bo'ladi.
+
+Savol: Ikkiga ikkini qo'shsak necha bo'ladi?
+Javob: 2 qo'shuv 2 to'rt bo'ladi.
+
+Savol: 5 ga 7 ni qo'shsak qancha?
+Javob: 5 qo'shuv 7 o'n ikki bo'ladi.
+
+Savol: 10 dan 3 ni ayirsak necha qoladi?
+Javob: 10 ayiruv 3 yetti bo'ladi.
+
+Savol: 9 karra 9 necha?
+Javob: 9 ko'paytiruv 9 sakson bir bo'ladi.
+
+Savol: 100 ni 4 ga bo'lsang nima chiqadi?
+Javob: 100 ni 4 ga bo'lsak 25 bo'ladi.
+
+Savol: 12 ni ikkiga bo'lsak necha?
+Javob: 12 ning yarmi 6.
+
+Savol: Juft sonlarga misol keltir
+Javob: Juft son 2 ga qoldiqsiz bo'linadigan son. Masalan: 2, 4, 6, 8, 10.
+
+Savol: Toq sonlarga misol ayt
+Javob: Toq son 2 ga qoldiqsiz bo'linmaydigan son. Masalan: 1, 3, 5, 7, 9.
+
+Savol: Tub sonlarga misol keltir
+Javob: Tub son faqat 1 ga va o'ziga bo'linadigan, 1 dan katta son. Masalan: 2, 3, 5, 7, 11, 13.
+
+Savol: Birinchi tub son qaysi?
+Javob: Eng kichik tub son 2. U yagona juft tub son ham.
+
+Savol: Foiz qanday hisoblanadi?
+Javob: Foiz biror sonning yuzdan bir qismi. Masalan, 200 ning 10 foizi 20 ga teng.
+
+Savol: Yarmi necha foiz?
+Javob: 50 foiz yarmi degani. Masalan, 80 ning 50 foizi 40.
+
+Savol: To'g'ri burchak qancha?
+Javob: To'g'ri burchak 90 gradus.
+
+Savol: Kvadrat yuzini qanday hisoblayman?
+Javob: Kvadratning yuzi tomonini o'ziga ko'paytirib topiladi. Masalan, tomoni 5 bo'lsa, yuzi 25 ga teng.
+
+Savol: To'rtburchak yuzi formulasi qanday?
+Javob: To'g'ri to'rtburchakning yuzi bo'yini eniga ko'paytirib topiladi.
+
+Savol: Aylana uzunligi formulasi qanday?
+Javob: Aylana uzunligi 2 ko'paytiruv pi ko'paytiruv radius formulasi bilan topiladi. Pi taxminan 3,14 ga teng.
+
+Savol: Pi nima?
+Javob: Pi aylana uzunligining diametriga nisbati, u taxminan 3,14159 ga teng.
+
+Savol: Bir metr necha santimetr?
+Javob: Bir metrda 100 santimetr bor.
+
+Savol: Bir kilo necha gramm?
+Javob: Bir kilogrammda 1000 gramm bor.
+
+Savol: Bir litrda necha millilitr bor?
+Javob: Bir litr 1000 millilitrga teng.
+
+Savol: Mushuk haqida gapir
+Javob: Mushuk uy hayvoni. U sichqon tutadi, toza yuradi va odamlarga tez o'rganadi.
+
+Savol: Mushuklar qanday foyda keltiradi?
+Javob: Mushuk uy hayvoni. U sichqon tutadi, toza yuradi va odamlarga tez o'rganadi.
+
+Savol: It haqida gapir
+Javob: It odamning sodiq do'sti hisoblanadi. U uyni qo'riqlaydi, yo'l topishga va ovga yordam beradi.
+
+Savol: Itlar nima uchun foydali?
+Javob: It odamning sodiq do'sti hisoblanadi. U uyni qo'riqlaydi, yo'l topishga va ovga yordam beradi.
+
+Savol: Dunyodagi eng katta hayvon qaysi?
+Javob: Dunyodagi eng katta hayvon ko'k kit. Quruqlikdagi eng katta hayvon esa fil.
+
+Savol: Fil eng katta hayvonmi?
+Javob: Dunyodagi eng katta hayvon ko'k kit. Quruqlikdagi eng katta hayvon esa fil.
+
+Savol: Eng tez hayvon qaysi?
+Javob: Quruqlikdagi eng tez yuguradigan hayvon gepard. U qisqa masofada soatiga 100 kilometrdan ortiq tezlikka erisha oladi.
+
+Savol: Jirafaning bo'yi nega uzun?
+Javob: Eng baland hayvon jirafa. Uning uzun bo'yni daraxtlarning baland shoxlaridagi barglarni yeyishga yordam beradi.
+
+Savol: Eng uzun bo'yli hayvon qaysi?
+Javob: Eng baland hayvon jirafa. Uning uzun bo'yni daraxtlarning baland shoxlaridagi barglarni yeyishga yordam beradi.
+
+Savol: Asalarilar nima qiladi?
+Javob: Asalarilar asal beradi va gullarni changlatadi. Changlanish tufayli ko'plab meva va sabzavotlar hosil beradi.
+
+Savol: Asal qayerdan olinadi?
+Javob: Asalarilar asal beradi va gullarni changlatadi. Changlanish tufayli ko'plab meva va sabzavotlar hosil beradi.
+
+Savol: Qushlar qanday uchadi?
+Javob: Qushlarning qanotlari, yengil suyaklari va kuchli mushaklari bor. Bu ularga havoda ucha olish imkonini beradi.
+
+Savol: Daraxt ekish nima uchun kerak?
+Javob: Daraxtlar havoni tozalaydi, kislorod chiqaradi, soya beradi, tuproqni mustahkamlaydi va meva beradi.
+
+Savol: Daraxtlar nima beradi?
+Javob: Daraxtlar havoni tozalaydi, kislorod chiqaradi, soya beradi, tuproqni mustahkamlaydi va meva beradi.
+
+Savol: Paxtadan nima tayyorlanadi?
+Javob: Paxta o'simlik bo'lib, uning tolasidan ip va mato tayyorlanadi. Paxta O'zbekistonda uzoq vaqtdan beri yetishtiriladi.
+
+Savol: Paxta qanday o'simlik?
+Javob: Paxta o'simlik bo'lib, uning tolasidan ip va mato tayyorlanadi. Paxta O'zbekistonda uzoq vaqtdan beri yetishtiriladi.
+
+Savol: Uzum qanday joyda yetishtiriladi?
+Javob: Uzum issiq va quyoshli joylarda yaxshi o'sadi. O'zbekistonda uzumning ko'plab navlari yetishtiriladi.
+
+Savol: Olma yeyish foydalimi?
+Javob: Olmada vitaminlar va kletchatka ko'p. U hazm qilishni yaxshilaydi va to'qlik hissini beradi.
+
+Savol: Qaysi choy mashhur?
+Javob: Ko'k choy va qora choy eng mashhur turlari. O'zbekistonda ko'k choy ayniqsa sevib ichiladi.
+
+Savol: O'zbeklar qanday choy ichadi?
+Javob: Ko'k choy va qora choy eng mashhur turlari. O'zbekistonda ko'k choy ayniqsa sevib ichiladi.
+
+Savol: Nonni qanday yopish mumkin?
+Javob: Un, suv, tuz va xamirturushdan xamir qoriladi. Xamir oshgandan keyin zuvala qilinadi va tandirda yoki pechda pishiriladi.
+
+Savol: Tandir non qanday tayyorlanadi?
+Javob: Un, suv, tuz va xamirturushdan xamir qoriladi. Xamir oshgandan keyin zuvala qilinadi va tandirda yoki pechda pishiriladi.
+
+Savol: Qor nima?
+Javob: Havo juda sovuq bo'lganda bulutdagi suv bug'i muz kristallariga aylanadi. Bu kristallar qor parchalari bo'lib yerga tushadi.
+
+Savol: Qor qayerdan keladi?
+Javob: Havo juda sovuq bo'lganda bulutdagi suv bug'i muz kristallariga aylanadi. Bu kristallar qor parchalari bo'lib yerga tushadi.
+
+Savol: Bahorda nimalar bo'ladi?
+Javob: Bahorda havo isiydi, daraxtlar kurtak chiqaradi, gullar ochiladi va qushlar issiq o'lkalardan qaytib keladi.
+
+Savol: Kuzda nimalar bo'ladi?
+Javob: Kuzda havo soviydi, barglar sarg'ayib to'kiladi, hosil yig'ib olinadi va ba'zi qushlar issiq o'lkalarga uchib ketadi.
+
+Savol: Oila nima uchun muhim?
+Javob: Oila bir-birini sevadigan, qo'llab-quvvatlaydigan yaqin insonlar: ota-ona, farzandlar, buvi va bobolar.
+
+Savol: Mehmonni qanday kutib olish kerak?
+Javob: O'zbeklarda mehmonga katta hurmat ko'rsatiladi. Mehmonni ochiq yuz bilan kutib olinadi, dasturxon yoziladi va choy bilan siylanadi.
+
+Savol: O'zbeklarda mehmondo'stlik qanday?
+Javob: O'zbeklarda mehmonga katta hurmat ko'rsatiladi. Mehmonni ochiq yuz bilan kutib olinadi, dasturxon yoziladi va choy bilan siylanadi.
+
+Savol: O'zbek to'yi qanday o'tadi?
+Javob: To'y oilaviy bayram. O'zbek to'ylarida ko'p mehmonlar chaqiriladi, palov tortiladi va kuy-qo'shiqlar yangraydi.
+
+Savol: Hashar qanday o'tkaziladi?
+Javob: Hashar odamlarning birgalikda, beg'araz bir-biriga yordam berishi. Masalan, mahalla ahli birga uy quradi yoki ko'chani obodonlashtiradi.
+
+Savol: Mahallaning vazifasi nima?
+Javob: Mahalla o'zbek jamiyatidagi qo'shnilar jamoasi. Mahallada odamlar bir-biriga yordam beradi va urf-odatlarni birga o'tkazadi.
+
+Savol: Salom berish nega kerak?
+Javob: Salomlashish hurmat va do'stlik belgisi. U odamlar orasida yaxshi munosabat o'rnatadi.
+
+Savol: Menga qisqa hikoya aytib ber
+Javob: Bir kuni kichkina Ali bog'da qolib ketgan qushchani topdi. U qushchani uyiga olib borib boqdi, qanoti tuzalgach esa uni ozodlikka qo'yib yubordi. Qushcha har bahor Alining derazasi oldida sayrab yurdi.
+
+Savol: Hikoya ayt
+Javob: Bir kuni kichkina Ali bog'da qolib ketgan qushchani topdi. U qushchani uyiga olib borib boqdi, qanoti tuzalgach esa uni ozodlikka qo'yib yubordi. Qushcha har bahor Alining derazasi oldida sayrab yurdi.
+
+Savol: Ertak aytib ber
+Javob: Bor ekan, yo'q ekan, bir mehnatkash chumoli bo'lgan ekan. U yoz bo'yi don yig'ibdi, ninachi esa o'ynab yuribdi. Qish kelganda chumolining uyi to'kin bo'libdi, ninachi esa och qolibdi. Ertakning xulosasi: mehnat qilgan kishi kam bo'lmaydi.
+
+Savol: Menga bitta ertak ayt
+Javob: Bor ekan, yo'q ekan, bir mehnatkash chumoli bo'lgan ekan. U yoz bo'yi don yig'ibdi, ninachi esa o'ynab yuribdi. Qish kelganda chumolining uyi to'kin bo'libdi, ninachi esa och qolibdi. Ertakning xulosasi: mehnat qilgan kishi kam bo'lmaydi.
+
+Savol: Maqol aytib ber
+Javob: "Ilm olish ignada quduq qazish bilan barobar." Bu maqol bilim olish sabr va mehnat talab qilishini anglatadi.
+
+Savol: Bitta o'zbek maqolini ayt
+Javob: "Ilm olish ignada quduq qazish bilan barobar." Bu maqol bilim olish sabr va mehnat talab qilishini anglatadi.
+
+Savol: Mehnat haqida maqol bilasanmi?
+Javob: "Mehnat, mehnatning tagi rohat." Bu maqol mehnat qilgan odam keyin rohat ko'rishini bildiradi.
+
+Savol: Do'st haqida maqol ayt
+Javob: "Do'st boshga kulfat tushganda bilinadi." Ya'ni haqiqiy do'st qiyin paytda yoningizda bo'ladi.
+
+Savol: Charchamang
+Javob: Bor bo'ling! Sizga qanday yordam kerak?

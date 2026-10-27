@@ -16,11 +16,12 @@ import sys
 
 import torch
 
-from umid import BPETokenizer, UmidLM
+from umid import BPETokenizer, load_model
+from umid.model import generate
 
 
 def load(ckpt_path, device):
-    model, ckpt = UmidLM.load(ckpt_path, map_location=device)
+    model, ckpt = load_model(ckpt_path, map_location=device)
     tok = BPETokenizer.from_dict(ckpt["tokenizer"])
     return model.to(device).eval(), tok
 
@@ -71,12 +72,12 @@ def main():
     if args.prompt is not None:
         print(args.prompt, end="", flush=True)
         ids = torch.tensor([tok.encode(args.prompt)], device=args.device)
-        model.generate(ids, args.max_new_tokens, on_token=Streamer(tok, False), **gen_kw)
+        generate(model, ids, args.max_new_tokens, on_token=Streamer(tok, False), **gen_kw)
         print()
         return
 
     print(f"Umid AI ({model.num_params() / 1e6:.1f}M parametr). Buyruqlar: /yangi, /xotira, /chiqish")
-    states, n_tokens = None, 0
+    states, n_tokens, ended = None, 0, True
     while True:
         try:
             user = input("\nSiz: ").strip()
@@ -89,19 +90,21 @@ def main():
             print("Xayr! Siz bilan suhbat qurish yoqimli bo'ldi.")
             break
         if user == "/yangi":
-            states, n_tokens = None, 0
+            states, n_tokens, ended = None, 0, True
             print("Xotira tozalandi.")
             continue
         if user == "/xotira":
-            size = UmidLM.state_bytes(states) if states else 0
-            print(f"Suhbatda {n_tokens} token o'qildi; xotira hajmi {size / 1024:.1f} KB (o'zgarmas).")
+            size = type(model).state_bytes(states) if states else 0
+            print(f"Suhbatda {n_tokens} token o'qildi; xotira hajmi {size / 1024:.1f} KB.")
             continue
-        # O'qitish formati (chat-data/savol-javob): "Savol: …\nJavob: …", juftliklar bo'sh qator bilan ajratilgan.
-        text = ("\n\n" if states is not None else "") + f"Savol: {user}\nJavob:"
-        ids = torch.tensor([tok.encode(text)], device=args.device)
+        # O'qitish formati (chat-data/savol-javob, sft.py): "Savol: …\nJavob: …<|endoftext|>". Javob EOT bilan
+        # tugamagan bo'lsa (qator oxiri yoki token chegarasi), keyingi savol oldidan EOT qo'yiladi.
+        ids = ([] if ended else [tok.eot_id]) + tok.encode(f"Savol: {user}\nJavob:")
+        ids = torch.tensor([ids], device=args.device)
         print("Umid: ", end="", flush=True)
-        new, states = model.generate(ids, args.max_new_tokens, states=states,
-                                     on_token=Streamer(tok, True), **gen_kw)
+        new, states = generate(model, ids, args.max_new_tokens, states=states,
+                               on_token=Streamer(tok, True), **gen_kw)
+        ended = new.size(1) > 0 and int(new[0, -1]) == tok.eot_id
         n_tokens += ids.size(1) + new.size(1)
         print()
 
