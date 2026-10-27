@@ -29,6 +29,8 @@ VARIANTS = {
     "umid-frame": dict(mixer="optimal", frame=True),   # aylanadigan koordinatalardagi optimal xotira
     "umid-r2": dict(V1, n_reads=2),                     # xotiradan qayta so'rash (2 bosqich)
     "umid-r3": dict(V1, n_reads=3),
+    "tanlov": dict(mixer="tanlov", select_k=32),         # yangi algoritm: eng muhim K ta token (umid/tanlov.py)
+    "tanlov-k64": dict(mixer="tanlov", select_k=64),
 }
 
 
