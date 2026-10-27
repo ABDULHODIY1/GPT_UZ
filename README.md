@@ -477,8 +477,16 @@ ikkala model ham shu formatda qayta o'qitilgan; retsept, ma'lumot va tokenizer b
 
   | lr | 5e-4 | 1e-3 | 2e-3 | 3e-3 |
   |---|---|---|---|---|
-  | Transformer | … | 4.066 | 4.189 | 4.323 |
-  | Tanlov, sof | … | … | 4.124 | — |
+  | Transformer | 4.257 | **4.066** | 4.189 | 4.323 |
+  | Tanlov, sof (K=32) | 4.397 | 4.142 | **4.124** | 4.244 |
+
+  Har biri o'zining eng yaxshi lr ida: Transformer 4.066, Tanlov 4.124 — **Transformer 0.058 oldinda**.
+  Pozitsiya bo'yicha (`val loss`, 256 tokenli oyna): 0–8 tokenda Tanlov biroz yaxshi (4.630 / 4.654),
+  8–32 da Transformer +0.04, 32 dan keyin (K=32 xotira to'lgandan so'ng) +0.05…0.08 oldinda. Demak
+  yo'qotishning asosiy qismi — K ta tokenlik xotira chegarasi.
+- Ogohlantirish: ma'lumot ~225K token, 600 qadamda model uni ~11 marta ko'radi (train loss ~2.1,
+  val ~4.1). Bu sharoitda val loss ko'proq ortiqcha moslashishni o'lchaydi; hal qiluvchi taqqoslash —
+  katta korpusda (GPU) bir martalik o'qitish.
 - Savol-javobda o'rtacha 55% ga qarshi 52% (jarima bilan) va 54% (jarimasiz). 60 ta savolda bitta natijaning
   statistik xatosi ~±6 ball, Tanlov seed'lari esa 50–58% oralig'ida. Shuning uchun bu farq **ishonchli
   emas** — savol-javobda ikkalasi teng deb hisoblanadi.
