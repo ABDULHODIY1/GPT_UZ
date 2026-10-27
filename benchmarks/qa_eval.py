@@ -23,10 +23,10 @@ from .common import RESULTS
 HERE = Path(__file__).parent
 
 
-def answer(model, tok, question, max_new_tokens=60):
+def answer(model, tok, question, max_new_tokens=60, repetition_penalty=1.15):
     ids = torch.tensor([tok.encode(f"Savol: {question}\nJavob:")])
-    out, _ = generate(model, ids, max_new_tokens, temperature=0.0, repetition_penalty=1.15, eos_id=tok.eot_id,
-                      on_token=None)
+    out, _ = generate(model, ids, max_new_tokens, temperature=0.0, repetition_penalty=repetition_penalty,
+                      eos_id=tok.eot_id, on_token=None)
     return tok.decode(out[0].tolist()).split("\n")[0].replace("<|endoftext|>", "").strip()
 
 
@@ -63,19 +63,20 @@ def main():
     ap.add_argument("--ckpt", default="checkpoints/umid/model.pt")
     ap.add_argument("--seen", type=int, default=15)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--rep-penalty", type=float, default=1.15, help="takrorlash jarimasi (1.0 — yo'q)")
     args = ap.parse_args()
     default_threads()
     model, ck = load_model(args.ckpt)
     model.eval()
     tok = BPETokenizer.from_dict(ck["tokenizer"])
 
-    report = {"ckpt": args.ckpt, "heldout": [], "seen": []}
+    report = {"ckpt": args.ckpt, "rep_penalty": args.rep_penalty, "heldout": [], "seen": []}
     for name in HELDOUT_SETS:
         hits = 0
         print(f"=== O'qitishda bo'lmagan savollar ({name}) ===")
         rows = load_heldout(name)
         for q, keys in rows:
-            a = answer(model, tok, q)
+            a = answer(model, tok, q, repetition_penalty=args.rep_penalty)
             ok = is_correct(a, keys)
             hits += ok
             report["heldout"].append({"toplam": name, "savol": q, "javob": a, "kalit": keys, "togri": ok})
@@ -90,7 +91,7 @@ def main():
     exact = 0
     print("\n=== O'qitishda bo'lgan savollardan namuna ===")
     for q, ref in load_seen(args.seen):
-        a = answer(model, tok, q)
+        a = answer(model, tok, q, repetition_penalty=args.rep_penalty)
         same = a.strip() == ref.strip()
         exact += same
         report["seen"].append({"savol": q, "javob": a, "asl": ref, "aynan": same})

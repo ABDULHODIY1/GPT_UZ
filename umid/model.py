@@ -47,6 +47,8 @@ class UmidConfig:
     mlp_hidden_size: int = 0      # 0 bo'lmasa MLP o'lchamini aniq belgilaydi (parametrlarni tenglashtirish uchun)
     decouple_erase: bool = False  # o'chirish kuchi b alohida darvoza: S ← α(I − b k kᵀ)S + β k vᵀ. b = β — klassik
                                   # delta (almashtirish), b < β — yig'ish (savol so'zlarining xulosasi uchun)
+    persistent_heads: int = 0     # har qatlamdagi shuncha head unutmaydi (α = 1, faqat EOT da tozalanadi): savolning
+                                  # boshidagi so'z javob boshlanguncha so'nib ketmaydi
     reset_on_eot: bool = False    # EOT tokenida xotira (S) tozalanadi: hujjatlar/savol-javoblar bir-biriga
                                   # aralashmaydi (Transformer'dagi hujjat maskasiga o'xshash). Qisqa konvolyutsiya
                                   # (conv_size − 1 token) chegaradan o'tadi.
@@ -198,6 +200,8 @@ class GatedDeltaMemory(nn.Module):
             g = (-self.A_log.to(fdt).exp()[:, None] * g.view(B, T, H, dk)).clamp(min=-5.0).transpose(1, 2)
         else:
             g = (-self.A_log.to(fdt).exp() * g).transpose(1, 2)    # g: [B, H, T] yoki [B, H, T, Dk]
+        if cfg.persistent_heads:   # oxirgi P ta head: α = 1 (unutmaydi)
+            g = torch.cat([g[:, :H - cfg.persistent_heads], torch.zeros_like(g[:, H - cfg.persistent_heads:])], 1)
         g = reset_decay(g, reset)
 
         S0 = st.get("S")
