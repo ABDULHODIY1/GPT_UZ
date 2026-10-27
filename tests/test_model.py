@@ -164,11 +164,14 @@ def test_reset_on_eot_isolates_documents(mixer, canon):
     assert torch.allclose(torch.cat(steps, 1), full, atol=1e-4)
 
 
-@pytest.mark.parametrize("doc_mask", [False, True])
-def test_gpt_cache_matches_full_forward(doc_mask):
+@pytest.mark.parametrize("doc_mask,canon", [(False, ""), (True, ""), (True, "ACD")])
+def test_gpt_cache_matches_full_forward(doc_mask, canon):
     from umid.baseline import GPT, GPTConfig
     torch.manual_seed(0)
-    gpt = GPT(GPTConfig(vocab_size=64, d_model=32, n_layers=2, n_heads=2, doc_mask=doc_mask)).eval()
+    gpt = GPT(GPTConfig(vocab_size=64, d_model=32, n_layers=2, n_heads=2, doc_mask=doc_mask, canon=canon)).eval()
+    for mod in gpt.modules():
+        if type(mod).__name__ == "Canon":
+            torch.nn.init.normal_(mod.conv.weight, std=0.3)
     seq = torch.cat([torch.randint(0, 60, (1, 7)), torch.tensor([[63]]), torch.randint(0, 60, (1, 9))], 1)
     full = gpt(seq)[0]
     # bo'laklab: 5 token, keyin 6 token (ichida EOT), keyin tokenma-token

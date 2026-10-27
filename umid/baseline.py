@@ -13,7 +13,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .model import RMSNorm
+from .model import Canon, RMSNorm
 
 
 @dataclass
@@ -24,6 +24,8 @@ class GPTConfig:
     n_heads: int = 6
     mlp_ratio: float = 8 / 3
     rope_base: float = 10000.0
+    canon: str = ""               # Canon qatlamlari (umid.model.UmidConfig.canon bilan bir xil): "A", "C", "D"
+    conv_size: int = 4
     doc_mask: bool = False        # EOT dan keyingi tokenlar oldingi hujjatga qaramaydi (Umid'ning reset_on_eot'iga mos)
     eot_id: int = -1              # -1 → vocab_size − 1
     dropout: float = 0.0
@@ -77,12 +79,24 @@ class GPTBlock(nn.Module):
         self.w_in = nn.Linear(cfg.d_model, 2 * cfg.mlp_hidden, bias=False)
         self.w_out = nn.Linear(cfg.mlp_hidden, cfg.d_model, bias=False)
         self.drop = nn.Dropout(cfg.dropout)
+        self.canon = nn.ModuleDict({p: Canon(2 * cfg.mlp_hidden if p == "D" else cfg.d_model, cfg.conv_size)
+                                    for p in cfg.canon})
 
-    def forward(self, x, cache=None, mask=None):
-        h, cache = self.attn(self.norm1(x), cache, mask)
+    def forward(self, x, cache=None, mask=None, reset=None):
+        """cache: (k, v, pozitsiya, Canon keshlari)."""
+        prev = {} if cache is None else cache[3]
+        extra = {}
+
+        def canon(p, h):
+            if p not in self.canon:
+                return h
+            h, extra[p] = self.canon[p](h, prev.get(p), reset)
+            return h
+
+        h, kvp = self.attn(canon("A", self.norm1(x)), None if cache is None else cache[:3], mask)
         x = x + self.drop(h)
-        a, b = self.w_in(self.norm2(x)).chunk(2, dim=-1)
-        return x + self.drop(self.w_out(F.silu(a) * b)), cache
+        a, b = canon("D", self.w_in(canon("C", self.norm2(x)))).chunk(2, dim=-1)
+        return x + self.drop(self.w_out(F.silu(a) * b)), (*kvp, extra)
 
 
 class GPT(nn.Module):
@@ -94,7 +108,7 @@ class GPT(nn.Module):
         self.norm = RMSNorm(cfg.d_model, cfg.norm_eps)
         self.lm_head = nn.Linear(cfg.d_model, cfg.vocab_size, bias=False)
         for name, p in self.named_parameters():
-            if "norm" in name:
+            if "norm" in name or "canon" in name:
                 continue
             std = 0.02 / math.sqrt(2 * cfg.n_layers) if name.endswith(("o_proj.weight", "w_out.weight")) else 0.02
             nn.init.normal_(p, std=std)
@@ -106,10 +120,11 @@ class GPT(nn.Module):
     def forward(self, idx, targets=None, states=None, return_states=False):
         x = self.embed(idx)
         mask, cut = self._doc_mask(idx, states)
+        reset = idx == (self.cfg.eot_id if self.cfg.eot_id >= 0 else self.cfg.vocab_size - 1) if self.cfg.doc_mask else None
         caches = []
         for i, block in enumerate(self.blocks):
-            x, c = block(x, None if states is None else states[i], mask)
-            caches.append(c if cut is None else (c[0][:, :, cut:], c[1][:, :, cut:], c[2]))
+            x, c = block(x, None if states is None else states[i], mask, reset)
+            caches.append(c if cut is None else (c[0][:, :, cut:], c[1][:, :, cut:], *c[2:]))
         logits = self.lm_head(self.norm(x))
         loss = None
         if targets is not None:

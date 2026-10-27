@@ -93,7 +93,7 @@ def build_config(args, vocab_size):
         kw["read_mix_init"] = args.read_mix_init
     if args.arch == "gpt":
         return GPTConfig(vocab_size=vocab_size, d_model=kw["d_model"], n_layers=kw["n_layers"], n_heads=kw["n_heads"],
-                         doc_mask=args.reset_on_eot, dropout=args.dropout)
+                         doc_mask=args.reset_on_eot, canon=args.canon, dropout=args.dropout)
     return UmidConfig(vocab_size=vocab_size, dropout=args.dropout, allow_neg_eigval=not args.no_neg_eigval,
                       reset_on_eot=args.reset_on_eot, decouple_erase=args.decouple_erase,
                       persistent_heads=args.persistent_heads, canon=args.canon, **kw)
