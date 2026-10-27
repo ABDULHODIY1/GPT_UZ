@@ -484,62 +484,6 @@ def generate(model, idx, max_new_tokens, temperature=0.8, top_k=50, top_p=0.95,
     return new, states
 
 
-def _select(states, index):
-    """Generatsiya holatidan berilgan qatorlarni tanlash (Umid: dict'lar, Transformer: (k, v, pos))."""
-    if isinstance(states, torch.Tensor):
-        return states.index_select(0, index)
-    if isinstance(states, dict):
-        return {k: _select(v, index) for k, v in states.items()}
-    if isinstance(states, (list, tuple)):
-        return type(states)(_select(v, index) for v in states)
-    return states
-
-
-@torch.no_grad()
-def beam_search(model, idx, max_new_tokens, beams=4, eos_id=None, repetition_penalty=1.0, length_alpha=1.0):
-    """Beam search: bir vaqtda `beams` ta nomzod javob, oxirida eng yuqori o'rtacha log-ehtimollisi
-    (uzunlik bo'yicha normallangan, score / len^α) tanlanadi. idx: [1, T]. Qaytaradi: yangi tokenlar [1, n].
-    Umid'da har nomzodning holati o'zgarmas hajmli, shuning uchun beam'lar xotirani o'stirmaydi."""
-    model.eval()
-    logits, _, states = model(idx, return_states=True)
-    seqs = [[]]
-    scores = torch.zeros(1)
-    done = []
-    last = logits[:, -1].float()
-    for _ in range(max_new_tokens):
-        logp = last.log_softmax(-1)
-        if repetition_penalty != 1.0:   # faqat yangi tokenlarga
-            for b, sq in enumerate(seqs):
-                if sq:
-                    t = torch.tensor(sorted(set(sq)))
-                    logp[b, t] = (logp[b, t] * repetition_penalty)
-        cand = (scores[:, None] + logp).view(-1)
-        top = cand.topk(min(2 * beams, cand.numel()))
-        keep, new_scores, new_seqs = [], [], []
-        V = logp.size(-1)
-        for sc, flat in zip(top.values.tolist(), top.indices.tolist()):
-            b, t = divmod(flat, V)
-            sq = seqs[b] + [t]
-            if eos_id is not None and t == eos_id:
-                done.append((sc / len(sq) ** length_alpha, sq))
-                continue
-            keep.append(b)
-            new_scores.append(sc)
-            new_seqs.append(sq)
-            if len(keep) == beams:
-                break
-        if not keep or (len(done) >= beams and max(d[0] for d in done) >= max(new_scores) / len(new_seqs[0]) ** length_alpha):
-            break
-        index = torch.tensor(keep)
-        states = _select(states, index)
-        seqs, scores = new_seqs, torch.tensor(new_scores)
-        logits, _, states = model(torch.tensor([sq[-1:] for sq in seqs]), states=states, return_states=True)
-        last = logits[:, -1].float()
-    done += [(sc / len(sq) ** length_alpha, sq) for sc, sq in zip(scores.tolist(), seqs)]
-    best = max(done, key=lambda d: d[0])[1]
-    return torch.tensor([best])
-
-
 def sample_next(logits, history, temperature=0.8, top_k=50, top_p=0.95, repetition_penalty=1.1):
     logits = logits.float().clone()
     if repetition_penalty and repetition_penalty != 1.0:
