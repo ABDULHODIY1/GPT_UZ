@@ -15,7 +15,8 @@ VARIANTS = [dict(), dict(decay="head", n_reads=1), dict(decay="channel", n_reads
             dict(mixer="optimal"), dict(mixer="optimal", frame=True), dict(n_reads=2), dict(n_reads=3, decay="channel"),
             dict(decouple_erase=True), dict(decouple_erase=True, n_writes=2, n_reads=1), dict(decouple_erase=True, n_reads=2),
             dict(persistent_heads=1, reset_on_eot=True), dict(persistent_heads=1, decay="channel"),
-            dict(canon="ACD"), dict(canon="ACD", reset_on_eot=True, persistent_heads=2)]
+            dict(canon="ACD"), dict(canon="ACD", reset_on_eot=True, persistent_heads=2),
+            dict(mixer="tanlov", select_k=8, select_chunk=16), dict(mixer="tanlov", select_k=4, reset_on_eot=True, canon="ACD")]
 
 
 def test_forward_shapes_and_loss():
@@ -140,11 +141,11 @@ def test_load_model_dispatches_on_arch(tmp_path):
     assert torch.allclose(g2(x)[0], gpt(x)[0]) and torch.allclose(u2(x)[0], umid.eval()(x)[0])
 
 
-@pytest.mark.parametrize("mixer,canon", [("delta", ""), ("optimal", ""), ("delta", "ACD")])
+@pytest.mark.parametrize("mixer,canon", [("delta", ""), ("optimal", ""), ("delta", "ACD"), ("tanlov", ""), ("tanlov", "ACD")])
 def test_reset_on_eot_isolates_documents(mixer, canon):
     torch.manual_seed(0)
     cfg = UmidConfig(vocab_size=64, d_model=32, n_layers=2, n_heads=2, head_dim=16, chunk_size=8, mixer=mixer,
-                     reset_on_eot=True, canon=canon)
+                     reset_on_eot=True, canon=canon, select_k=4, select_chunk=8)
     model = UmidLM(cfg).eval()
     for mod in model.modules():   # Canon noldan boshlanadi — test uchun tasodifiy og'irliklar
         if type(mod).__name__ == "Canon":
@@ -187,3 +188,35 @@ def test_gpt_cache_matches_full_forward(doc_mask, canon):
         other[:, :7] = torch.randint(0, 60, (1, 7))
         assert torch.allclose(gpt(other)[0][:, 7:], full[:, 7:], atol=1e-5)
         assert st[0][0].shape[2] == seq.size(1) - 7   # kesh EOT dan boshlab saqlanadi
+
+
+def test_tanlov_matches_reference_and_keeps_constant_state():
+    """Tanlov xotirasi: modeldagi bo'laklab hisob = naiv etalon; xotira hajmi kontekstga bog'liq emas."""
+    import torch.nn.functional as F
+    from umid.tanlov import selective_read_reference
+    torch.manual_seed(0)
+    cfg = UmidConfig(vocab_size=64, d_model=32, n_layers=1, n_heads=2, head_dim=16, mixer="tanlov", select_k=5,
+                     select_chunk=7, reset_on_eot=True)
+    model = UmidLM(cfg).eval()
+    mem = model.blocks[0].mixer
+    torch.nn.init.normal_(mem.s_proj.weight, std=1.0)    # muhimlik tasodifiy — haqiqiy tanlov sinovdan o'tadi
+    idx = torch.randint(0, 63, (2, 30))
+    idx[1, 12] = 63                                       # EOT
+    x = model.blocks[0].norm1(model.embed(idx))
+    out_model, st = mem(x, reset=idx == 63)
+    # etalon: xuddi shu q, k, v, s bilan
+    B, T, H, dk = 2, 30, 2, 16
+    qkv, _ = mem.qkv_conv(mem.qkv_proj(x), None, idx == 63)
+    q, k, v = qkv.split([H * dk, H * dk, H * dk], -1)
+    q = F.normalize(q.view(B, T, H, dk), dim=-1).transpose(1, 2)
+    k = F.normalize(k.view(B, T, H, dk), dim=-1).transpose(1, 2)
+    v = v.view(B, T, H, dk).transpose(1, 2)
+    o = selective_read_reference(q, k, v, mem.s_proj(x).transpose(1, 2), torch.arange(T).expand(B, T),
+                                 (idx == 63).long().cumsum(1), 5, mem.tau_log.exp(), mem.attn_offset,
+                                 F.softplus(mem.slope_raw))
+    o = mem.o_norm(o.transpose(1, 2)) * F.silu(mem.g_proj(x)).view(B, T, H, dk)
+    torch.testing.assert_close(out_model, mem.o_proj(o.reshape(B, T, H * dk)), rtol=1e-4, atol=1e-5)
+    long_idx = torch.randint(0, 63, (1, 300))
+    _, _, s1 = model(long_idx[:, :20], return_states=True)
+    _, _, s2 = model(long_idx, return_states=True)
+    assert UmidLM.state_bytes(s1) == UmidLM.state_bytes(s2)

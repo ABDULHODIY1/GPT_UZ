@@ -45,6 +45,9 @@ def parse_args():
     ap.add_argument("--decouple-erase", action="store_true", help="o'chirish kuchi alohida darvoza (Umid)")
     ap.add_argument("--persistent-heads", type=int, default=0, help="unutmaydigan head'lar soni (Umid)")
     ap.add_argument("--canon", default="", help="Canon qatlamlari (Umid): masalan ACD")
+    ap.add_argument("--mixer", default="delta", choices=["delta", "optimal", "tanlov"],
+                    help="xotira algoritmi: delta (Gated Delta) yoki tanlov (eng muhim K ta token, umid/tanlov.py)")
+    ap.add_argument("--select-k", type=int, default=32, help="tanlov: har head saqlaydigan tokenlar soni")
     ap.add_argument("--n-reads", type=int, default=None, help="fikrlash rejimi: xotiradan qayta so'rashlar soni (standart 1)")
     ap.add_argument("--decay", choices=["head", "channel"], default=None)
     ap.add_argument("--read-mix-init", type=float, default=None)
@@ -96,7 +99,8 @@ def build_config(args, vocab_size):
                          doc_mask=args.reset_on_eot, canon=args.canon, dropout=args.dropout)
     return UmidConfig(vocab_size=vocab_size, dropout=args.dropout, allow_neg_eigval=not args.no_neg_eigval,
                       reset_on_eot=args.reset_on_eot, decouple_erase=args.decouple_erase,
-                      persistent_heads=args.persistent_heads, canon=args.canon, **kw)
+                      persistent_heads=args.persistent_heads, canon=args.canon, mixer=args.mixer,
+                      select_k=args.select_k, **kw)
 
 
 def detach_states(states):
@@ -144,8 +148,9 @@ def main():
         model, ckpt = (GPT(cfg) if args.arch == "gpt" else UmidLM(cfg)), None
     model.to(device)
     cfg = model.cfg
-    kind = "Transformer (taqqoslash uchun)" if isinstance(model, GPT) else \
-        f"Umid, β∈(0,{2 if cfg.allow_neg_eigval else 1})"
+    kind = ("Transformer (taqqoslash uchun)" if isinstance(model, GPT) else
+            f"Umid-Tanlov, K={cfg.select_k}" if cfg.mixer == "tanlov" else
+            f"Umid, β∈(0,{2 if cfg.allow_neg_eigval else 1})")
     print(f"Model: {model.num_params() / 1e6:.2f}M parametr | {kind} | {cfg.n_layers} qatlam, d={cfg.d_model}, "
           f"{cfg.n_heads} head | qurilma: {device}")
 

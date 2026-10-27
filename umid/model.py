@@ -19,6 +19,7 @@ import torch.nn.functional as F
 
 from .delta import delta_rule_chunked, delta_rule_step
 from .optimal import optimal_memory_chunked, optimal_memory_step
+from .tanlov import selective_read
 
 
 @dataclass
@@ -42,7 +43,10 @@ class UmidConfig:
                                   # (README: "Aql tadqiqoti"), shuning uchun standart 1.
     read_mix_init: float = 0.0    # n_reads > 1: boshlang'ich holatda birinchi o'qish foydasiga bias (0 → teng)
     n_loops: int = 1              # fikrlash halqasi: qatlamlar steki necha marta qayta ishlatiladi
-    mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
+    mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi;
+                                  # "tanlov": eng muhim K ta tokenni saqlovchi xotira (umid/tanlov.py)
+    select_k: int = 32            # "tanlov": har head saqlaydigan tokenlar soni (xotira hajmi o'zgarmas)
+    select_chunk: int = 128       # "tanlov": o'qitishda bo'lak uzunligi (natijaga ta'sir qilmaydi, faqat tezlik)
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
     mlp_hidden_size: int = 0      # 0 bo'lmasa MLP o'lchamini aniq belgilaydi (parametrlarni tenglashtirish uchun)
     decouple_erase: bool = False  # o'chirish kuchi b alohida darvoza: S ← α(I − b k kᵀ)S + β k vᵀ. b = β — klassik
@@ -327,6 +331,58 @@ class OptimalMemory(nn.Module):
         return self.o_proj(o.reshape(B, T, H * dv)), new_state
 
 
+class SelectiveMemory(nn.Module):
+    """Tanlov xotirasi: har head hujjatdagi eng muhim K ta tokenni saqlaydi va ularni alohida, sigmoid
+    bilan o'qiydi (umid/tanlov.py). Delta qoidasi va chiziqli xotira ishlatilmaydi."""
+
+    def __init__(self, cfg: UmidConfig):
+        super().__init__()
+        self.cfg = cfg
+        D, H, dk, dv = cfg.d_model, cfg.n_heads, cfg.head_dim, cfg.value_dim
+        self.qkv_proj = nn.Linear(D, H * (2 * dk + dv), bias=False)
+        self.qkv_conv = ShortConv(H * (2 * dk + dv), cfg.conv_size)
+        self.s_proj = nn.Linear(D, H, bias=True)          # muhimlik; boshida 0 → "oxirgi K ta token" oynasi
+        self.g_proj = nn.Linear(D, H * dv, bias=False)
+        self.o_norm = RMSNorm(dv, cfg.norm_eps)
+        self.o_proj = nn.Linear(H * dv, D, bias=False)
+        self.tau_log = nn.Parameter(torch.full((H,), math.log(8.0)))                 # o'xshashlik keskinligi
+        self.attn_offset = nn.Parameter(torch.full((H,), -math.log(cfg.select_k)))   # sigmoid siljishi
+        slope = torch.logspace(math.log10(0.05), 0.0, H)                             # head'lar: uzoqdan yaqinga
+        self.slope_raw = nn.Parameter(torch.log(torch.expm1(slope)))                  # softplus⁻¹
+        self._zero_init = ("s_proj",)
+
+    def forward(self, x, state=None, reset=None):
+        cfg = self.cfg
+        B, T, _ = x.shape
+        H, dk, dv = cfg.n_heads, cfg.head_dim, cfg.value_dim
+        st = state or {}
+        fdt = torch.promote_types(x.dtype, torch.float32)
+        qkv, conv_cache = self.qkv_conv(self.qkv_proj(x), st.get("conv"), reset)
+        q, k, v = qkv.split([H * dk, H * dk, H * dv], dim=-1)
+        q = F.normalize(q.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
+        k = F.normalize(k.reshape(B, T, H, dk).to(fdt), dim=-1).transpose(1, 2)
+        v = v.reshape(B, T, H, dv).to(fdt).transpose(1, 2)
+        s = self.s_proj(x).to(fdt).transpose(1, 2)                                   # [B, H, T]
+        n0 = st["n"] if "n" in st else torch.zeros(B, dtype=torch.long, device=x.device)
+        pos = n0[:, None] + torch.arange(T, device=x.device)
+        seg = reset.long().cumsum(1) if reset is not None else torch.zeros(B, T, dtype=torch.long, device=x.device)
+        cache = tuple(st[n] for n in ("ck", "cv", "cs", "cp", "cm")) if "ck" in st else None
+        tau, bias, slope = self.tau_log.exp().to(fdt), self.attn_offset.to(fdt), F.softplus(self.slope_raw).to(fdt)
+        outs = []
+        for a in range(0, T, cfg.select_chunk):
+            b = min(a + cfg.select_chunk, T)
+            # segment kesh hujjatiga nisbatan: 0 — o'sha hujjat, k — oradan k ta EOT o'tgan
+            rel = seg[:, a:b] - seg[:, a - 1:a] if a else seg[:, a:b]
+            o, cache = selective_read(q[:, :, a:b], k[:, :, a:b], v[:, :, a:b], s[:, :, a:b], pos[:, a:b], rel,
+                                      cfg.select_k, tau, bias, slope, cache)
+            outs.append(o)
+        o = torch.cat(outs, 2)
+        o = self.o_norm(o.transpose(1, 2).to(x.dtype)) * F.silu(self.g_proj(x)).view(B, T, H, dv)
+        new_state = {"conv": conv_cache, "n": n0 + T}
+        new_state.update(zip(("ck", "cv", "cs", "cp", "cm"), cache))
+        return self.o_proj(o.reshape(B, T, H * dv)), new_state
+
+
 class SwiGLU(nn.Module):
     def __init__(self, cfg: UmidConfig):
         super().__init__()
@@ -346,7 +402,7 @@ class Block(nn.Module):
     def __init__(self, cfg: UmidConfig):
         super().__init__()
         self.norm1 = RMSNorm(cfg.d_model, cfg.norm_eps)
-        self.mixer = OptimalMemory(cfg) if cfg.mixer == "optimal" else GatedDeltaMemory(cfg)
+        self.mixer = {"optimal": OptimalMemory, "tanlov": SelectiveMemory}.get(cfg.mixer, GatedDeltaMemory)(cfg)
         self.norm2 = RMSNorm(cfg.d_model, cfg.norm_eps)
         self.mlp = SwiGLU(cfg)
         self.drop = nn.Dropout(cfg.dropout)
@@ -386,12 +442,15 @@ class UmidLM(nn.Module):
         for mod in self.modules():
             for name, value in getattr(mod, "_bias_init", {}).items():   # _init_weights biaslarni nolga tushiradi
                 getattr(mod, name).bias.data.copy_(value)
+            for name in getattr(mod, "_zero_init", ()):
+                nn.init.zeros_(getattr(mod, name).weight)
         if cfg.tie_embeddings:
             self.lm_head.weight = self.embed.weight
 
     def _init_weights(self):
         for name, p in self.named_parameters():
-            if name.endswith(("A_log", "dt_bias", "lam_raw")) or "conv" in name or "norm" in name:
+            if name.endswith(("A_log", "dt_bias", "lam_raw", "tau_log", "attn_offset", "slope_raw")) \
+                    or "conv" in name or "norm" in name:
                 continue
             if name.endswith("bias"):
                 nn.init.zeros_(p)
