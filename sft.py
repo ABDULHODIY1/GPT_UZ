@@ -29,8 +29,6 @@ def parse_args():
     ap.add_argument("--qa", default="chat-data/savol-javob", help="savol-javob fayllari (papka yoki ro'yxat)")
     ap.add_argument("--mix", default="chat-data/Data.txt!", help="tilni unutmaslik uchun umumiy matn ('' — yo'q)")
     ap.add_argument("--mix-frac", type=float, default=0.25, help="umumiy matndan olinadigan qatorlar ulushi")
-    ap.add_argument("--repeat-question", type=int, default=1,
-                    help="savolni necha marta o'qish (2 — 'Just read twice'); chat.py va baholash buni o'zi biladi")
     ap.add_argument("--steps", type=int, default=300)
     ap.add_argument("--lr", type=float, default=5e-4)
     ap.add_argument("--warmup", type=int, default=30)
@@ -56,7 +54,7 @@ def main():
         if isinstance(mod, torch.nn.Dropout):
             mod.p = args.dropout
 
-    examples = encode_qa(tok, read_qa_pairs(args.qa), args.repeat_question)
+    examples = encode_qa(tok, read_qa_pairs(args.qa))
     mix_tok = None
     if args.mix and args.mix_frac > 0:
         tok_path = out / "tokenizer.json"
