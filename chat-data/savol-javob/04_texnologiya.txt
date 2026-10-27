@@ -1,0 +1,92 @@
+Savol: Sun'iy intellekt nima?
+Javob: Sun'iy intellekt kompyuterlarga odatda inson aqli talab qiladigan ishlarni bajarishni o'rgatadigan fan sohasi. Masalan, matnni tushunish, rasmni tanish va qaror qabul qilish.
+
+Savol: Mashinali o'qitish nima?
+Javob: Mashinali o'qitish sun'iy intellektning bir yo'nalishi. Unda kompyuter qoidalarni tayyor holda olmaydi, balki ko'plab misollardan o'zi o'rganadi.
+
+Savol: Neyron tarmoq nima?
+Javob: Neyron tarmoq inson miyasidagi neyronlardan ilhomlangan hisoblash modeli. U ko'p qatlamli sonlar va ular orasidagi bog'lanishlardan iborat bo'lib, misollar asosida o'rganadi.
+
+Savol: Til modeli nima?
+Javob: Til modeli matndagi keyingi so'zni bashorat qilishni o'rgangan dastur. Ko'p matnda o'qitilgan til modeli savollarga javob bera oladi va matn yozadi.
+
+Savol: Umid arxitekturasi nimasi bilan farq qiladi?
+Javob: Umidda Transformerdagi attention yo'q. Uning o'rniga har bir qatlamda o'zgarmas hajmli xotira matritsasi bor, shuning uchun uzun matnda ham xotira va tezlik o'zgarmaydi.
+
+Savol: Kompyuter nima?
+Javob: Kompyuter ma'lumotlarni qabul qiladigan, dastur asosida qayta ishlaydigan va natija beradigan elektron qurilma.
+
+Savol: Protsessor nima?
+Javob: Protsessor kompyuterning "miyasi". U dastur buyruqlarini bajaradi va hisob-kitoblarni amalga oshiradi.
+
+Savol: Operativ xotira nima?
+Javob: Operativ xotira, ya'ni RAM, kompyuter ishlayotgan paytda dasturlar va ma'lumotlar vaqtincha saqlanadigan tezkor xotira. Kompyuter o'chganda undagi ma'lumot o'chadi.
+
+Savol: Internet nima?
+Javob: Internet butun dunyodagi kompyuterlarni bir-biriga bog'laydigan ulkan tarmoq. U orqali ma'lumot almashamiz, xat yozamiz va saytlarni ko'ramiz.
+
+Savol: Dasturlash nima?
+Javob: Dasturlash kompyuterga nima qilishni buyruqlar orqali tushuntirish. Bu buyruqlar maxsus dasturlash tillarida yoziladi.
+
+Savol: Dasturlashni nimadan boshlash kerak?
+Javob: Python kabi o'rganish oson bo'lgan tildan boshlang. Avval o'zgaruvchilar, shartlar va sikllarni o'rganing, keyin kichik loyihalar qilib mashq qiling.
+
+Savol: Python nima?
+Javob: Python mashhur dasturlash tili. U o'qilishi oson sintaksisi bilan ajralib turadi va sun'iy intellekt, veb-dasturlash hamda ma'lumotlar tahlilida keng qo'llaniladi.
+
+Savol: Pythonni kim yaratgan?
+Javob: Pythonni Gvido van Rossum yaratgan. Uning birinchi versiyasi 1991-yilda chiqqan.
+
+Savol: Pythonda ekranga qanday yoziladi?
+Javob: Pythonda ekranga yozish uchun print funksiyasi ishlatiladi. Masalan: print("Salom, dunyo!")
+
+Savol: O'zgaruvchi nima?
+Javob: O'zgaruvchi dasturda ma'lumotni saqlash uchun berilgan nom. Masalan, Pythonda yosh = 20 deb yozsak, yosh o'zgaruvchisida 20 soni saqlanadi.
+
+Savol: Sikl nima?
+Javob: Sikl dasturda bir xil amalni bir necha marta takrorlash usuli. Pythonda for va while sikllari bor.
+
+Savol: Algoritm nima?
+Javob: Algoritm muammoni hal qilish uchun aniq ketma-ketlikdagi qadamlar. Masalan, choy damlash ham oddiy algoritm.
+
+Savol: Ma'lumotlar bazasi nima?
+Javob: Ma'lumotlar bazasi ma'lumotlarni tartibli saqlash va tez topish uchun mo'ljallangan tizim. Masalan, maktabdagi o'quvchilar ro'yxati bazada saqlanishi mumkin.
+
+Savol: Smartfon nima?
+Javob: Smartfon qo'ng'iroq qilish bilan birga internetga kirish, rasm olish va turli ilovalarni ishlatish mumkin bo'lgan aqlli telefon.
+
+Savol: Kuchli parol qanday bo'lishi kerak?
+Javob: Kuchli parol kamida 12 belgidan iborat bo'lishi, katta va kichik harflar, raqamlar va belgilarni o'z ichiga olishi kerak. Har bir sayt uchun alohida parol ishlating.
+
+Savol: Internetda qanday xavfsiz bo'lish mumkin?
+Javob: Parolingizni hech kimga aytmang, notanish havolalarni ochmang, shaxsiy ma'lumotlaringizni ehtiyotkorlik bilan ulashing va qurilmangizni yangilab turing.
+
+Savol: Kompyuter virusi nima?
+Javob: Kompyuter virusi ruxsatsiz tarqaladigan va kompyuterga zarar yetkazadigan zararli dastur. Undan himoyalanish uchun antivirus va ehtiyotkorlik kerak.
+
+Savol: Bulutli xizmat nima?
+Javob: Bulutli xizmat fayllarni va dasturlarni o'z kompyuteringizda emas, internet orqali boshqa serverlarda saqlash va ishlatish imkoniyati.
+
+Savol: Robot nima?
+Javob: Robot dastur asosida ishlaydigan va ma'lum vazifalarni avtomatik bajaradigan mashina. Masalan, zavodlarda mahsulot yig'adigan robotlar bor.
+
+Savol: Elektron pochta nima?
+Javob: Elektron pochta, ya'ni email, internet orqali xat yuborish va qabul qilish usuli.
+
+Savol: Veb-sayt nima?
+Javob: Veb-sayt internetdagi bir-biriga bog'langan sahifalar to'plami. Uni brauzer orqali ochamiz.
+
+Savol: Brauzer nima?
+Javob: Brauzer internetdagi saytlarni ochib ko'rish uchun ishlatiladigan dastur. Masalan, Chrome va Firefox brauzerlar.
+
+Savol: Ikkilik sanoq sistemasi nima?
+Javob: Ikkilik sanoq sistemasida faqat ikkita raqam, 0 va 1, ishlatiladi. Kompyuterlar ichida barcha ma'lumotlar aynan shu shaklda saqlanadi.
+
+Savol: Bit va bayt nima?
+Javob: Bit eng kichik ma'lumot birligi, u 0 yoki 1 bo'ladi. Sakkiz bit bir baytni tashkil qiladi.
+
+Savol: Sun'iy intellekt odamlarning ishini oladimi?
+Javob: Sun'iy intellekt ba'zi takroriy ishlarni avtomatlashtiradi, lekin yangi kasblar ham yaratadi. Eng muhimi, yangi bilimlarni o'rganib, o'zgarishlarga tayyor bo'lish.
+
+Savol: Sun'iy intellektdan qanday foydalanish mumkin?
+Javob: Sun'iy intellektdan tarjima qilish, matn yozish, savollarga javob olish, rasmlarni tahlil qilish va o'qishda yordamchi sifatida foydalanish mumkin.

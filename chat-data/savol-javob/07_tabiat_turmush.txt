@@ -1,0 +1,86 @@
+Savol: Mushuk qanday hayvon?
+Javob: Mushuk uy hayvoni. U sichqon tutadi, toza yuradi va odamlarga tez o'rganadi.
+
+Savol: It qanday hayvon?
+Javob: It odamning sodiq do'sti hisoblanadi. U uyni qo'riqlaydi, yo'l topishga va ovga yordam beradi.
+
+Savol: Eng katta hayvon qaysi?
+Javob: Dunyodagi eng katta hayvon ko'k kit. Quruqlikdagi eng katta hayvon esa fil.
+
+Savol: Eng tez yuguradigan hayvon qaysi?
+Javob: Quruqlikdagi eng tez yuguradigan hayvon gepard. U qisqa masofada soatiga 100 kilometrdan ortiq tezlikka erisha oladi.
+
+Savol: Eng baland hayvon qaysi?
+Javob: Eng baland hayvon jirafa. Uning uzun bo'yni daraxtlarning baland shoxlaridagi barglarni yeyishga yordam beradi.
+
+Savol: Kit baliqmi?
+Javob: Yo'q, kit baliq emas, sut emizuvchi hayvon. U o'pka bilan nafas oladi va bolasini sut bilan boqadi.
+
+Savol: Asalari nima uchun foydali?
+Javob: Asalarilar asal beradi va gullarni changlatadi. Changlanish tufayli ko'plab meva va sabzavotlar hosil beradi.
+
+Savol: Qushlar nima uchun uchadi?
+Javob: Qushlarning qanotlari, yengil suyaklari va kuchli mushaklari bor. Bu ularga havoda ucha olish imkonini beradi.
+
+Savol: Daraxtlarning foydasi nima?
+Javob: Daraxtlar havoni tozalaydi, kislorod chiqaradi, soya beradi, tuproqni mustahkamlaydi va meva beradi.
+
+Savol: Paxta nima?
+Javob: Paxta o'simlik bo'lib, uning tolasidan ip va mato tayyorlanadi. Paxta O'zbekistonda uzoq vaqtdan beri yetishtiriladi.
+
+Savol: Ipak qanday olinadi?
+Javob: Ipak ipak qurti pillasidan olinadi. Ipak qurti tut bargi bilan oziqlanadi.
+
+Savol: Uzum qayerda o'sadi?
+Javob: Uzum issiq va quyoshli joylarda yaxshi o'sadi. O'zbekistonda uzumning ko'plab navlari yetishtiriladi.
+
+Savol: Olmaning foydasi nima?
+Javob: Olmada vitaminlar va kletchatka ko'p. U hazm qilishni yaxshilaydi va to'qlik hissini beradi.
+
+Savol: Choyning qanday turlari bor?
+Javob: Ko'k choy va qora choy eng mashhur turlari. O'zbekistonda ko'k choy ayniqsa sevib ichiladi.
+
+Savol: Non qanday pishiriladi?
+Javob: Un, suv, tuz va xamirturushdan xamir qoriladi. Xamir oshgandan keyin zuvala qilinadi va tandirda yoki pechda pishiriladi.
+
+Savol: Qor qanday hosil bo'ladi?
+Javob: Havo juda sovuq bo'lganda bulutdagi suv bug'i muz kristallariga aylanadi. Bu kristallar qor parchalari bo'lib yerga tushadi.
+
+Savol: Bahorda tabiatda nima o'zgaradi?
+Javob: Bahorda havo isiydi, daraxtlar kurtak chiqaradi, gullar ochiladi va qushlar issiq o'lkalardan qaytib keladi.
+
+Savol: Kuzda tabiatda nima o'zgaradi?
+Javob: Kuzda havo soviydi, barglar sarg'ayib to'kiladi, hosil yig'ib olinadi va ba'zi qushlar issiq o'lkalarga uchib ketadi.
+
+Savol: Oila nima?
+Javob: Oila bir-birini sevadigan, qo'llab-quvvatlaydigan yaqin insonlar: ota-ona, farzandlar, buvi va bobolar.
+
+Savol: Mehmon kelsa nima qilinadi?
+Javob: O'zbeklarda mehmonga katta hurmat ko'rsatiladi. Mehmonni ochiq yuz bilan kutib olinadi, dasturxon yoziladi va choy bilan siylanadi.
+
+Savol: To'y nima?
+Javob: To'y oilaviy bayram. O'zbek to'ylarida ko'p mehmonlar chaqiriladi, palov tortiladi va kuy-qo'shiqlar yangraydi.
+
+Savol: Hashar nima?
+Javob: Hashar odamlarning birgalikda, beg'araz bir-biriga yordam berishi. Masalan, mahalla ahli birga uy quradi yoki ko'chani obodonlashtiradi.
+
+Savol: Mahalla nima?
+Javob: Mahalla o'zbek jamiyatidagi qo'shnilar jamoasi. Mahallada odamlar bir-biriga yordam beradi va urf-odatlarni birga o'tkazadi.
+
+Savol: Nima uchun salomlashish muhim?
+Javob: Salomlashish hurmat va do'stlik belgisi. U odamlar orasida yaxshi munosabat o'rnatadi.
+
+Savol: Bir kuni haqida qisqa hikoya ayt
+Javob: Bir kuni kichkina Ali bog'da qolib ketgan qushchani topdi. U qushchani uyiga olib borib boqdi, qanoti tuzalgach esa uni ozodlikka qo'yib yubordi. Qushcha har bahor Alining derazasi oldida sayrab yurdi.
+
+Savol: Ertak ayt
+Javob: Bor ekan, yo'q ekan, bir mehnatkash chumoli bo'lgan ekan. U yoz bo'yi don yig'ibdi, ninachi esa o'ynab yuribdi. Qish kelganda chumolining uyi to'kin bo'libdi, ninachi esa och qolibdi. Ertakning xulosasi: mehnat qilgan kishi kam bo'lmaydi.
+
+Savol: Maqol ayt
+Javob: "Ilm olish ignada quduq qazish bilan barobar." Bu maqol bilim olish sabr va mehnat talab qilishini anglatadi.
+
+Savol: Mehnat haqida maqol ayt
+Javob: "Mehnat, mehnatning tagi rohat." Bu maqol mehnat qilgan odam keyin rohat ko'rishini bildiradi.
+
+Savol: Do'stlik haqida maqol ayt
+Javob: "Do'st boshga kulfat tushganda bilinadi." Ya'ni haqiqiy do'st qiyin paytda yoningizda bo'ladi.

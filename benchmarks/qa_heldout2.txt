@@ -1,0 +1,33 @@
+# Ikkinchi nazorat to'plami: qayta ifodalangan o'qitish ma'lumoti (09_qayta_ifodalar.txt) yozilishidan
+# OLDIN yozilgan. Faktlar o'qitish javoblarida bor, savollar esa boshqa so'zlar bilan; bir qismi
+# xulosa talab qiladi (masalan "Dushanbadan oldin", "7 ni 6 ga"). Format qa_heldout.txt bilan bir xil.
+Toshkent qaysi daryo vodiysida joylashgan? | Chirchiq
+O'zbekistonning qo'shni davlatlari qaysilar? | Qirg'iziston/Tojikiston
+O'zbekistonda qaysi valyuta ishlatiladi? | so'm
+Ulug'bek nima bilan mashhur? | astronom/rasadxona
+Ibn Sinoning mashhur kitobi qaysi? | Tib qonunlari
+Algebra so'zi kimning nomi bilan bog'liq? | Xorazmiy
+Bobur qayerda tug'ilgan? | Andijon
+Oyning o'zi yorug'lik chiqaradimi? | qaytar/nur sochmaydi
+Merkuriy haqida nima bilasan? | eng yaqin
+Havoning qancha qismi kislorod? | 21 foiz
+Osmon nega ko'k rangda? | sochil
+Kamalakda nechta rang bor? | yettita rang/yetti rang/7 ta rang
+Odam tanasida qancha suyak bor? | 206
+Yurakning vazifasi nima? | qonni
+Everest qanday tog'? | 8849/eng baland tog'
+Okeanlarning eng kattasi qaysi? | Tinch
+RAM nima? | operativ/vaqtincha
+Kompyuterning miyasi nima? | protsessor
+Ishonchli parol qanday tuziladi? | 12/raqam/belgi
+Sutka necha soatdan iborat? | 24
+Dushanbadan oldin qaysi kun keladi? | yakshanba keladi
+Qishda qaysi oylar bo'ladi? | dekabr, yanvar
+Bir kilometr necha metrga teng? | 1000 metr
+7 ni 6 ga ko'paytirsak qancha bo'ladi? | 42/qirq ikki
+Tishni qanday asrash kerak? | ikki marta/shirinlik/yuving
+Shamollaganda nima qilish kerak? | suyuqlik/isitma
+Kayfiyatni ko'tarish uchun nima qilay? | sayr/yaqin insoningiz/yaqinlaringiz
+Gepard qanchalik tez yuguradi? | soatiga
+Ipak nimadan olinadi? | qurt/pilla
+Seni yaratgan odam kim? | Abdulhodiy

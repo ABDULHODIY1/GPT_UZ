@@ -1,0 +1,289 @@
+{
+  "distances": [
+    0,
+    2,
+    5,
+    10,
+    20,
+    40
+  ],
+  "n": 40,
+  "models": {
+    "Umid": {
+      "by_distance": {
+        "0": {
+          "accuracy": 0.022727272727272728,
+          "mean_tokens": 71.73863636363636
+        },
+        "2": {
+          "accuracy": 0.0,
+          "mean_tokens": 133.03571428571428
+        },
+        "5": {
+          "accuracy": 0.011764705882352941,
+          "mean_tokens": 227.4470588235294
+        },
+        "10": {
+          "accuracy": 0.0,
+          "mean_tokens": 391.9756097560976
+        },
+        "20": {
+          "accuracy": 0.0,
+          "mean_tokens": 752.8409090909091
+        },
+        "40": {
+          "accuracy": 0.0,
+          "mean_tokens": 1415.7272727272727
+        }
+      },
+      "examples": [
+        {
+          "masofa": 0,
+          "kutilgan": "632",
+          "javob": "Xonangiz raqami 423.",
+          "togri": false
+        },
+        {
+          "masofa": 0,
+          "kutilgan": "Xurshid",
+          "javob": "Ismingiz Madina.",
+          "togri": false
+        },
+        {
+          "masofa": 0,
+          "kutilgan": "Marg'ilon",
+          "javob": "Siz Shahrisabz shahrida yashaysiz.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Ravshan",
+          "javob": "Do'stingizning ismi Madina.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Xeboqi",
+          "javob": "Mushugingizning ismi Dupe.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Ulugbek",
+          "javob": "Do'stingizning ismi Murod.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "temirdan yasalgan ko'prik",
+          "javob": "Lovi — bu dengiz tubidagi o'simlik.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "73",
+          "javob": "Siz 53 yoshdasiz.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "aytmagansiz",
+          "javob": "Siz Qarshi shahrida yashaysiz.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "Diyor",
+          "javob": "Do'stingizning ismi Madina.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "Chirchiq",
+          "javob": "Siz Qarshi shahrida yashaysiz.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "aytmagansiz",
+          "javob": "Mushugingizning ismi Duzo.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "794",
+          "javob": "Xonangiz raqami 475.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "Yulduz",
+          "javob": "Sizning ismingiz Nodir.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "64",
+          "javob": "Siz 59 yoshdasiz.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "863",
+          "javob": "Xonangiz raqami 452.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "Sanjar",
+          "javob": "Do'stingizning ismi Dilshod.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "73",
+          "javob": "Siz 49 yoshdasiz.",
+          "togri": false
+        }
+      ]
+    },
+    "Transformer": {
+      "by_distance": {
+        "0": {
+          "accuracy": 0.011363636363636364,
+          "mean_tokens": 71.73863636363636
+        },
+        "2": {
+          "accuracy": 0.0,
+          "mean_tokens": 133.03571428571428
+        },
+        "5": {
+          "accuracy": 0.011764705882352941,
+          "mean_tokens": 227.4470588235294
+        },
+        "10": {
+          "accuracy": 0.04878048780487805,
+          "mean_tokens": 391.9756097560976
+        },
+        "20": {
+          "accuracy": 0.03409090909090909,
+          "mean_tokens": 752.8409090909091
+        },
+        "40": {
+          "accuracy": 0.056818181818181816,
+          "mean_tokens": 1415.7272727272727
+        }
+      },
+      "examples": [
+        {
+          "masofa": 0,
+          "kutilgan": "632",
+          "javob": "Xonangiz raqami 422.",
+          "togri": false
+        },
+        {
+          "masofa": 0,
+          "kutilgan": "Xurshid",
+          "javob": "Sizning ismingiz Nodir.",
+          "togri": false
+        },
+        {
+          "masofa": 0,
+          "kutilgan": "Marg'ilon",
+          "javob": "Siz Termiz shahrida yashaysiz.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Ravshan",
+          "javob": "Do'stingizning ismi Murod.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Xeboqi",
+          "javob": "Mushugingizning ismi Rimu.",
+          "togri": false
+        },
+        {
+          "masofa": 2,
+          "kutilgan": "Ulugbek",
+          "javob": "Do'stingizning ismi Dilshod.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "temirdan yasalgan ko'prik",
+          "javob": "Lelo — bu dengiz tubidagi o'simlik.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "73",
+          "javob": "Siz 53 yoshdasiz.",
+          "togri": false
+        },
+        {
+          "masofa": 5,
+          "kutilgan": "aytmagansiz",
+          "javob": "Siz Toshkent shahrida yashaysiz.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "Diyor",
+          "javob": "Do'stingizning ismi Dilshod.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "Chirchiq",
+          "javob": "Siz Andijon shahrida yashaysiz.",
+          "togri": false
+        },
+        {
+          "masofa": 10,
+          "kutilgan": "aytmagansiz",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": true
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "794",
+          "javob": "Xonangiz raqami 423.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "Yulduz",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": false
+        },
+        {
+          "masofa": 20,
+          "kutilgan": "64",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "863",
+          "javob": "Xonangiz raqami 43.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "Sanjar",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": false
+        },
+        {
+          "masofa": 40,
+          "kutilgan": "73",
+          "javob": "Siz buni menga hali aytmagansiz.",
+          "togri": false
+        }
+      ]
+    }
+  }
+}

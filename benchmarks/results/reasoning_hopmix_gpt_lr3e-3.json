@@ -1,0 +1,26 @@
+{
+  "args": {
+    "task": "hopmix",
+    "models": "gpt",
+    "steps": 3000,
+    "lr": 0.003,
+    "seed": 0,
+    "threads": 1,
+    "tag": "gpt_lr3e-3"
+  },
+  "models": {
+    "gpt": {
+      "params": 431104,
+      "train_loss": 2.3834132814407347,
+      "sec_per_step": 0.1740582841237386,
+      "acc": {
+        "1 bosqich": 0.191339373588562,
+        "2 bosqich": 0.1914691925048828
+      },
+      "acc_last": {
+        "1 bosqich": 0.076171875,
+        "2 bosqich": 0.10546875
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "args": {
+    "data": "chat-data/Data.txt",
+    "tokenizer": "checkpoints/tokenizer.json",
+    "models": "gpt",
+    "steps": 800,
+    "batch_size": 16,
+    "train_len": 128,
+    "eval_lens": "128,256,512,1024,2048",
+    "d_model": 256,
+    "n_layers": 4,
+    "n_heads": 4,
+    "lr": 0.001,
+    "seed": 0,
+    "eval_every": 50,
+    "tag": "gpt_lr1e-3"
+  },
+  "models": {
+    "gpt": {
+      "params": 4262144,
+      "train_loss": 3.668280658721924,
+      "best_step": 800,
+      "sec_per_step": 0.3295229008793831,
+      "val_loss": {
+        "128": 4.677781138833113,
+        "256": 4.679411237201993,
+        "512": 4.718218849551294,
+        "1024": 4.774117501576741,
+        "2048": 4.818045139312744
+      }
+    }
+  }
+}

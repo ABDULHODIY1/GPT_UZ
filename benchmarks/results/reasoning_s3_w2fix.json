@@ -1,0 +1,28 @@
+{
+  "args": {
+    "task": "s3",
+    "models": "umid-w2",
+    "steps": 2000,
+    "lr": 0.001,
+    "seed": 0,
+    "threads": 1,
+    "tag": "w2fix"
+  },
+  "models": {
+    "umid-w2": {
+      "params": 107536,
+      "train_loss": 0.964993553161621,
+      "sec_per_step": 0.13790505480766296,
+      "acc": {
+        "uzunlik 32": 0.4281005859375,
+        "uzunlik 64": 0.319122314453125,
+        "uzunlik 128": 0.2436676025390625
+      },
+      "acc_last": {
+        "uzunlik 32": 0.306640625,
+        "uzunlik 64": 0.189453125,
+        "uzunlik 128": 0.18359375
+      }
+    }
+  }
+}

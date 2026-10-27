@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "umid_ckpt": "checkpoints/umid_v1/model.pt",
+    "gpt_ckpt": "checkpoints/gpt_baseline/model.pt",
+    "data": "chat-data/Data.txt",
+    "steps": 600,
+    "seq_len": 256,
+    "batch_size": 16,
+    "warmup": 100,
+    "dropout": 0.1,
+    "lrs": "1e-3,2e-3",
+    "seed": 1337,
+    "max_new_tokens": 50,
+    "temperature": 0.8,
+    "long_context": 1536
+  },
+  "transformer": {
+    "lr": 0.002,
+    "best_step": 600,
+    "lr_sweep": {
+      "0.001": 4.4006,
+      "0.002": 4.0394
+    }
+  },
+  "params": {
+    "Umid": 4545072,
+    "Transformer": 4262144
+  },
+  "val_loss": {
+    "Umid": {
+      "256": 4.0411,
+      "1024": 3.9028,
+      "2048": 3.7451
+    },
+    "Transformer": {
+      "256": 4.0394,
+      "1024": 4.0669,
+      "2048": 4.1495
+    }
+  },
+  "positional_loss_2048": {
+    "Umid": {
+      "0-256": 3.4846,
+      "1792-2048": 4.0131
+    },
+    "Transformer": {
+      "0-256": 3.5666,
+      "1792-2048": 4.7438
+    }
+  },
+  "generations": [
+    {
+      "prompt": "Python dasturlash tili",
+      "prompt_tokens": 3,
+      "Umid": {
+        "greedy": " sifatida amalga oshirilishi mumkin va butun sonlar uchun ozgartirish yoki qayta ishlash uchun ishlatiladi py pyga yonaltirilgan dasturlash tillarida yozilgan koddagi versiyalar ham mavjud ammo u c yoki boshqa bir nechta tenglik munosabatlariga ega mantiqiy ifodalarga ruxsat beradi masalan ifoda dan kichik va undan",
+        "sampled": " pythondan ilhomlangan sintaksisga egalilik bir qatorda joylashgani uchun uning python kodi ham birinchi marta 2023yil 19aprelda asl nusxadan arxivlangan 2021yil 26martda olindi cve cve20213176 cvemitreorg 202"
+      },
+      "Transformer": {
+        "greedy": "dir ayniqsa protsessual obektga yonaltirilgan dasturlash tillarida yozish va funktsional dasturlash tillarini solishtiroga asoslangan dasturlash tili sifatida standart kutubxonasi tufayli u kopincha batareyalar bilan birgalikda hisoblash uchun eng yaxshilanish amaliyoti tcl 227 erlangnet ga kompilyatsiya",
+        "sampled": "dir ilidamiBir oz jalb qilganimmasiga mos kelish istemirma kapazilini okki uchun joga kerak bolganda uning sharqasiga olib bor edi Yuqoridagi ulkan quroldan foydalanish"
+      }
+    },
+    {
+      "prompt": "Bobur Hayitov Sun'iy intellekt nima AI SI",
+      "prompt_tokens": 12,
+      "Umid": {
+        "greedy": " Bu savolga aniq javob yoq chunki axloqiy talqinlar va yaxshilanishlarni yigiladi 284 AIning asosiy qismi sifatida taqdim etadi nomida mobil yoki pythonning cheklangan kichik ekanligini anglatadi 103 ammo koplab platformalar uchun mavjud edi jumladan llint sh",
+        "sampled": " Qismanmi Mullasni boshlagan bolsa ogiz qabrib qoli  dedi mehmon yoq Bobur Hayitov Agar koinotdan songaholiga ega bolib osib tashqaradilar Men ham mumkin emasligi bu hayotning eng muhimim"
+      },
+      "Transformer": {
+        "greedy": " Bu savolga javob berish uchun javobgargan javob yoq chunki bu esa oz qadriyatning maqsadi va manaviy kapi yoq chunki u hayotning eng yaxshi usuli odamni tushunishimiz mumkin Bobur Hayitov Agar bizga jinsiy aloqa osimlik his",
+        "sampled": " Bu savolga javob berish uchun javobgargan javobgardir Biroq ular kopincha kelayotganligi bilan bogliq Bobur Hayitov Bizning maqsadi va butun hayotimizni ozimiz kerakmi yoki undan ortiqcha insoniyatlariga asoslanib bor va qiziqtirish yoqolashdan"
+      }
+    },
+    {
+      "prompt": "Bir kuni kampir",
+      "prompt_tokens": 3,
+      "Umid": {
+        "greedy": "ni hammishlab kurrdim borayotgandek bu odam deb oyladi u yoqqa berar edikgan bir kishilaming ketadi Boqijon Baqoyevning fikri bor Men yaxshi bo'ldik Mehmonxona olaman dedi",
+        "sampled": "lardan biri edi XSSni bu vinaga bormaydi ular kopincha kesib turadi U bir qatorga kirdi Shu bolib olaman dedi mehmonxona yoshi bilan ariq yoq edikizil qoyiladi Himmeninglab kor"
+      },
+      "Transformer": {
+        "greedy": "ning tagli tini tingni istagi borku  dedi mehmonxonasidagi yaxshi ketiga olib bordim Jiyanimning kozlarini birmadim mehmonni qamashdi yarqirab turgan tomonga birdan keyin mehmonnidan turdi",
+        "sampled": "ning bosh tinig‘li chindan kechirdi. Faqat qattiq bir amal qilish, qolimga ko‘raydida butun royxatga mos kelgan o'z tarzida qochib ketar oldi va erkinligi uchun fikrlar, modellashtir"
+      }
+    },
+    {
+      "prompt": "Inson hayotida eng muhim narsa",
+      "prompt_tokens": 7,
+      "Umid": {
+        "greedy": " borligini bilmagan holda bu odam nega uning hidini yoqotganda olaman dedi uqishingizdagi hamma narsa bori tomonidagi temirladi Katta portlashicha koproq sovushiga qaramay hali hamishor qil",
+        "sampled": "lardan biri emas balki satrlar bu hayotga olib kelishini elon qiladi Bobur Hayitov Bizning maqsadi va hissiy aloqalari bilan rivojlantirish AI SI Vaqt otishi mumkin Biroq falsafiy odamlar inson qatiy voqealar bilan inson uchun fikrning ozida bizga"
+      },
+      "Transformer": {
+        "greedy": "lar uchun odam bolgan maʼnanaviy kulbalar guruhiginingdir va bu yerda boladigan boʻlsa qoshgan matndagi maʼlumotlarga ega bolish mumkin Masalan virtual jihatdan haqiqiy dunyo dasturlarining aksariyati bir xilmasida ushbu soh",
+        "sampled": "larning ozgartirilgan rivojlantirolanish joylarida rivojlangan maʼlumotlar toʻliq har bir qator iteratorning ishlashiga qoʻshiladi va ular orqali yangi uslublarga ega bolishi mumkin Xulosa chiqarish uchun yaratilgan Buyuk Britaniya va Farman koplab xususiyatlarining boshqa tillar"
+      }
+    },
+    {
+      "prompt": "Salom",
+      "prompt_tokens": 2,
+      "Umid": {
+        "greedy": " Bilace JITetty Demy Perl Creative Commons Attribution 40 InternationalC dasturlash tili NET Framework va Visual Studio 2017 versiyasi 155 59C da yangi xususiyatlarC 7041 p",
+        "sampled": " BILEBSICIXXA GAPLARDreyfus NatijahonaCiya Misks Sophechmarking Qolgiz bilan birgalikda Microsoft va forumbotten Xitch Press 201"
+      },
+      "Transformer": {
+        "greedy": "MATILOBELCLConcurrentSinalla Sun MulkalkSimulahilliyatli suniy intellektSaytlararoitilgan va Solaninglang kabi koplab",
+        "sampled": " Shehey L y Kaner MurringHelpingOnegiers Geambolgiz borishaktin Yoshkiy qichqiruvlaroridagi toglar otadiArhul"
+      }
+    },
+    {
+      "prompt": "[val matnidan 1536 tokenli kontekst] … 15noyabrda asl nusxadan arxivlangan 2018yil 30mayda olingan scikitlearndan kim foydalanmoqda scikitlearn 020",
+      "prompt_tokens": 1536,
+      "Umid": {
+        "greedy": "2 hujjatlari wwwnline 2007 yil 4 dekabr pep 333 python 312 shuningdek pythonni yuklab oling pythonorg asl nusxadan arxivlangan 2020yil 4iyun 2019yil 16oktabrda olindi pep 8103 python 27 ning oxirgi versiyasi edi 36 python takomillashtirish",
+        "sampled": "2 hujjatlari docspythonorg 2011yil 17oktabrda asl nusxadan arxivlangan 2021yil 24avgustda olingan round python standart kutubxonasi nashr 27 2 ornatilgan funksiyalar 2012yil 26fevralda asl nusxadan arxivlangan 2011yil 25fevralda olindi langa lukasz 2022yil"
+      },
+      "Transformer": {
+        "greedy": "21 Olingan 2023 yil 24 fevral 2012 yil 1 yanvarda olindi pep 37388 biblogspythonication pythonorg 2020yil 17mayda olingan python 271 hujjatlari docspythonorg 2017yil 26dekabrda asl nusxadan arxivlangan 2018yil 3dekabrda olingan",
+        "sampled": "2021 Olingan 2011102 da topilgan na fakun runtime asosida qurilishini ewe 2007 yil 24may pep 1 yillik relizlar yaratuvchi xususiyatlarining rasmiy ombahda ozgartirildi coffeeees"
+      }
+    }
+  ]
+}

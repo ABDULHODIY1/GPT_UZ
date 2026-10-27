@@ -1,0 +1,28 @@
+{
+  "args": {
+    "task": "s3",
+    "models": "umid-frame",
+    "steps": 2000,
+    "lr": 0.001,
+    "seed": 0,
+    "threads": 1,
+    "tag": "frame"
+  },
+  "models": {
+    "umid-frame": {
+      "params": 108176,
+      "train_loss": 1.3655237174034118,
+      "sec_per_step": 0.42971588599681854,
+      "acc": {
+        "uzunlik 32": 0.36724853515625,
+        "uzunlik 64": 0.2669677734375,
+        "uzunlik 128": 0.217193603515625
+      },
+      "acc_last": {
+        "uzunlik 32": 0.15625,
+        "uzunlik 64": 0.1796875,
+        "uzunlik 128": 0.154296875
+      }
+    }
+  }
+}

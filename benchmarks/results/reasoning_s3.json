@@ -1,0 +1,87 @@
+{
+  "args": {
+    "task": "s3",
+    "models": "gpt,umid,umid-w2,umid-loop2,umid-opt",
+    "steps": 2000,
+    "lr": 0.001,
+    "seed": 0,
+    "threads": 1
+  },
+  "models": {
+    "gpt": {
+      "params": 107200,
+      "train_loss": 1.5203571653366088,
+      "sec_per_step": 0.04204638159275055,
+      "acc": {
+        "uzunlik 32": 0.27923583984375,
+        "uzunlik 64": 0.225921630859375,
+        "uzunlik 128": 0.198333740234375
+      },
+      "acc_last": {
+        "uzunlik 32": 0.19140625,
+        "uzunlik 64": 0.166015625,
+        "uzunlik 128": 0.1640625
+      }
+    },
+    "umid": {
+      "params": 108300,
+      "train_loss": 1.0072902870178222,
+      "sec_per_step": 0.09478426539897919,
+      "acc": {
+        "uzunlik 32": 0.41473388671875,
+        "uzunlik 64": 0.30950927734375,
+        "uzunlik 128": 0.2376708984375
+      },
+      "acc_last": {
+        "uzunlik 32": 0.279296875,
+        "uzunlik 64": 0.185546875,
+        "uzunlik 128": 0.18359375
+      }
+    },
+    "umid-w2": {
+      "params": 107536,
+      "train_loss": 0.8449514615535736,
+      "sec_per_step": 0.1359432100057602,
+      "acc": {
+        "uzunlik 32": 0.5062255859375,
+        "uzunlik 64": 0.370269775390625,
+        "uzunlik 128": 0.2646636962890625
+      },
+      "acc_last": {
+        "uzunlik 32": 0.328125,
+        "uzunlik 64": 0.142578125,
+        "uzunlik 128": 0.185546875
+      }
+    },
+    "umid-loop2": {
+      "params": 108428,
+      "train_loss": 1.1905272912979126,
+      "sec_per_step": 0.17899020862579346,
+      "acc": {
+        "uzunlik 32": 0.46588134765625,
+        "uzunlik 64": 0.318450927734375,
+        "uzunlik 128": 0.2414703369140625
+      },
+      "acc_last": {
+        "uzunlik 32": 0.1484375,
+        "uzunlik 64": 0.1875,
+        "uzunlik 128": 0.1640625
+      }
+    },
+    "umid-opt": {
+      "params": 108428,
+      "train_loss": 0.9661206817626953,
+      "sec_per_step": 0.3651596276760101,
+      "acc": {
+        "uzunlik 32": 0.4185791015625,
+        "uzunlik 64": 0.315185546875,
+        "uzunlik 128": 0.2397918701171875
+      },
+      "acc_last": {
+        "uzunlik 32": 0.3125,
+        "uzunlik 64": 0.171875,
+        "uzunlik 128": 0.162109375
+      }
+    }
+  }
+}

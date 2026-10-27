@@ -1,0 +1,60 @@
+# Nazorat savoli → o'qitishdagi asl savol (javobi etalon sifatida olinadi). qa_nll.py uchun.
+O'zbekistonning bosh shahri qaysi? | O'zbekistonning poytaxti qaysi shahar?
+Seni kim yasagan? | Seni kim yaratgan?
+Ismingni ayt | Isming nima?
+Quyosh tizimida nechta sayyora mavjud? | Quyosh tizimida nechta sayyora bor?
+Suvning qaynash harorati qancha? | Suv necha gradusda qaynaydi?
+Haftaning kunlari qaysilar? | Hafta kunlarini sanab ber
+Yil necha oydan iborat? | Yilda nechta oy bor?
+Sun'iy intellekt haqida tushuntir | Sun'iy intellekt nima?
+Python tilini kim yaratgan? | Pythonni kim yaratgan?
+Qanday qilib sog'lom yashash mumkin? | Sog'lom bo'lish uchun nima qilish kerak?
+Necha soat uxlashim kerak? | Kuniga necha soat uxlash kerak?
+Amir Temur haqida gapir | Amir Temur kim?
+Navro'z bayrami qachon? | Navro'z qachon nishonlanadi?
+Samarqandda qanday yodgorliklar bor? | Samarqanddagi mashhur joylar qaysilar?
+Mars qanday sayyora? | Mars haqida gapirib ber
+Bir yilda necha kun bor? | Yilda necha kun bor?
+Assalomu alaykum, yaxshimisiz? | Assalomu alaykum, qalaysiz?
+Fotosintez haqida tushuntir | Fotosintez nima?
+Alisher Navoiy qanday asar yozgan? | Navoiyning eng mashhur asari qaysi?
+Kitob o'qish nima beradi? | Kitob o'qishning foydasi nima?
+Pulni qanday tejasam bo'ladi? | Qanday qilib pul tejash mumkin?
+O'zbekiston qachon mustaqillikka erishdi? | O'zbekiston qachon mustaqil bo'lgan?
+Mustaqillik bayrami qaysi kuni? | Mustaqillik kuni qachon nishonlanadi?
+Osh qanday tayyorlanadi? | Palov qanday tayyorlanadi?
+Quyosh tizimidagi eng yirik sayyora qanday nomlanadi? | Eng katta sayyora qaysi?
+Bir soat necha daqiqadan iborat? | Bir soatda necha daqiqa bor?
+Ingliz tilini qanday o'rgansam bo'ladi? | Ingliz tilini qanday tez o'rganish mumkin?
+Dasturlashni o'rganmoqchiman, nimadan boshlay? | Dasturlashni nimadan boshlash kerak?
+Uchburchakning burchaklari yig'indisi qancha? | Uchburchak burchaklari yig'indisi necha gradus?
+Kit qanday hayvon? | Kit baliqmi?
+Toshkent qaysi daryo vodiysida joylashgan? | Toshkent qayerda joylashgan?
+O'zbekistonning qo'shni davlatlari qaysilar? | O'zbekiston qaysi davlatlar bilan chegaradosh?
+O'zbekistonda qaysi valyuta ishlatiladi? | O'zbekistonning pul birligi nima?
+Ulug'bek nima bilan mashhur? | Mirzo Ulug'bek kim bo'lgan?
+Ibn Sinoning mashhur kitobi qaysi? | Ibn Sino kim?
+Algebra so'zi kimning nomi bilan bog'liq? | Al-Xorazmiy kim?
+Bobur qayerda tug'ilgan? | Zahiriddin Muhammad Bobur kim?
+Oyning o'zi yorug'lik chiqaradimi? | Oy nima?
+Merkuriy haqida nima bilasan? | Quyoshga eng yaqin sayyora qaysi?
+Havoning qancha qismi kislorod? | Havo nimalardan iborat?
+Osmon nega ko'k rangda? | Nima uchun osmon ko'k?
+Kamalakda nechta rang bor? | Kamalak nima?
+Odam tanasida qancha suyak bor? | Katta odamda nechta suyak bor?
+Yurakning vazifasi nima? | Inson yuragi nima vazifani bajaradi?
+Everest qanday tog'? | Eng baland tog' qaysi?
+Okeanlarning eng kattasi qaysi? | Eng katta okean qaysi?
+RAM nima? | Operativ xotira nima?
+Kompyuterning miyasi nima? | Protsessor nima?
+Ishonchli parol qanday tuziladi? | Kuchli parol qanday bo'lishi kerak?
+Sutka necha soatdan iborat? | Bir kunda necha soat bor?
+Qishda qaysi oylar bo'ladi? | Qish oylari qaysilar?
+Bir kilometr necha metrga teng? | Bir kilometrda necha metr bor?
+7 ni 6 ga ko'paytirsak qancha bo'ladi? | 6 ko'paytiruv 7 necha?
+Tishni qanday asrash kerak? | Tishlarni qanday parvarish qilish kerak?
+Shamollaganda nima qilish kerak? | Shamollasam nima qilay?
+Kayfiyatni ko'tarish uchun nima qilay? | Kayfiyatim yomon
+Gepard qanchalik tez yuguradi? | Eng tez yuguradigan hayvon qaysi?
+Ipak nimadan olinadi? | Ipak qanday olinadi?
+Seni yaratgan odam kim? | Seni kim yaratdi?

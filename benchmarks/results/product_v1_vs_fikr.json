@@ -1,0 +1,22 @@
+{
+  "protocol": "python train.py (standart: tiny, 256 token, 600 qadam), butun val to'plami, eng yaxshi checkpoint",
+  "val_loss_256": {
+    "v1 (n_reads=1)": {
+      "1337": 4.0411,
+      "1": 4.1087,
+      "2": 4.0598
+    },
+    "fikr (n_reads=2)": {
+      "1337": 4.3021,
+      "1": 4.2246,
+      "2": 4.1547
+    },
+    "fikr, read_mix_init=2": {
+      "1337": 4.2042
+    },
+    "fikr, read_mix_init=4": {
+      "1337": 4.1547
+    }
+  },
+  "xulosa": "256 tokenli o'qitishda n_reads=2 uchala juftlangan seed'da yomonroq (o'rtacha +0.16 nat), shuning uchun standart n_reads=1"
+}

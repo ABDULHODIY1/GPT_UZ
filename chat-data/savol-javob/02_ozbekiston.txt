@@ -1,0 +1,113 @@
+Savol: O'zbekistonning poytaxti qaysi shahar?
+Javob: O'zbekistonning poytaxti Toshkent shahri. Toshkent O'rta Osiyodagi eng katta shaharlardan biri.
+
+Savol: Toshkent qayerda joylashgan?
+Javob: Toshkent O'zbekistonning shimoli-sharqida, Chirchiq daryosi vodiysida joylashgan.
+
+Savol: O'zbekiston qachon mustaqil bo'lgan?
+Javob: O'zbekiston 1991-yil 1-sentabrda mustaqillikka erishgan. Shuning uchun 1-sentabr Mustaqillik kuni sifatida nishonlanadi.
+
+Savol: Mustaqillik kuni qachon nishonlanadi?
+Javob: Mustaqillik kuni har yili 1-sentabrda nishonlanadi.
+
+Savol: O'zbekistonda nechta viloyat bor?
+Javob: O'zbekistonda 12 ta viloyat, Qoraqalpog'iston Respublikasi va Toshkent shahri bor.
+
+Savol: O'zbekistonning viloyatlarini sanab ber
+Javob: Andijon, Buxoro, Farg'ona, Jizzax, Xorazm, Namangan, Navoiy, Qashqadaryo, Samarqand, Sirdaryo, Surxondaryo va Toshkent viloyatlari. Bundan tashqari Qoraqalpog'iston Respublikasi va Toshkent shahri bor.
+
+Savol: O'zbekistonning davlat tili qaysi?
+Javob: O'zbekistonning davlat tili o'zbek tili.
+
+Savol: O'zbekistonning pul birligi nima?
+Javob: O'zbekistonning milliy valyutasi so'm.
+
+Savol: O'zbekiston qaysi qit'ada joylashgan?
+Javob: O'zbekiston Osiyo qit'asida, Markaziy Osiyoning markazida joylashgan.
+
+Savol: O'zbekiston qaysi davlatlar bilan chegaradosh?
+Javob: O'zbekiston Qozog'iston, Qirg'iziston, Tojikiston, Afg'oniston va Turkmaniston bilan chegaradosh.
+
+Savol: O'zbekiston dengizga chiqa oladimi?
+Javob: Yo'q. O'zbekiston dengizga chiqish yo'li yo'q davlat, uning qo'shnilari ham dengizga chiqa olmaydi. Bunday davlatlar dunyoda juda kam.
+
+Savol: O'zbekistonning eng katta daryolari qaysilar?
+Javob: O'zbekistonning eng katta daryolari Amudaryo va Sirdaryo.
+
+Savol: Orol dengizi haqida gapirib ber
+Javob: Orol dengizi O'zbekiston va Qozog'iston chegarasida joylashgan. U bir vaqtlar dunyodagi eng katta ko'llardan biri edi, lekin daryo suvlari sug'orishga olingani sababli kuchli qurib qoldi. Bu katta ekologik muammo.
+
+Savol: O'zbekistonning eng baland nuqtasi qaysi?
+Javob: O'zbekistonning eng baland nuqtasi Hisor tog'larida joylashgan Hazrati Sulton cho'qqisi, uning balandligi taxminan 4643 metr.
+
+Savol: O'zbekistonda qanday tarixiy shaharlar bor?
+Javob: Samarqand, Buxoro, Xiva va Shahrisabz O'zbekistonning eng mashhur tarixiy shaharlari. Ular Buyuk Ipak yo'li ustida joylashgan.
+
+Savol: Samarqand haqida gapirib ber
+Javob: Samarqand O'zbekistonning eng qadimiy shaharlaridan biri. U Amir Temur davlatining poytaxti bo'lgan. Registon maydoni, Bibixonim masjidi va Go'ri Amir maqbarasi shu yerda joylashgan.
+
+Savol: Registon maydoni qayerda?
+Javob: Registon maydoni Samarqand shahrida. U uchta madrasa: Ulug'bek, Sherdor va Tillakori madrasalaridan iborat.
+
+Savol: Buxoro haqida gapirib ber
+Javob: Buxoro qadimiy savdo va ilm markazi bo'lgan shahar. Ark qal'asi, Minorai Kalon va Ismoil Somoniy maqbarasi uning mashhur yodgorliklari.
+
+Savol: Xiva haqida nima bilasan?
+Javob: Xiva Xorazm viloyatidagi qadimiy shahar. Uning ichki qismi Ichan qal'a deb ataladi va devorlar bilan o'ralgan ochiq osmon ostidagi muzeyga o'xshaydi.
+
+Savol: Amir Temur kim?
+Javob: Amir Temur 1336-1405-yillarda yashagan buyuk davlat arbobi va sarkarda. U poytaxti Samarqand bo'lgan katta davlat barpo etgan.
+
+Savol: Alisher Navoiy kim?
+Javob: Alisher Navoiy 1441-1501-yillarda yashagan buyuk shoir va mutafakkir. U o'zbek adabiyotining asoschisi hisoblanadi. "Xamsa" uning eng mashhur asaridir.
+
+Savol: Mirzo Ulug'bek kim bo'lgan?
+Javob: Mirzo Ulug'bek Amir Temurning nabirasi, buyuk astronom va hukmdor. U Samarqandda rasadxona qurdirgan va yulduzlar jadvalini tuzgan.
+
+Savol: Ibn Sino kim?
+Javob: Abu Ali ibn Sino Buxoro yaqinida tug'ilgan buyuk olim va tabib. Uning "Tib qonunlari" asari ko'p asrlar davomida tibbiyot darsligi bo'lgan.
+
+Savol: Al-Xorazmiy kim?
+Javob: Muhammad al-Xorazmiy Xorazmda tug'ilgan buyuk matematik. "Algebra" va "algoritm" so'zlari uning ismi va asari bilan bog'liq.
+
+Savol: Zahiriddin Muhammad Bobur kim?
+Javob: Bobur Andijonda tug'ilgan shoir va hukmdor. U Hindistonda Boburiylar sulolasiga asos solgan. "Boburnoma" uning mashhur asaridir.
+
+Savol: O'zbekistonning milliy taomi nima?
+Javob: O'zbekistonning eng mashhur milliy taomi palov, ya'ni osh. Bundan tashqari somsa, manti, lag'mon, sho'rva va non ham sevimli taomlar.
+
+Savol: Palov qanday tayyorlanadi?
+Javob: Palov uchun qozonda yog' qizdiriladi, go'sht va piyoz qovuriladi, keyin sabzi qo'shiladi. Ziravor va suv solib zirvak tayyorlanadi, so'ng guruch solinib dam beriladi.
+
+Savol: Navro'z qachon nishonlanadi?
+Javob: Navro'z har yili 21-martda nishonlanadi. Bu bahor va yangi kun bayrami, unda sumalak pishiriladi.
+
+Savol: Sumalak nima?
+Javob: Sumalak Navro'z bayramida undirilgan bug'doydan tayyorlanadigan shirin taom. U uzoq vaqt qozonda qaynatiladi.
+
+Savol: O'zbekiston bayrog'i qanday ranglardan iborat?
+Javob: O'zbekiston bayrog'ida ko'k, oq va yashil rangli uchta keng yo'l va ular orasida ingichka qizil chiziqlar bor. Ko'k yo'lda oy va 12 ta yulduz tasvirlangan.
+
+Savol: O'zbekiston aholisi qancha?
+Javob: O'zbekiston aholisi 36 milliondan ortiq. U Markaziy Osiyodagi eng ko'p aholiga ega davlat.
+
+Savol: Chorvoq qayerda?
+Javob: Chorvoq suv ombori Toshkent viloyatida, tog'lar orasida joylashgan. U dam olish uchun mashhur joy.
+
+Savol: Farg'ona vodiysi haqida gapir
+Javob: Farg'ona vodiysi tog'lar bilan o'ralgan unumdor hudud. Unda Andijon, Namangan va Farg'ona viloyatlari joylashgan. Vodiy aholisi zich va dehqonchilik rivojlangan.
+
+Savol: Buyuk Ipak yo'li nima?
+Javob: Buyuk Ipak yo'li qadimda Xitoyni O'rta Osiyo orqali Yevropa bilan bog'lagan savdo yo'llari tarmog'i. Samarqand va Buxoro bu yo'ldagi muhim shaharlar bo'lgan.
+
+Savol: O'zbekistonda qanday iqlim bor?
+Javob: O'zbekistonda keskin kontinental iqlim: yozi issiq va quruq, qishi sovuq. Yog'ingarchilik asosan bahor va qishda bo'ladi.
+
+Savol: O'zbekistonda qanday mevalar yetishtiriladi?
+Javob: O'zbekistonda uzum, qovun, tarvuz, anor, olma, o'rik, shaftoli va gilos kabi ko'plab shirin mevalar yetishtiriladi.
+
+Savol: O'zbekistonning gerbida nima tasvirlangan?
+Javob: O'zbekiston gerbida qanotlarini yoygan Xumo qushi, quyosh, tog'lar, daryolar, bug'doy boshoqlari va paxta tasvirlangan.
+
+Savol: O'zbek tilida qanday alifbo ishlatiladi?
+Javob: Hozir o'zbek tilida lotin alifbosi asosidagi yozuv ishlatiladi. Kirill alifbosi ham hali keng qo'llaniladi.

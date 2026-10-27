@@ -1,0 +1,33 @@
+# O'qitishda BO'LMAGAN savollar (boshqacha so'z bilan). Format: savol | kutilgan kalit so'z(lar)
+# "/" — muqobillardan biri yetarli, "&" — hammasi bo'lishi shart. Kalitlar boshqa savollarning javobida
+# tasodifan uchramaydigan qilib tanlangan (masalan "1991" Python javobida ham bor, shuning uchun "1991&sentabr").
+O'zbekistonning bosh shahri qaysi? | Toshkent
+Seni kim yasagan? | Abdulhodiy
+Ismingni ayt | Umid
+Quyosh tizimida nechta sayyora mavjud? | 8 ta/sakkiz
+Suvning qaynash harorati qancha? | 100 gradus
+Haftaning kunlari qaysilar? | dushanba
+Yil necha oydan iborat? | 12 ta oy/12 oy/o'n ikki oy
+Sun'iy intellekt haqida tushuntir | inson aql
+Python tilini kim yaratgan? | Gvido/Rossum
+Qanday qilib sog'lom yashash mumkin? | uxla/ovqat/harakat/sport
+Necha soat uxlashim kerak? | 7-9/7 soat/8 soat/9 soat
+Amir Temur haqida gapir | sarkarda/1336
+Navro'z bayrami qachon? | mart
+Samarqandda qanday yodgorliklar bor? | Registon/Bibixonim/Go'ri
+Mars qanday sayyora? | qizil/temir
+Bir yilda necha kun bor? | 365
+Assalomu alaykum, yaxshimisiz? | alaykum/yaxshi/rahmat
+Fotosintez haqida tushuntir | o'simlik/kislorod
+Alisher Navoiy qanday asar yozgan? | Xamsa/shoir
+Kitob o'qish nima beradi? | bilim/so'z boyligi/fikrlash
+Pulni qanday tejasam bo'ladi? | xarajat/jamg'ar/daromad
+O'zbekiston qachon mustaqillikka erishdi? | 1991&sentabr
+Mustaqillik bayrami qaysi kuni? | 1-sentabr
+Osh qanday tayyorlanadi? | guruch/sabzi/go'sht
+Quyosh tizimidagi eng yirik sayyora qanday nomlanadi? | Yupiter
+Bir soat necha daqiqadan iborat? | 60 daqiqa/60 minut
+Ingliz tilini qanday o'rgansam bo'ladi? | so'z/har kuni/mashq
+Dasturlashni o'rganmoqchiman, nimadan boshlay? | Python
+Uchburchakning burchaklari yig'indisi qancha? | 180
+Kit qanday hayvon? | sut emizuvchi/o'pka
