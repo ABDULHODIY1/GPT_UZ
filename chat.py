@@ -96,8 +96,8 @@ def main():
             size = UmidLM.state_bytes(states) if states else 0
             print(f"Suhbatda {n_tokens} token o'qildi; xotira hajmi {size / 1024:.1f} KB (o'zgarmas).")
             continue
-        # Data.txt formati: "savol javob" bitta qatorda, har bir juftlik yangi qatordan.
-        text = ("\n" if states is not None else "") + user + " "
+        # O'qitish formati (chat-data/savol-javob): "Savol: …\nJavob: …", juftliklar bo'sh qator bilan ajratilgan.
+        text = ("\n\n" if states is not None else "") + f"Savol: {user}\nJavob:"
         ids = torch.tensor([tok.encode(text)], device=args.device)
         print("Umid: ", end="", flush=True)
         new, states = model.generate(ids, args.max_new_tokens, states=states,

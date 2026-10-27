@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import os
+import re
 from pathlib import Path
 
 import torch
@@ -11,18 +12,53 @@ import torch
 from .tokenizer import EOT, BPETokenizer
 
 
-def read_corpus(path) -> str:
-    """Bitta .txt fayl yoki papkadagi barcha .txt fayllar (hujjatlar orasiga EOT qo'yiladi)."""
-    p = Path(path)
-    files = sorted(p.rglob("*.txt")) if p.is_dir() else [p]
-    if not files:
-        raise FileNotFoundError(f"{path} ichida .txt fayl topilmadi")
-    return EOT.join(f.read_text(encoding="utf-8") for f in files)
+_JUNK = re.compile(r"arxivlangan|olindi|archived|retrieved|isbn|doi|https?|www|\.org|\.com|\.net", re.I)
+_ENGLISH = {"the", "and", "of", "to", "in", "is", "for", "on", "with", "from", "by", "as", "that", "this",
+            "an", "are", "be", "or", "it", "at", "was", "which", "were", "has", "its"}
+_GLUED = re.compile(r"(?<=[a-zʼ‘'’])(?=[A-Z][a-z])")
 
 
-def prepare_tokens(data_path, tokenizer_path, vocab_size=4096, verbose=True):
+def clean_text(text, window=30, max_junk=0.25):
+    """Korpusni tozalash: yopishib qolgan so'zlarni ajratadi ("otishRivojlanish" → "otish Rivojlanish")
+    va chiqindi zichligi yuqori bo'laklarni (manbalar ro'yxati, yillar, URL, inglizcha matn) olib tashlaydi."""
+    out_lines = []
+    for line in text.split("\n"):
+        words = _GLUED.sub(" ", line).split()
+        kept = []
+        for i in range(0, len(words), window):
+            chunk = words[i:i + window]
+            junk = sum(bool(_JUNK.search(w)) or any(c.isdigit() for c in w) or w.lower() in _ENGLISH for w in chunk)
+            if junk / len(chunk) < max_junk:
+                kept.extend(chunk)
+        if kept:
+            out_lines.append(" ".join(kept))
+    return "\n".join(out_lines)
+
+
+def read_corpus(path, clean=False) -> str:
+    """Korpusni o'qish. path — .txt fayl, .txt fayllar papkasi yoki vergul bilan ajratilgan ro'yxat.
+    Har bir element oxirida: `!` — shu manbani tozalash (clean_text), `*N` — N marta takrorlash.
+    Masalan: "chat-data/Data.txt!,chat-data/savol-javob*8". clean=True barcha manbalarni tozalaydi.
+    Hujjatlar orasiga EOT qo'yiladi."""
+    texts = []
+    for spec in str(path).split(","):
+        spec = spec.strip()
+        do_clean = clean or spec.endswith("!")
+        spec, _, rep = spec.rstrip("!").partition("*")
+        p = Path(spec)
+        files = sorted(p.rglob("*.txt")) if p.is_dir() else [p]
+        if not files:
+            raise FileNotFoundError(f"{spec} ichida .txt fayl topilmadi")
+        part = [f.read_text(encoding="utf-8") for f in files]
+        if do_clean:
+            part = [clean_text(t) for t in part]
+        texts.extend(part * int(rep or 1))
+    return EOT.join(texts)
+
+
+def prepare_tokens(data_path, tokenizer_path, vocab_size=4096, verbose=True, clean=False):
     """Tokenizer'ni o'qitadi (yoki mavjudini yuklaydi) va korpusni tokenlaydi (keshlab)."""
-    text = read_corpus(data_path)
+    text = read_corpus(data_path, clean=clean)
     tokenizer_path = Path(tokenizer_path)
     if tokenizer_path.exists():
         tok = BPETokenizer.load(tokenizer_path)
@@ -33,7 +69,7 @@ def prepare_tokens(data_path, tokenizer_path, vocab_size=4096, verbose=True):
         tokenizer_path.parent.mkdir(parents=True, exist_ok=True)
         tok.save(tokenizer_path)
     cache = tokenizer_path.with_suffix(".tokens.pt")
-    stamp = (str(Path(data_path).resolve()), len(text), tok.vocab_size)
+    stamp = (str(data_path), len(text), tok.vocab_size, clean)
     if cache.exists():
         saved = torch.load(cache, weights_only=False)
         if saved.get("stamp") == stamp:

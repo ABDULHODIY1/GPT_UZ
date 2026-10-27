@@ -1,0 +1,137 @@
+Savol: Haftada necha kun bor?
+Javob: Haftada 7 kun bor: dushanba, seshanba, chorshanba, payshanba, juma, shanba va yakshanba.
+
+Savol: Hafta kunlarini sanab ber
+Javob: Dushanba, seshanba, chorshanba, payshanba, juma, shanba va yakshanba.
+
+Savol: Dushanbadan keyin qaysi kun keladi?
+Javob: Dushanbadan keyin seshanba keladi.
+
+Savol: Jumadan keyin qaysi kun keladi?
+Javob: Jumadan keyin shanba keladi.
+
+Savol: Yakshanbadan keyin qaysi kun keladi?
+Javob: Yakshanbadan keyin dushanba keladi va yangi hafta boshlanadi.
+
+Savol: Yilda nechta oy bor?
+Javob: Yilda 12 ta oy bor.
+
+Savol: Oylarni sanab ber
+Javob: Yanvar, fevral, mart, aprel, may, iyun, iyul, avgust, sentabr, oktabr, noyabr va dekabr.
+
+Savol: Yilning birinchi oyi qaysi?
+Javob: Yilning birinchi oyi yanvar.
+
+Savol: Yilning oxirgi oyi qaysi?
+Javob: Yilning oxirgi oyi dekabr.
+
+Savol: Yilda necha kun bor?
+Javob: Oddiy yilda 365 kun, kabisa yilida esa 366 kun bor.
+
+Savol: Kabisa yili nima?
+Javob: Kabisa yilida fevral oyi 29 kun bo'ladi va yilda 366 kun bo'ladi. Odatda u har to'rt yilda bir marta keladi.
+
+Savol: Fevralda necha kun bor?
+Javob: Fevralda odatda 28 kun, kabisa yilida esa 29 kun bo'ladi.
+
+Savol: Yilda nechta fasl bor?
+Javob: Yilda to'rtta fasl bor: bahor, yoz, kuz va qish.
+
+Savol: Bahor oylari qaysilar?
+Javob: Bahor oylari mart, aprel va may.
+
+Savol: Yoz oylari qaysilar?
+Javob: Yoz oylari iyun, iyul va avgust.
+
+Savol: Kuz oylari qaysilar?
+Javob: Kuz oylari sentabr, oktabr va noyabr.
+
+Savol: Qish oylari qaysilar?
+Javob: Qish oylari dekabr, yanvar va fevral.
+
+Savol: Bir kunda necha soat bor?
+Javob: Bir kunda 24 soat bor.
+
+Savol: Bir soatda necha daqiqa bor?
+Javob: Bir soatda 60 daqiqa bor.
+
+Savol: Bir daqiqada necha soniya bor?
+Javob: Bir daqiqada 60 soniya bor.
+
+Savol: Bir soatda necha soniya bor?
+Javob: Bir soatda 3600 soniya bor, chunki 60 ni 60 ga ko'paytirsak 3600 bo'ladi.
+
+Savol: Bir haftada necha soat bor?
+Javob: Bir haftada 168 soat bor, chunki 7 kunni 24 soatga ko'paytirsak 168 bo'ladi.
+
+Savol: Bir asrda necha yil bor?
+Javob: Bir asrda 100 yil bor.
+
+Savol: 2 qo'shuv 2 necha bo'ladi?
+Javob: 2 qo'shuv 2 to'rt bo'ladi.
+
+Savol: 5 qo'shuv 7 necha?
+Javob: 5 qo'shuv 7 o'n ikki bo'ladi.
+
+Savol: 10 ayiruv 3 necha?
+Javob: 10 ayiruv 3 yetti bo'ladi.
+
+Savol: 6 ko'paytiruv 7 necha?
+Javob: 6 ko'paytiruv 7 qirq ikki bo'ladi.
+
+Savol: 9 ko'paytiruv 9 necha?
+Javob: 9 ko'paytiruv 9 sakson bir bo'ladi.
+
+Savol: 100 ni 4 ga bo'lsak necha bo'ladi?
+Javob: 100 ni 4 ga bo'lsak 25 bo'ladi.
+
+Savol: 12 ning yarmi necha?
+Javob: 12 ning yarmi 6.
+
+Savol: Juft son nima?
+Javob: Juft son 2 ga qoldiqsiz bo'linadigan son. Masalan: 2, 4, 6, 8, 10.
+
+Savol: Toq son nima?
+Javob: Toq son 2 ga qoldiqsiz bo'linmaydigan son. Masalan: 1, 3, 5, 7, 9.
+
+Savol: Tub son nima?
+Javob: Tub son faqat 1 ga va o'ziga bo'linadigan, 1 dan katta son. Masalan: 2, 3, 5, 7, 11, 13.
+
+Savol: Eng kichik tub son qaysi?
+Javob: Eng kichik tub son 2. U yagona juft tub son ham.
+
+Savol: Foiz nima?
+Javob: Foiz biror sonning yuzdan bir qismi. Masalan, 200 ning 10 foizi 20 ga teng.
+
+Savol: 50 foiz nima degani?
+Javob: 50 foiz yarmi degani. Masalan, 80 ning 50 foizi 40.
+
+Savol: Uchburchak burchaklari yig'indisi necha gradus?
+Javob: Har qanday uchburchak ichki burchaklarining yig'indisi 180 gradus.
+
+Savol: To'g'ri burchak necha gradus?
+Javob: To'g'ri burchak 90 gradus.
+
+Savol: Kvadratning yuzi qanday topiladi?
+Javob: Kvadratning yuzi tomonini o'ziga ko'paytirib topiladi. Masalan, tomoni 5 bo'lsa, yuzi 25 ga teng.
+
+Savol: To'g'ri to'rtburchakning yuzi qanday topiladi?
+Javob: To'g'ri to'rtburchakning yuzi bo'yini eniga ko'paytirib topiladi.
+
+Savol: Aylana uzunligi qanday topiladi?
+Javob: Aylana uzunligi 2 ko'paytiruv pi ko'paytiruv radius formulasi bilan topiladi. Pi taxminan 3,14 ga teng.
+
+Savol: Pi soni nimaga teng?
+Javob: Pi aylana uzunligining diametriga nisbati, u taxminan 3,14159 ga teng.
+
+Savol: Bir kilometrda necha metr bor?
+Javob: Bir kilometrda 1000 metr bor.
+
+Savol: Bir metrda necha santimetr bor?
+Javob: Bir metrda 100 santimetr bor.
+
+Savol: Bir kilogrammda necha gramm bor?
+Javob: Bir kilogrammda 1000 gramm bor.
+
+Savol: Bir litr necha millilitr?
+Javob: Bir litr 1000 millilitrga teng.

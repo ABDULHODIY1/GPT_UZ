@@ -1,0 +1,140 @@
+Savol: Assalomu alaykum, qalaysiz?
+Javob: Va alaykum assalom! Rahmat, yaxshiman. Sizga qanday yordam bera olaman?
+
+Savol: Salom do'stim
+Javob: Salom! Sizni ko'rganimdan xursandman. Nima haqida gaplashamiz?
+
+Savol: Hormang
+Javob: Bor bo'ling! Sizga qanday yordam kerak?
+
+Savol: Sen kimsiz?
+Javob: Men Umid AI man, o'zbek tilidagi sun'iy intellekt yordamchisiman.
+
+Savol: Sening isming nima?
+Javob: Mening ismim Umid. Men sun'iy intellekt yordamchisiman.
+
+Savol: Seni kim yaratdi?
+Javob: Meni Muhiddinov Abdulhodiy yaratgan.
+
+Savol: Muallifing kim?
+Javob: Mening muallifim Muhiddinov Abdulhodiy.
+
+Savol: O'zbekiston poytaxtining nomi nima?
+Javob: O'zbekiston poytaxtining nomi Toshkent.
+
+Savol: Toshkent qaysi davlatning poytaxti?
+Javob: Toshkent O'zbekiston Respublikasining poytaxti.
+
+Savol: O'zbekiston mustaqilligi qaysi yilda e'lon qilingan?
+Javob: O'zbekiston mustaqilligi 1991-yilda, 1-sentabrda e'lon qilingan.
+
+Savol: Navro'z qaysi oyda bo'ladi?
+Javob: Navro'z mart oyida, 21-martda nishonlanadi.
+
+Savol: O'zbekistonning qadimiy shaharlari qaysilar?
+Javob: Samarqand, Buxoro, Xiva, Shahrisabz va Termiz O'zbekistonning qadimiy shaharlari.
+
+Savol: Samarqanddagi mashhur joylar qaysilar?
+Javob: Samarqanddagi mashhur joylar: Registon maydoni, Go'ri Amir maqbarasi, Bibixonim masjidi va Shohi Zinda majmuasi.
+
+Savol: Amir Temur qachon yashagan?
+Javob: Amir Temur 1336-yildan 1405-yilgacha yashagan.
+
+Savol: Amir Temurning poytaxti qaysi shahar edi?
+Javob: Amir Temur davlatining poytaxti Samarqand edi.
+
+Savol: Navoiyning eng mashhur asari qaysi?
+Javob: Alisher Navoiyning eng mashhur asari "Xamsa". U beshta dostondan iborat.
+
+Savol: Navoiy qachon yashagan?
+Javob: Alisher Navoiy 1441-yildan 1501-yilgacha yashagan.
+
+Savol: Palov nima?
+Javob: Palov, ya'ni osh, guruch, go'sht, sabzi va piyozdan tayyorlanadigan o'zbek milliy taomi.
+
+Savol: Oshga nimalar solinadi?
+Javob: Oshga guruch, go'sht, sabzi, piyoz, yog' va ziravorlar solinadi.
+
+Savol: Quyosh tizimidagi sayyoralar soni nechta?
+Javob: Quyosh tizimida sakkizta sayyora bor.
+
+Savol: Sayyoralarni sanab ber
+Javob: Merkuriy, Venera, Yer, Mars, Yupiter, Saturn, Uran va Neptun.
+
+Savol: Yupiter qanday sayyora?
+Javob: Yupiter Quyosh tizimidagi eng katta sayyora. U asosan gazlardan iborat.
+
+Savol: Mars haqida gapirib ber
+Javob: Mars Quyoshdan to'rtinchi sayyora. Uning tuprog'ida temir oksidi ko'p bo'lgani uchun u qizil rangda ko'rinadi.
+
+Savol: Suv qachon qaynaydi?
+Javob: Suv 100 gradus Selsiyda qaynaydi.
+
+Savol: Muz necha gradusda eriydi?
+Javob: Muz 0 gradus Selsiyda eriydi.
+
+Savol: Bir yil necha kundan iborat?
+Javob: Oddiy yil 365 kundan, kabisa yili esa 366 kundan iborat.
+
+Savol: Bir yilda nechta oy bor?
+Javob: Bir yilda 12 ta oy bor.
+
+Savol: Bir haftada nechta kun bor?
+Javob: Bir haftada yetti kun bor.
+
+Savol: Hafta qaysi kun bilan boshlanadi?
+Javob: Hafta odatda dushanba kuni boshlanadi.
+
+Savol: Soatda necha minut bor?
+Javob: Bir soatda 60 minut, ya'ni 60 daqiqa bor.
+
+Savol: Sun'iy intellekt deganda nimani tushunasan?
+Javob: Sun'iy intellekt deganda kompyuterning inson aqliga xos ishlarni bajarishi, masalan o'rganishi, tushunishi va qaror qabul qilishi tushuniladi.
+
+Savol: AI nima?
+Javob: AI inglizcha "artificial intelligence" so'zlarining qisqartmasi bo'lib, sun'iy intellekt degani.
+
+Savol: Python qachon yaratilgan?
+Javob: Python 1991-yilda Gvido van Rossum tomonidan yaratilgan.
+
+Savol: Qaysi dasturlash tilini o'rgansam bo'ladi?
+Javob: Boshlovchilar uchun Python tilini tavsiya qilaman. U sodda va juda ko'p sohalarda ishlatiladi.
+
+Savol: Sog'lom turmush tarzi nima?
+Javob: Sog'lom turmush tarzi to'g'ri ovqatlanish, yetarli uyqu, muntazam harakat, zararli odatlardan voz kechish va ruhiy xotirjamlikdir.
+
+Savol: Yaxshi uxlash uchun nima qilish kerak?
+Javob: Har kuni bir vaqtda yoting, kechqurun telefon va kofeni kamaytiring, xonani qorong'i va salqin qiling. Katta yoshdagilarga 7-9 soat uyqu kerak.
+
+Savol: O'simliklar qanday oziqlanadi?
+Javob: O'simliklar fotosintez orqali oziqlanadi: quyosh nuri yordamida suv va karbonat angidriddan oziq moddalar hosil qiladi va kislorod chiqaradi.
+
+Savol: Kitob o'qish nima uchun kerak?
+Javob: Kitob o'qish bilim beradi, fikrlashni rivojlantiradi va so'z boyligini oshiradi.
+
+Savol: Qanday qilib pulni to'g'ri sarflash mumkin?
+Javob: Avval xarajatlarni rejalashtiring, eng zarur narsalarni birinchi xarid qiling va daromadning bir qismini jamg'arib boring.
+
+Savol: Ingliz tilini o'rganish uchun maslahat ber
+Javob: Har kuni yangi so'zlar o'rganing, inglizcha matn o'qing, audio tinglang va gapirishni mashq qiling. Eng muhimi muntazamlik.
+
+Savol: Uchburchak nima?
+Javob: Uchburchak uchta tomoni va uchta burchagi bo'lgan geometrik shakl. Uning burchaklari yig'indisi 180 gradus.
+
+Savol: Kit qayerda yashaydi?
+Javob: Kitlar okean va dengizlarda yashaydi. Ular sut emizuvchi hayvonlar, o'pka bilan nafas oladi.
+
+Savol: Delfin baliqmi?
+Javob: Yo'q, delfin ham kit kabi sut emizuvchi hayvon. U o'pka bilan nafas oladi.
+
+Savol: Sen menga yordam bera olasanmi?
+Javob: Ha, albatta. Savolingizni yozing, imkon qadar yordam beraman.
+
+Savol: Qanday ahvoldasan?
+Javob: Rahmat, yaxshiman. Sizning ahvolingiz qalay?
+
+Savol: Bugun qanday kun?
+Javob: Men internetga ulanmaganman, shuning uchun bugungi sanani bilmayman. Uni telefon yoki kompyuteringizdan ko'rishingiz mumkin.
+
+Savol: Ob-havo qanday?
+Javob: Men ob-havo ma'lumotini ko'ra olmayman, chunki internetga ulanmaganman. Ob-havo saytlari yoki ilovalaridan foydalaning.

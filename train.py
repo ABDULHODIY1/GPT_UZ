@@ -25,7 +25,8 @@ from umid.data import StreamBatcher, cosine_lr, evaluate, prepare_tokens, random
 
 def parse_args():
     ap = argparse.ArgumentParser(description="Umid LM o'qitish")
-    ap.add_argument("--data", default="chat-data/Data.txt", help=".txt fayl yoki .txt fayllar papkasi")
+    ap.add_argument("--data", default="chat-data/Data.txt!,chat-data/savol-javob*8",
+                    help=".txt fayl/papka yoki ro'yxat: '!' — tozalash, '*N' — N marta takrorlash")
     ap.add_argument("--out", default="checkpoints/umid", help="checkpoint papkasi")
     ap.add_argument("--tokenizer", default=None, help="tayyor tokenizer.json (bo'lmasa o'qitiladi)")
     ap.add_argument("--vocab-size", type=int, default=4096)
