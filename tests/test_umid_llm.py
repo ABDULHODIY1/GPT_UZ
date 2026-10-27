@@ -44,3 +44,25 @@ def test_single_file_cleaning_and_tokenizer():
     assert out == "O'zbekiston — Markaziy Osiyodagi davlat, poytaxti Toshkent shahri hisoblanadi."
     tok = u.Tokenizer.train(out * 20, 300)
     assert tok.decode(tok.encode(out)) == out
+
+
+def test_single_file_compare_transformer():
+    """--compare dagi Transformer: parametr soni teng, generatsiyadagi davom ettirish aniq, hujjat maskasi ishlaydi."""
+    for d, L, H in u.PRESETS.values():
+        mc = u.ModelConfig(vocab_size=16000, d_model=d, n_layers=L, n_heads=H)
+        a = sum(p.numel() for p in u.UmidLM(mc).parameters())
+        b = sum(p.numel() for p in u.Transformer(u.transformer_config(mc)).parameters())
+        assert abs(a - b) / a < 1e-3
+    torch.manual_seed(0)
+    m = u.Transformer(u.transformer_config(u.ModelConfig(vocab_size=50, d_model=32, n_layers=2, n_heads=4))).eval()
+    idx = torch.randint(0, 49, (1, 12))
+    idx[0, 5] = 49                                    # EOT
+    with torch.no_grad():
+        full = m(idx)[0]
+        a, _, st = m(idx[:, :7])
+        b, _, _ = m(idx[:, 7:], states=st)
+        other = idx.clone()
+        other[0, :5] = torch.randint(0, 49, (5,))
+        after_eot = m(other)[0][0, 5:]
+    torch.testing.assert_close(torch.cat([a, b], 1), full, rtol=1e-4, atol=1e-5)
+    torch.testing.assert_close(after_eot, full[0, 5:], rtol=1e-4, atol=1e-5)

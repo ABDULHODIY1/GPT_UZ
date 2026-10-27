@@ -43,6 +43,12 @@ Notebook shu faylni ishga tushiradi. Faylning matnini bitta katakka to'liq joyla
 python umid_llm.py --preset small --max_mb 600 --steps 20000 --sft_steps 6000 --chat
 ```
 
+Katta ma'lumotda Transformer bilan halol taqqoslash uchun `--compare 1` ni qo'shing. Shunda xuddi shu
+ma'lumot, qadamlar va batch'larda teng parametrli oddiy Transformer ham o'qitiladi (RoPE, softmax
+attention, SwiGLU, hujjat maskasi). Oxirida ikkala model yonma-yon chiqadi: pretraining va SFT dan
+keyingi val loss hamda o'qitishda bo'lmagan savollar. Bu model faqat o'lchov uchun va Umid'ning bir
+qismi emas. GPU vaqti taxminan ikki baravar ko'payadi. Transformer uchun alohida lr: `--compare_lr`.
+
 Repo modullari bilan ham shu jarayonni bitta buyruqda bajarish mumkin:
 
 ```bash

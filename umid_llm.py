@@ -6,6 +6,7 @@ Colab / Kaggle (GPU):
     * !python umid_llm.py --preset small --steps 20000 --chat
 
 Sozlamalar quyidagi CONFIG da; buyruq qatorida ham o'zgartirish mumkin: --steps 1000 --max_mb 50.
+Transformer bilan taqqoslash (xuddi shu ma'lumot va qadamlarda, teng parametr): --compare 1.
 Har bosqich tugagan bo'lsa qayta bajarilmaydi, pretraining uzilgan joyidan davom etadi.
 
 Tanlov xotirasi (attention o'rniga): har head hujjatdagi eng muhim K ta tokenni o'zi tanlab saqlaydi
@@ -35,6 +36,9 @@ CONFIG = dict(
     select_k=32,                # Tanlov: har head saqlaydigan tokenlar soni
     seed=0,
     allow_cpu=False,            # GPU bo'lmasa o'qitish boshlanmaydi (CPU da kichik sinovdan boshqasi juda uzoq)
+    compare=False,              # 1: xuddi shu ma'lumot va qadamlarda teng parametrli oddiy Transformer ham o'qitilib,
+                                #    natijalar yonma-yon chiqadi (faqat o'lchov uchun; GPU vaqti ~2 baravar)
+    compare_lr=0.0,             # Transformer uchun lr (0 — lr bilan bir xil)
 )
 # ========================================================================
 
@@ -379,6 +383,8 @@ class ModelConfig:
     select_k: int = 32
     select_chunk: int = 128
     dropout: float = 0.0
+    arch: str = "tanlov"          # "transformer" — faqat --compare dagi taqqoslash modeli
+    mlp: int = 0                  # MLP kengligi (0 — standart)
 
     @property
     def head_dim(self):
@@ -386,7 +392,7 @@ class ModelConfig:
 
     @property
     def mlp_hidden(self):
-        return 64 * math.ceil(self.d_model * 8 / 3 / 64)
+        return self.mlp or 64 * math.ceil(self.d_model * 8 / 3 / 64)
 
 
 class RMSNorm(nn.Module):
@@ -528,6 +534,74 @@ class UmidLM(nn.Module):
         return logits, loss, new
 
 
+# ---- Faqat --compare uchun o'lchov modeli (Umid'ning bir qismi emas): oddiy Transformer ----
+def rope(x):
+    D, T = x.shape[-1], x.shape[-2]
+    inv = 1.0 / (10000.0 ** (torch.arange(0, D, 2, device=x.device, dtype=torch.float32) / D))
+    ang = torch.outer(torch.arange(T, device=x.device, dtype=torch.float32), inv)
+    cos, sin = ang.cos().to(x.dtype), ang.sin().to(x.dtype)
+    x1, x2 = x[..., 0::2], x[..., 1::2]
+    return torch.stack([x1 * cos - x2 * sin, x1 * sin + x2 * cos], -1).flatten(-2)
+
+
+class TransformerBlock(nn.Module):
+    """Llama uslubi: RoPE + softmax attention + SwiGLU."""
+    def __init__(self, c):
+        super().__init__()
+        self.c = c
+        self.n1, self.n2 = RMSNorm(c.d_model), RMSNorm(c.d_model)
+        self.qkv = nn.Linear(c.d_model, 3 * c.d_model, bias=False)
+        self.out = nn.Linear(c.d_model, c.d_model, bias=False)
+        self.w_in = nn.Linear(c.d_model, 2 * c.mlp_hidden, bias=False)
+        self.w_out = nn.Linear(c.mlp_hidden, c.d_model, bias=False)
+        self.drop = nn.Dropout(c.dropout)
+
+    def forward(self, x, mask):
+        B, T, _ = x.shape
+        q, k, v = self.qkv(self.n1(x)).view(B, T, 3, self.c.n_heads, self.c.head_dim).permute(2, 0, 3, 1, 4)
+        o = F.scaled_dot_product_attention(rope(q), rope(k), v, attn_mask=mask)
+        x = x + self.drop(self.out(o.transpose(1, 2).reshape(B, T, -1)))
+        a, b = self.w_in(self.n2(x)).chunk(2, -1)
+        return x + self.drop(self.w_out(F.silu(a) * b))
+
+
+class Transformer(nn.Module):
+    """Taqqoslash modeli: hujjat maskasi bilan (EOT dan keyin oldingi hujjatga qaramaydi — Tanlov'dagidek).
+    "states" — oldingi tokenlar (generatsiyada kontekst har safar to'liq qayta hisoblanadi)."""
+    def __init__(self, c: ModelConfig):
+        super().__init__()
+        self.c = c
+        self.embed = nn.Embedding(c.vocab_size, c.d_model)
+        self.blocks = nn.ModuleList(TransformerBlock(c) for _ in range(c.n_layers))
+        self.norm = RMSNorm(c.d_model)
+        self.head = nn.Linear(c.d_model, c.vocab_size, bias=False)
+        for name, p in self.named_parameters():
+            if "n1" in name or "n2" in name or "norm" in name:
+                continue
+            nn.init.normal_(p, std=0.02 / math.sqrt(2 * c.n_layers) if name.endswith(("out.weight", "w_out.weight")) else 0.02)
+        self.head.weight = self.embed.weight
+
+    def forward(self, idx, targets=None, states=None):
+        full = idx if states is None else torch.cat([states, idx], 1)
+        seg = (full == self.c.vocab_size - 1).long().cumsum(1)
+        T = full.size(1)
+        causal = torch.ones(T, T, dtype=torch.bool, device=idx.device).tril()
+        mask = (causal & (seg[:, :, None] == seg[:, None, :]))[:, None]
+        x = self.embed(full)
+        for blk in self.blocks:
+            x = blk(x, mask)
+        logits = self.head(self.norm(x[:, -idx.size(1):]))
+        loss = None if targets is None else F.cross_entropy(logits.float().view(-1, logits.size(-1)),
+                                                             targets.reshape(-1), ignore_index=-100)
+        return logits, loss, full
+
+
+def transformer_config(mc: ModelConfig):
+    """Parametr soni Tanlov modeliga teng bo'lsin: Tanlov'ning ortiqcha qismi (gate d², muhimlik d·H) MLP ga beriladi."""
+    extra = mc.d_model * mc.d_model + mc.d_model * mc.n_heads
+    return ModelConfig(**{**asdict(mc), "arch": "transformer", "mlp": mc.mlp_hidden + round(extra / (3 * mc.d_model))})
+
+
 @torch.no_grad()
 def generate(model, tok, prompt_ids, max_new=150, temperature=0.7, top_p=0.9, rep=1.15, states=None):
     """Javob qator oxiri yoki EOT da to'xtaydi. Xotira o'zgarmas hajmda (har token O(K))."""
@@ -618,22 +692,27 @@ def val_loss(model, val, seq_len, dev, dtype, n=50, bs=8):
     return tot / max(n // bs, 1)
 
 
-def pretrain(cfg, tok, tokens, save):
+def pretrain(cfg, tok, tokens, save, pre=""):
+    """pre="gpt_" — taqqoslash uchun Transformer (xuddi shu ma'lumot, qadamlar va batch'lar)."""
     dev, dtype, scaler = device_and_amp()
     d, L, H = PRESETS[cfg["preset"]]
     mc = ModelConfig(vocab_size=tok.vocab_size, d_model=d, n_layers=L, n_heads=H, select_k=cfg["select_k"])
-    model = UmidLM(mc).to(dev)
-    opt = make_opt(model, cfg["lr"])
+    lr = cfg["lr"]
+    if pre:
+        mc, lr = transformer_config(mc), cfg["compare_lr"] or cfg["lr"]
+    model = (Transformer if pre else UmidLM)(mc).to(dev)
+    opt = make_opt(model, lr)
     n_val = max(len(tokens) // 50, cfg["seq_len"] * 20)
     train, val = tokens[:-n_val], tokens[-n_val:]
     start, best = 0, float("inf")
-    if (save / "last.pt").exists():                      # uzilgan joydan davom etish
-        ck = torch.load(save / "last.pt", map_location=dev, weights_only=False)
+    if (save / f"{pre}last.pt").exists():                # uzilgan joydan davom etish
+        ck = torch.load(save / f"{pre}last.pt", map_location=dev, weights_only=False)
         model.load_state_dict(ck["model"])
         opt.load_state_dict(ck["opt"])
         start, best = ck["step"], ck["best"]
         print(f"   davom ettirilmoqda: {start}-qadamdan", flush=True)
-    print(f"== 5) Pretraining: {sum(p.numel() for p in model.parameters()) / 1e6:.1f}M parametr, "
+    print(f"== 5) Pretraining{' — taqqoslash: Transformer' if pre else ''}: "
+          f"{sum(p.numel() for p in model.parameters()) / 1e6:.1f}M parametr, "
           f"{len(train) / 1e6:.1f}M token, {dev}{'' if dtype is None else ', ' + str(dtype)}", flush=True)
     g = torch.Generator().manual_seed(cfg["seed"] + start)
     L_ = cfg["seq_len"]
@@ -647,29 +726,30 @@ def pretrain(cfg, tok, tokens, save):
         v = val_loss(model, val, L_, dev, dtype)
         if v < best:
             best = v
-            torch.save({"config": asdict(mc), "model": model.state_dict(), "merges": tok.merges}, save / "base.pt")
-        torch.save({"model": model.state_dict(), "opt": opt.state_dict(), "step": step, "best": best}, save / "last.pt")
+            torch.save({"config": asdict(mc), "model": model.state_dict(), "merges": tok.merges}, save / f"{pre}base.pt")
+        torch.save({"model": model.state_dict(), "opt": opt.state_dict(), "step": step, "best": best}, save / f"{pre}last.pt")
         sample, _ = generate(model, tok, tok.encode("O'zbekiston"), 30)
         print(f"== baholash {step}: val loss {v:.3f} (perplexity {math.exp(v):.1f}), eng yaxshi {best:.3f} | "
               f"namuna: O'zbekiston{sample}", flush=True)
 
     if start < cfg["steps"]:
-        train_steps(model, opt, batch, start, cfg["steps"], cfg["lr"], cfg["warmup"], dev, dtype, scaler, on_eval,
+        train_steps(model, opt, batch, start, cfg["steps"], lr, cfg["warmup"], dev, dtype, scaler, on_eval,
                     cfg["eval_every"])
-    return val
+    return val, best
 
 
 def load_model(path, dev):
     ck = torch.load(path, map_location=dev, weights_only=False)
-    model = UmidLM(ModelConfig(**ck["config"])).to(dev)
+    mc = ModelConfig(**ck["config"])
+    model = (Transformer if mc.arch == "transformer" else UmidLM)(mc).to(dev)
     model.load_state_dict(ck["model"])
     return model, ck
 
 
-def sft(cfg, tok, tokens, pairs, save):
+def sft(cfg, tok, tokens, pairs, save, pre=""):
     """Sekin SFT: loss faqat javob tokenlarida, kichik lr, uzun qizish, umumiy matn aralashmasi."""
     dev, dtype, scaler = device_and_amp()
-    model, ck = load_model(save / "base.pt", dev)
+    model, ck = load_model(save / f"{pre}base.pt", dev)
     opt = make_opt(model, cfg["sft_lr"])
     examples = []
     for q, a in pairs:
@@ -697,7 +777,7 @@ def sft(cfg, tok, tokens, pairs, save):
         return torch.stack(xs), torch.stack(ys)
 
     train_steps(model, opt, batch, 0, cfg["sft_steps"], cfg["sft_lr"], cfg["sft_warmup"], dev, dtype, scaler)
-    torch.save({"config": ck["config"], "model": model.state_dict(), "merges": tok.merges}, save / "chat.pt")
+    torch.save({"config": ck["config"], "model": model.state_dict(), "merges": tok.merges}, save / f"{pre}chat.pt")
 
 
 # ============================== 6. SINASH ==============================
@@ -721,10 +801,10 @@ DEMO = ["Salom", "Sen kimsan?", "O'zbekiston haqida gapirib ber", "Sog'lom bo'li
         "Sun'iy intellekt nima?", "Menga maslahat ber: ingliz tilini qanday o'rgansam bo'ladi?"]
 
 
-def test(cfg, tok, val, save):
+def test(cfg, tok, val, save, pre=""):
     dev, dtype, _ = device_and_amp()
-    model, _ = load_model(save / "chat.pt", dev)
-    print("\n== 7) Sinash", flush=True)
+    model, _ = load_model(save / f"{pre}chat.pt", dev)
+    print(f"\n== 7) Sinash{' — taqqoslash: Transformer' if pre else ''}", flush=True)
     v = val_loss(model, val, cfg["seq_len"], dev, dtype)
     print(f"val loss {v:.3f} (perplexity {math.exp(v):.1f})")
     hits = 0
@@ -737,7 +817,7 @@ def test(cfg, tok, val, save):
     print("\n== Namunaviy javoblar")
     for q in DEMO:
         print(f"Savol: {q}\nUmid:  {generate(model, tok, tok.encode(f'Savol: {q}' + chr(10) + 'Javob:'))[0]}\n")
-    return model
+    return model, v, hits
 
 
 def chat(model, tok):
@@ -800,12 +880,21 @@ def main(argv=None):
     save.mkdir(parents=True, exist_ok=True)
     print(f"Natijalar: {save}", flush=True)
     tok, tokens, pairs = prepare_data(cfg, save / "data")
-    val = pretrain(cfg, tok, tokens, save)
-    if not (save / "chat.pt").exists():
-        sft(cfg, tok, tokens, pairs, save)
-    else:
-        print("== 6) chat.pt tayyor — SFT o'tkazib yuborildi (qayta qilish uchun o'chiring)")
-    model = test(cfg, tok, val, save)
+    results = {}
+    for pre in [""] + (["gpt_"] if cfg["compare"] else []):
+        val, best = pretrain(cfg, tok, tokens, save, pre)
+        if not (save / f"{pre}chat.pt").exists():
+            sft(cfg, tok, tokens, pairs, save, pre)
+        else:
+            print(f"== 6) {pre}chat.pt tayyor — SFT o'tkazib yuborildi (qayta qilish uchun o'chiring)")
+        results[pre] = (best, *test(cfg, tok, val, save, pre))
+    model = results[""][1]
+    if cfg["compare"]:
+        print("\n== Taqqoslash (bir xil ma'lumot, qadamlar va batch'lar; val loss — pastroq yaxshi)")
+        for pre, name in [("", "Umid (Tanlov)"), ("gpt_", "Transformer")]:
+            best, m, v, hits = results[pre]
+            print(f"{name:14s} {sum(p.numel() for p in m.parameters()) / 1e6:5.1f}M parametr | pretraining val loss "
+                  f"{best:.3f} | SFT dan keyin {v:.3f} | o'qitishda bo'lmagan savollar {hits}/{len(HELDOUT)}")
     if args.chat:
         chat(model, tok)
     return model, tok
