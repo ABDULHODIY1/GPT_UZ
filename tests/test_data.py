@@ -59,9 +59,11 @@ def test_qa_batch_masks_everything_but_answers(tmp_path):
 
 def test_dialog_test_values_never_seen_in_training():
     import random
-    from umid.dialog import CITIES, COLORS, DEFINITIONS, NAMES, SYLLABLES, make_dialog
-    for pools in (NAMES, CITIES, COLORS, DEFINITIONS, SYLLABLES):
+    from umid.dialog import CITIES, COLORS, DEF_WORDS, NAMES, SYLLABLES, make_dialog
+    for pools in (NAMES, CITIES, COLORS, SYLLABLES):
         assert not set(pools["train"]) & set(pools["test"])
+    for a, b in zip(DEF_WORDS["train"], DEF_WORDS["test"]):
+        assert not set(a) & set(b)
     fillers = [("Salom", "Assalomu alaykum!"), ("Rahmat", "Arzimaydi!"), ("Xayr", "Xayr!")]
     train_text = " ".join(q + " " + a for i in range(300)
                           for q, a in make_dialog(random.Random(i), "train", fillers)[0])

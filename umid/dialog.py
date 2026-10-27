@@ -8,6 +8,8 @@ gradient qadamiga teng.
 
 O'qitish ("train") va baholash ("test") uchun qiymatlar (ismlar, shaharlar, ranglar, ta'riflar, o'ylab
 topilgan so'zlar) KESISHMAYDI: baholashda model ismni ham, so'zni ham o'qitishda hech qachon ko'rmagan.
+O'qitish qiymatlari ataylab juda xilma-xil (bo'g'inlardan yasalgan minglab so'z): kam xil bo'lsa, model
+ularni yodlab "taxmin qiladi" va suhbatdan o'qishni o'rganmaydi (birinchi tajribada aynan shunday bo'ldi).
 """
 
 from __future__ import annotations
@@ -28,13 +30,16 @@ CITIES = {
 }
 COLORS = {"train": ["qizil", "ko'k", "yashil", "sariq", "oq", "qora"],
           "test": ["pushti", "binafsha", "jigarrang", "kulrang"]}
-DEFINITIONS = {
-    "train": ["Marsdagi qadimiy shahar", "ko'k rangli shirin meva", "tez yuguradigan kichik hayvon",
-              "bolalar o'ynaydigan o'yin", "tog'dagi sovuq ko'l", "qadimiy musiqa asbobi", "yangi turdagi robot",
-              "dengiz tubidagi o'simlik", "kuzda pishadigan nok navi", "uchar mashina", "qishloqdagi bayram",
-              "issiq ichimlik"],
-    "test": ["Oydagi kichik qishloq", "qizil rangli nordon meva", "suvda yashaydigan qush", "eski kitob nomi",
-             "yozda gullaydigan daraxt", "temirdan yasalgan ko'prik"],
+# O'qitishda ta'riflar so'zlardan tasodifiy yig'iladi (yuzlab xil) — model ta'rifni yodlay olmaydi,
+# suhbatdan ko'chirishni o'rganishi shart. Test ta'riflari boshqa so'zlardan.
+DEF_WORDS = {
+    "train": (["Marsdagi", "tog'dagi", "dengizdagi", "qishloqdagi", "o'rmondagi", "cho'ldagi"],
+              ["qadimiy", "kichik", "katta", "ko'k rangli", "shirin", "tez", "sovuq", "yangi", "eski"],
+              ["shahar", "meva", "hayvon", "o'yin", "ko'l", "musiqa asbobi", "robot", "o'simlik", "mashina",
+               "ichimlik", "qal'a", "baliq"]),
+    "test": (["Oydagi", "daryodagi", "bog'dagi"],
+             ["qizil rangli", "nordon", "uzun", "yumshoq"],
+             ["qushcha", "kitob", "daraxt", "ko'prik", "qo'shiq"]),
 }
 # O'ylab topilgan so'zlar: train va test turli bo'g'inlardan — testdagi so'zlar o'qitishda hech qachon uchramaydi
 SYLLABLES = {"train": ["ka", "ri", "zo", "mu", "le", "ta", "vi", "no", "sa", "du", "pe", "lo"],
@@ -67,19 +72,21 @@ def new_word(rng, split):
 
 
 def fact_value(kind, rng, split):
+    # Yarmi haqiqiy ism/shahar, yarmi bo'g'inlardan yasalgan (minglab xil) — yodlash o'rniga ko'chirish o'rganiladi
     if kind in ("ism", "do'st"):
-        return rng.choice(NAMES[split])
+        return rng.choice(NAMES[split]) if rng.random() < 0.5 else new_word(rng, split)
     if kind == "mushuk":
         return new_word(rng, split)
     if kind == "shahar":
-        return rng.choice(CITIES[split])
+        return rng.choice(CITIES[split]) if rng.random() < 0.5 else new_word(rng, split)
     if kind == "yosh":
         return str(rng.randint(*AGE_RANGE[split]))
     if kind == "rang":
         return rng.choice(COLORS[split])
     if kind == "xona":
         return str(rng.randint(*ROOM_RANGE[split]))
-    return rng.choice(DEFINITIONS[split])
+    where, adj, noun = DEF_WORDS[split]
+    return f"{rng.choice(where)} {rng.choice(adj)} {rng.choice(noun)}"
 
 
 def make_dialog(rng, split, fillers, n_facts=None, n_fill=None, unknown_p=0.15):
