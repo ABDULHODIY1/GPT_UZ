@@ -101,3 +101,32 @@ def test_multi_read_matches_recurrent(channel):
     (o.sum() + s.sum()).backward()
     torch.testing.assert_close(o, o_ref, rtol=1e-10, atol=1e-10)
     torch.testing.assert_close(W.grad, g_ref, rtol=1e-8, atol=1e-8)
+
+
+@pytest.mark.parametrize("channel", [False, True])
+@pytest.mark.parametrize("chunk", [7, 64])
+def test_decoupled_erase_matches_recurrent(chunk, channel):
+    """O'chirish kuchi b yozish kuchi β dan alohida: chunk'li algoritm = etalon (natija va gradient)."""
+    q, k, v, g, beta = make_inputs(T=100, channel=channel)
+    erase = torch.rand_like(beta, dtype=torch.float64) * 2.0
+    S0 = torch.randn(2, 3, 16, 24, dtype=torch.float64)
+    leaves = [x.requires_grad_() for x in (v, beta, erase)]
+    o_ref, s_ref = delta_rule_recurrent(q, k, v, g, beta, S0, erase=erase)
+    grads_ref = torch.autograd.grad((o_ref.sum() + s_ref.sum()), leaves)
+    o, s = delta_rule_chunked(q, k, v, g, beta, chunk, S0, erase=erase)
+    grads = torch.autograd.grad((o.sum() + s.sum()), leaves)
+    torch.testing.assert_close(o, o_ref, rtol=1e-10, atol=1e-10)
+    torch.testing.assert_close(s, s_ref, rtol=1e-10, atol=1e-10)
+    for a, b in zip(grads, grads_ref):
+        torch.testing.assert_close(a, b, rtol=1e-8, atol=1e-8)
+
+
+def test_zero_erase_accumulates():
+    """b = 0: xotira qiymatlarni almashtirmaydi, yig'adi (savol so'zlarining "xulosasi" uchun)."""
+    Dk = 8
+    key = F.normalize(torch.randn(Dk, dtype=torch.float64), dim=0)
+    k = q = key.expand(1, 1, 2, Dk).clone()
+    v = torch.tensor([[[[1.0, 0.0], [0.0, 1.0]]]], dtype=torch.float64)
+    g, beta = torch.zeros(1, 1, 2, dtype=torch.float64), torch.ones(1, 1, 2, dtype=torch.float64)
+    o, _ = delta_rule_chunked(q, k, v, g, beta, erase=torch.zeros_like(beta))
+    torch.testing.assert_close(o[0, 0, 1], torch.tensor([1.0, 1.0], dtype=torch.float64))

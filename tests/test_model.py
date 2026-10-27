@@ -12,7 +12,8 @@ def tiny_model(**kw):
 
 # Arxitektura variantlari: kanal bo'yicha unutish, ko'p yozish, fikrlash halqasi
 VARIANTS = [dict(), dict(decay="head", n_reads=1), dict(decay="channel", n_reads=1), dict(n_writes=2, n_reads=1), dict(n_writes=3, n_reads=1), dict(n_loops=2),
-            dict(mixer="optimal"), dict(mixer="optimal", frame=True), dict(n_reads=2), dict(n_reads=3, decay="channel")]
+            dict(mixer="optimal"), dict(mixer="optimal", frame=True), dict(n_reads=2), dict(n_reads=3, decay="channel"),
+            dict(decouple_erase=True), dict(decouple_erase=True, n_writes=2, n_reads=1), dict(decouple_erase=True, n_reads=2)]
 
 
 def test_forward_shapes_and_loss():

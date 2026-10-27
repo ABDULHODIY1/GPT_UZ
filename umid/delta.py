@@ -3,12 +3,15 @@
 Har bir head o'zining qat'iy o'lchamli xotira matritsasiga ega: S ∈ R^{Dk×Dv}.
 Har bir token uchun xotira quyidagicha yangilanadi (gated delta rule):
 
-    S_t = α_t · (I − β_t k_t k_tᵀ) · S_{t−1} + β_t · k_t v_tᵀ
+    S_t = α_t · (I − b_t k_t k_tᵀ) · S_{t−1} + β_t · k_t v_tᵀ      (odatda b_t = β_t)
     o_t = S_tᵀ q_t
 
     α_t ∈ (0, 1]  — unutish darvozasi (eskirgan ma'lumotni o'chiradi)
     β_t ∈ (0, 2)  — yozish kuchi; β > 1 bo'lsa (I − β k kᵀ) manfiy xos qiymatga
                      ega bo'ladi va model holatni kuzata oladi (parity, hisoblash)
+    b_t           — o'chirish kuchi (erase). b = β — klassik delta rule (eski qiymat yangisiga
+                     almashtiriladi); b < β — yig'ish (bir nechta qiymat ustma-ust saqlanadi, masalan
+                     savoldagi barcha so'zlarning "xulosasi"); har token o'zi tanlaydi
     k_t, q_t      — L2-normallangan kalit va so'rov
 
 Bu Transformer attention'dan farqli ravishda:
@@ -29,24 +32,25 @@ import torch
 import torch.nn.functional as F
 
 
-def delta_rule_recurrent(q, k, v, g, beta, initial_state=None, read_fn=None, n_reads=1):
+def delta_rule_recurrent(q, k, v, g, beta, initial_state=None, read_fn=None, n_reads=1, erase=None):
     """Etalon (sekin) implementatsiya.
 
     q, k: [B, H, T, Dk]; v: [B, H, T, Dv]; g: [B, H, T] yoki [B, H, T, Dk] (log α, ≤ 0);
-    beta: [B, H, T]. Qaytaradi: o [B, H, T, Dv], yakuniy holat [B, H, Dk, Dv].
+    beta, erase: [B, H, T] (erase=None → β). Qaytaradi: o [B, H, T, Dv], yakuniy holat [B, H, Dk, Dv].
     """
     B, H, T, Dk = k.shape
     Dv = v.shape[-1]
     S = q.new_zeros(B, H, Dk, Dv) if initial_state is None else initial_state
     outs = []
     for t in range(T):
-        o, S = delta_rule_step(q[:, :, t], k[:, :, t], v[:, :, t], g[:, :, t], beta[:, :, t], S, read_fn, n_reads)
+        o, S = delta_rule_step(q[:, :, t], k[:, :, t], v[:, :, t], g[:, :, t], beta[:, :, t], S, read_fn, n_reads,
+                               None if erase is None else erase[:, :, t])
         outs.append(o)
     return torch.stack(outs, dim=2), S
 
 
-def delta_rule_step(q, k, v, g, beta, state, read_fn=None, n_reads=1):
-    """Bitta token uchun yangilanish. q, k: [B, H, Dk]; v: [B, H, Dv]; beta: [B, H];
+def delta_rule_step(q, k, v, g, beta, state, read_fn=None, n_reads=1, erase=None):
+    """Bitta token uchun yangilanish. q, k: [B, H, Dk]; v: [B, H, Dv]; beta, erase: [B, H];
     g: [B, H] (head bo'yicha unutish) yoki [B, H, Dk] (har bir kalit-kanal o'z tezligida).
 
     n_reads > 1: xotiradan qayta so'rash — o¹ = Sᵀq, q^{r+1} = read_fn(o^r), o^{r+1} = Sᵀq^{r+1};
@@ -54,7 +58,8 @@ def delta_rule_step(q, k, v, g, beta, state, read_fn=None, n_reads=1):
     a = g.exp()
     S = state * (a[..., None, None] if a.dim() == 2 else a[..., :, None])
     pred = torch.einsum("bhkv,bhk->bhv", S, k)            # xotira hozir k uchun nimani "eslaydi"
-    delta = (v - pred) * beta[..., None]                 # xato bo'yicha tuzatish (delta rule)
+    b = beta if erase is None else erase
+    delta = v * beta[..., None] - pred * b[..., None]    # xato bo'yicha tuzatish (delta rule)
     S = S + k[..., :, None] * delta[..., None, :]
     outs = [torch.einsum("bhkv,bhk->bhv", S, q)]
     for _ in range(n_reads - 1):
@@ -62,11 +67,11 @@ def delta_rule_step(q, k, v, g, beta, state, read_fn=None, n_reads=1):
     return (outs[0] if n_reads == 1 else torch.stack(outs, 2)), S
 
 
-def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None, read_fn=None, n_reads=1):
+def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None, read_fn=None, n_reads=1, erase=None):
     """Chunk'li parallel algoritm (WY/UT ko'rinishi), vaqt O(T·C), xotira O(T·C).
 
     Chunk ichida rekurrensiyani uchburchak tenglamalar sistemasi orqali yechamiz:
-      (I + A) · N = β·V − (β·K ⊙ γ) · S₀,   A[t,s] = β_t (k_t ⊙ γ_t/γ_s)·k_s  (s < t)
+      (I + A) · N = β·V − (b·K ⊙ γ) · S₀,   A[t,s] = b_t (k_t ⊙ γ_t/γ_s)·k_s  (s < t)
     bu yerda N — har bir token xotiraga yozgan "yangi" qiymat, γ — chunk boshidan
     to'plangan unutish koeffitsienti. Natija delta_rule_recurrent bilan bir xil.
 
@@ -79,7 +84,8 @@ def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None, read
     """
     in_dtype = v.dtype
     dtype = torch.promote_types(in_dtype, torch.float32)   # bf16/fp16 bo'lsa ham fp32 da hisoblaymiz
-    q, k, v, g, beta = (x.to(dtype) for x in (q, k, v, g, beta))
+    erase = beta if erase is None else erase
+    q, k, v, g, beta, erase = (x.to(dtype) for x in (q, k, v, g, beta, erase))
     channel = g.dim() == 4
     B, H, T, Dk = k.shape
     Dv = v.shape[-1]
@@ -89,14 +95,14 @@ def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None, read
         # Bo'sh tokenlar: k=0, β=0 (hech narsa yozmaydi), g=0 (unutmaydi) → holat o'zgarmaydi.
         q, k, v = (F.pad(x, (0, 0, 0, pad)) for x in (q, k, v))
         g = F.pad(g, (0, 0, 0, pad) if channel else (0, pad))
-        beta = F.pad(beta, (0, pad))
+        beta, erase = F.pad(beta, (0, pad)), F.pad(erase, (0, pad))
     N = (T + pad) // C
     q, k, v = (x.reshape(B, H, N, C, -1) for x in (q, k, v))
-    g, beta = g.reshape(B, H, N, C, *g.shape[3:]), beta.reshape(B, H, N, C)
+    g, beta, erase = g.reshape(B, H, N, C, *g.shape[3:]), beta.reshape(B, H, N, C), erase.reshape(B, H, N, C)
 
     gc = g.cumsum(3)                                        # log γ_t
     tril = torch.ones(C, C, dtype=torch.bool, device=q.device).tril()
-    k_beta = k * beta[..., None]
+    k_beta = k * erase[..., None]                          # o'chirish qismi (b·k)
     if channel:
         eg = gc.exp()
         k_in = k * (-gc).exp()

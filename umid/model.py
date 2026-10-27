@@ -45,6 +45,8 @@ class UmidConfig:
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
     mlp_hidden_size: int = 0      # 0 bo'lmasa MLP o'lchamini aniq belgilaydi (parametrlarni tenglashtirish uchun)
+    decouple_erase: bool = False  # o'chirish kuchi b alohida darvoza: S ← α(I − b k kᵀ)S + β k vᵀ. b = β — klassik
+                                  # delta (almashtirish), b < β — yig'ish (savol so'zlarining xulosasi uchun)
     reset_on_eot: bool = False    # EOT tokenida xotira (S) tozalanadi: hujjatlar/savol-javoblar bir-biriga
                                   # aralashmaydi (Transformer'dagi hujjat maskasiga o'xshash). Qisqa konvolyutsiya
                                   # (conv_size − 1 token) chegaradan o'tadi.
@@ -143,6 +145,8 @@ class GatedDeltaMemory(nn.Module):
         self.qkv_proj = nn.Linear(D, H * (dk + n * (dk + dv)), bias=False)
         self.qkv_conv = ShortConv(H * (dk + n * (dk + dv)), cfg.conv_size)
         self.b_proj = nn.Linear(D, n * H, bias=True)  # β — qancha kuch bilan yozish
+        if cfg.decouple_erase:                        # b — eski qiymatni qancha o'chirish (β dan mustaqil)
+            self.e_proj = nn.Linear(D, n * H, bias=True)
         if n > 1:   # qo'shimcha yozishlar deyarli o'chiq boshlanadi (β ≈ 0.1), birinchisini buzmaydi
             self._bias_init = {"b_proj": torch.cat([torch.zeros(H), torch.full(((n - 1) * H,), -3.0)])}
         n_decay = H * dk if cfg.decay == "channel" else H
@@ -183,6 +187,10 @@ class GatedDeltaMemory(nn.Module):
         v = v.reshape(B, T, n, H, dv).to(fdt).permute(0, 3, 1, 2, 4)
 
         beta = torch.sigmoid(self.b_proj(x).to(fdt)).view(B, T, n, H).permute(0, 3, 1, 2)   # [B, H, T, n]
+        erase = None
+        if cfg.decouple_erase:
+            erase = torch.sigmoid(self.e_proj(x).to(fdt)).view(B, T, n, H).permute(0, 3, 1, 2)
+            erase = erase * 2.0 if cfg.allow_neg_eigval else erase
         if cfg.allow_neg_eigval:
             beta = beta * 2.0
         g = F.softplus(self.a_proj(x).to(fdt) + self.dt_bias.to(fdt))
@@ -203,10 +211,11 @@ class GatedDeltaMemory(nn.Module):
             for j in range(n):   # unutish faqat birinchi yozishda, o'qish oxirgisidan keyin
                 o, S = delta_rule_step(q[:, :, 0], k[:, :, 0, j], v[:, :, 0, j],
                                        g[:, :, 0] if j == 0 else torch.zeros_like(g[:, :, 0]), beta[:, :, 0, j], S,
-                                       read_fn, R)
+                                       read_fn, R, None if erase is None else erase[:, :, 0, j])
             o = o[:, :, None]
         elif n == 1:
-            o, S = delta_rule_chunked(q, k[:, :, :, 0], v[:, :, :, 0], g, beta[..., 0], cfg.chunk_size, S0, read_fn, R)
+            o, S = delta_rule_chunked(q, k[:, :, :, 0], v[:, :, :, 0], g, beta[..., 0], cfg.chunk_size, S0, read_fn, R,
+                                      None if erase is None else erase[..., 0])
         else:
             # Har bir token n ta ketma-ket "kichik qadam"ga yoyiladi: S ← Π_j (I − β_j k_j k_jᵀ) S + …
             # Bu xotirani aks ettirishlar ko'paytmasi (aylanish, almashtirish) bilan o'zgartirish imkonini beradi.
@@ -214,7 +223,7 @@ class GatedDeltaMemory(nn.Module):
             g_seq = torch.cat([g.unsqueeze(3), gz], 3).flatten(2, 3)
             q_seq = torch.cat([q.new_zeros(B, H, T, n - 1, dk), q.unsqueeze(3)], 3).flatten(2, 3)
             o, S = delta_rule_chunked(q_seq, k.flatten(2, 3), v.flatten(2, 3), g_seq, beta.flatten(2, 3),
-                                      cfg.chunk_size, S0)
+                                      cfg.chunk_size, S0, erase=None if erase is None else erase.flatten(2, 3))
             o = o.view(B, H, T, n, dv)[:, :, :, -1]
 
         o = self.o_norm(o.transpose(1, 2).to(x.dtype))           # [B, T, H, dv] yoki [B, T, H, R, dv]
