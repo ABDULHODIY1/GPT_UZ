@@ -43,6 +43,12 @@ Notebook shu faylni ishga tushiradi. Faylning matnini bitta katakka to'liq joyla
 python umid_llm.py --preset small --max_mb 600 --steps 20000 --sft_steps 6000 --chat
 ```
 
+Katta ma'lumotda Transformer bilan halol taqqoslash uchun `--compare 1` ni qo'shing. Shunda xuddi shu
+ma'lumot, qadamlar va batch'larda teng parametrli oddiy Transformer ham o'qitiladi (RoPE, softmax
+attention, SwiGLU, hujjat maskasi). Oxirida ikkala model yonma-yon chiqadi: pretraining va SFT dan
+keyingi val loss hamda o'qitishda bo'lmagan savollar. Bu model faqat o'lchov uchun va Umid'ning bir
+qismi emas. GPU vaqti taxminan ikki baravar ko'payadi. Transformer uchun alohida lr: `--compare_lr`.
+
 Repo modullari bilan ham shu jarayonni bitta buyruqda bajarish mumkin:
 
 ```bash
@@ -458,6 +464,47 @@ qilish ochiq vazifa bo'lib qoladi.
   - Umid natijasi seed'ga kuchli bog'liq (35–57%), Transformer'niki barqaror.
   - Canon Umid'da bitta seed'da +8 ball berdi, ikkinchisida tasdiqlanmadi.
 
+**Tanlov xotirasi va Transformer** (yangi SFT formati: javob `"\n"` bilan tugaydi, EOT dialog oxirida;
+ikkala model ham shu formatda qayta o'qitilgan; retsept, ma'lumot va tokenizer bir xil):
+
+| model (tiny) | parametr | val loss (seed'lar) | QA, jarima 1.15 | QA, jarimasiz |
+|---|---|---|---|---|
+| Tanlov + qkv conv | 4.54M | 4.205, 4.162 | 48, 48% | 52, 52% |
+| Tanlov + o'qib boyitish | 4.80M | 4.180, 4.157 | 48, 50% | 50, 53% |
+| Tanlov, sof (conv'siz) | 4.53M | 4.162, 4.146 | 55, 53% | 55, 55% |
+| **Tanlov, sof, teng parametr** (`--mlp-hidden 616`) | **4.26M** | **4.124, 4.130, 4.126** | **58, 57, 50%** | **58, 57, 50%** |
+| Transformer (hujjat maskasi) | 4.26M | 4.189, 4.145, 4.149 | 52, 53, 52% | 53, 55, 55% |
+| Transformer, lr 1e-3 (uning eng yaxshi lr i) | 4.26M | 4.066 | 57% | 62% |
+
+- **Tuzatish:** jadvaldagi hamma model lr 2e-3 da o'qitilgan. Bu Transformer uchun noqulay ekan:
+  Transformer lr 1e-3 da 4.066 ga tushadi (lr 3e-3 da 4.323). Shuning uchun "val loss da Tanlov
+  yaxshiroq" degan xulosa noto'g'ri. Har model o'zining eng yaxshi lr ida solishtirilishi kerak
+  (pastdagi lr jadvaliga qarang).
+- Val loss va o'rganish tezligi (teng parametr 4.26M, seed 1337):
+
+  | lr | 5e-4 | 1e-3 | 2e-3 | 3e-3 |
+  |---|---|---|---|---|
+  | Transformer | 4.257 | **4.066** | 4.189 | 4.323 |
+  | Tanlov, sof (K=32) | 4.397 | 4.142 | **4.124** | 4.244 |
+
+  Har biri o'zining eng yaxshi lr ida: Transformer 4.066, Tanlov 4.124 — **Transformer 0.058 oldinda**.
+  Savol-javobda (seed 1337) eng yaxshi lr larda: Tanlov 58% / 58%, Transformer 57% / 62% (jarima bilan / jarimasiz).
+  Pozitsiya bo'yicha (`val loss`, 256 tokenli oyna): 0–8 tokenda Tanlov biroz yaxshi (4.630 / 4.654),
+  8–32 da Transformer +0.04, 32 dan keyin +0.05…0.08 oldinda.
+- Xotirani kattalashtirish yordam bermadi (lr 2e-3, seed 1337): K=32 — 4.124, K=64 — 4.174,
+  K=128 — 4.150. K=128 da ham 32–64 pozitsiyalarda loss 4.219 (Transformer 4.119). Demak farq
+  xotira hajmidan emas, o'qish mexanizmidan (yaqin kontekstda ham Transformer oldinda). Standart
+  `select_k=32` qoldirildi.
+- Ogohlantirish: ma'lumot ~225K token, 600 qadamda model uni ~11 marta ko'radi (train loss ~2.1,
+  val ~4.1). Bu sharoitda val loss ko'proq ortiqcha moslashishni o'lchaydi; hal qiluvchi taqqoslash —
+  katta korpusda (GPU) bir martalik o'qitish.
+- Savol-javobda o'rtacha 55% ga qarshi 52% (jarima bilan) va 54% (jarimasiz). 60 ta savolda bitta natijaning
+  statistik xatosi ~±6 ball, Tanlov seed'lari esa 50–58% oralig'ida. Shuning uchun bu farq **ishonchli
+  emas** — savol-javobda ikkalasi teng deb hisoblanadi.
+- Ma'lumot juda kichik (~250K token): val loss farqi sig'imdan ko'ra ortiqcha moslashishga ham bog'liq
+  bo'lishi mumkin (kichikroq MLP li 4.26M model 4.53M dan yaxshiroq chiqdi). Katta ma'lumotda GPU da
+  tekshirish kerak.
+
 **Sinab ko'rilgan, foyda bermagan g'oyalar** (kodi olib tashlangan yoki standart emas):
 - "Just read twice" (savolni ikki marta o'qish): Umid 45→42%, Transformer 52→48%;
 - beam search;
@@ -481,9 +528,10 @@ bog'lanishini o'rganishning bir gradient qadamiga teng.
   - dialog bilan fine-tuning qilingan ikkala model ham kontekstdan ko'chirmaydi (0–6%);
   - ular o'qitishda ko'p uchragan qiymatni taxmin qiladi;
   - faqat "aytmagansiz" holatini to'g'ri o'rganadi.
-- Keyingi qadam:
-  - har qadamda yangi dialoglar yaratish (yodlab bo'lmaydi);
-  - dialog bosqichini uzaytirish (ko'chirish mexanizmini noldan o'rganish uchun 600 qadam kam).
+- Har qadamda yangi dialoglar bilan ham (`--dialog-frac 0.5`, 1500 qadam, `icl_eval_v3.json`) ikkala model
+  pol darajasida qoldi: Tanlov 1–4%, Transformer 1–6%. Bu o'lchamda (4M, 250K token) test hech qaysi
+  modelni ajrata olmaydi.
+- Keyingi qadam: kattaroq model va ma'lumotda (GPU) qayta sinash.
 
 ## Halol cheklovlar
 
