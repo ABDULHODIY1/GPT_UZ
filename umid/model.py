@@ -356,29 +356,10 @@ class UmidLM(nn.Module):
         """Generatsiya holatining hajmi (baytda) — kontekst uzunligiga bog'liq emas."""
         return sum(t.numel() * t.element_size() for st in states for t in st.values())
 
-    @torch.no_grad()
-    def generate(self, idx, max_new_tokens, temperature=0.8, top_k=50, top_p=0.95,
-                 repetition_penalty=1.1, eos_id=None, states=None, on_token=None):
+    def generate(self, idx, max_new_tokens, **kw):
         """Avtoregressiv generatsiya. Har bir yangi token uchun xotira va vaqt O(1).
-
-        on_token(token) True qaytarsa generatsiya to'xtaydi. Qaytaradi: (yangi tokenlar
-        [B, n], holat). Holat prompt va barcha yangi tokenlarni "eslaydi" — uni keyingi
-        chaqiruvga uzatsangiz suhbat davom etadi, KV-cache kabi o'smaydi.
-        """
-        self.eval()
-        logits, _, states = self(idx, states=states, return_states=True)
-        history, out = idx, []
-        for _ in range(max_new_tokens):
-            nxt = sample_next(logits[:, -1], history, temperature, top_k, top_p, repetition_penalty)
-            out.append(nxt)
-            history = torch.cat([history, nxt], dim=1)
-            logits, _, states = self(nxt, states=states, return_states=True)
-            if eos_id is not None and bool((nxt == eos_id).all()):
-                break
-            if on_token is not None and on_token(nxt):
-                break
-        new = torch.cat(out, dim=1) if out else idx.new_zeros(idx.size(0), 0)
-        return new, states
+        Parametrlar: umid.model.generate ga qarang."""
+        return generate(self, idx, max_new_tokens, **kw)
 
     def save(self, path, **extra):
         torch.save({"config": asdict(self.cfg), "model": self.state_dict(), **extra}, path)
@@ -389,6 +370,32 @@ class UmidLM(nn.Module):
         model = cls(UmidConfig(**ckpt["config"]))
         model.load_state_dict(ckpt["model"])
         return model, ckpt
+
+
+@torch.no_grad()
+def generate(model, idx, max_new_tokens, temperature=0.8, top_k=50, top_p=0.95,
+             repetition_penalty=1.1, eos_id=None, states=None, on_token=None):
+    """Avtoregressiv generatsiya — `model(idx, states=…, return_states=True)` interfeysiga ega
+    istalgan model uchun (UmidLM, shuningdek taqqoslash uchun baseline.GPT).
+
+    on_token(token) True qaytarsa generatsiya to'xtaydi. Qaytaradi: (yangi tokenlar [B, n], holat).
+    Holat prompt va barcha yangi tokenlarni "eslaydi" — uni keyingi chaqiruvga uzatsangiz suhbat
+    davom etadi. Umid'da holat o'zgarmas hajmli, Transformer'da esa KV-cache o'sib boradi.
+    """
+    model.eval()
+    logits, _, states = model(idx, states=states, return_states=True)
+    history, out = idx, []
+    for _ in range(max_new_tokens):
+        nxt = sample_next(logits[:, -1], history, temperature, top_k, top_p, repetition_penalty)
+        out.append(nxt)
+        history = torch.cat([history, nxt], dim=1)
+        logits, _, states = model(nxt, states=states, return_states=True)
+        if eos_id is not None and bool((nxt == eos_id).all()):
+            break
+        if on_token is not None and on_token(nxt):
+            break
+    new = torch.cat(out, dim=1) if out else idx.new_zeros(idx.size(0), 0)
+    return new, states
 
 
 def sample_next(logits, history, temperature=0.8, top_k=50, top_p=0.95, repetition_penalty=1.1):
