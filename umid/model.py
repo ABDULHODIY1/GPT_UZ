@@ -46,6 +46,7 @@ class UmidConfig:
     mixer: str = "delta"          # "delta": Gated Delta Memory; "optimal": aniq eng kichik kvadratlar xotirasi;
                                   # "tanlov": eng muhim K ta tokenni saqlovchi xotira (umid/tanlov.py)
     select_k: int = 32            # "tanlov": har head saqlaydigan tokenlar soni (xotira hajmi o'zgarmas)
+    select_enrich: bool = False   # "tanlov": o'qib boyitish — o'qigan token o'qilgan yozuvlarga ma'lumot qaytaradi
     select_chunk: int = 128       # "tanlov": o'qitishda bo'lak uzunligi (natijaga ta'sir qilmaydi, faqat tezlik)
     frame: bool = False           # "optimal" uchun: kalit/so'rovlar aks ettirishlar bilan aylanadigan tizimda
     mlp_hidden_size: int = 0      # 0 bo'lmasa MLP o'lchamini aniq belgilaydi (parametrlarni tenglashtirish uchun)
@@ -350,6 +351,9 @@ class SelectiveMemory(nn.Module):
         slope = torch.logspace(math.log10(0.05), 0.0, H)                             # head'lar: uzoqdan yaqinga
         self.slope_raw = nn.Parameter(torch.log(torch.expm1(slope)))                  # softplus⁻¹
         self._zero_init = ("s_proj",)
+        if cfg.select_enrich:   # o'qib boyitish: u — qaytariladigan ma'lumot, η — kuchi (boshida kichik)
+            self.u_proj = nn.Linear(D, H * dv, bias=False)
+            self.eta_raw = nn.Parameter(torch.full((H,), -3.0))
 
     def forward(self, x, state=None, reset=None):
         cfg = self.cfg
@@ -368,13 +372,18 @@ class SelectiveMemory(nn.Module):
         seg = reset.long().cumsum(1) if reset is not None else torch.zeros(B, T, dtype=torch.long, device=x.device)
         cache = tuple(st[n] for n in ("ck", "cv", "cs", "cp", "cm")) if "ck" in st else None
         tau, bias, slope = self.tau_log.exp().to(fdt), self.attn_offset.to(fdt), F.softplus(self.slope_raw).to(fdt)
+        u = eta = None
+        if cfg.select_enrich:
+            u = self.u_proj(x).to(fdt).reshape(B, T, H, dv).transpose(1, 2)
+            eta = torch.sigmoid(self.eta_raw).to(fdt)
         outs = []
         for a in range(0, T, cfg.select_chunk):
             b = min(a + cfg.select_chunk, T)
             # segment kesh hujjatiga nisbatan: 0 — o'sha hujjat, k — oradan k ta EOT o'tgan
             rel = seg[:, a:b] - seg[:, a - 1:a] if a else seg[:, a:b]
             o, cache = selective_read(q[:, :, a:b], k[:, :, a:b], v[:, :, a:b], s[:, :, a:b], pos[:, a:b], rel,
-                                      cfg.select_k, tau, bias, slope, cache)
+                                      cfg.select_k, tau, bias, slope, cache,
+                                      None if u is None else u[:, :, a:b], eta)
             outs.append(o)
         o = torch.cat(outs, 2)
         o = self.o_norm(o.transpose(1, 2).to(x.dtype)) * F.silu(self.g_proj(x)).view(B, T, H, dv)
@@ -449,7 +458,7 @@ class UmidLM(nn.Module):
 
     def _init_weights(self):
         for name, p in self.named_parameters():
-            if name.endswith(("A_log", "dt_bias", "lam_raw", "tau_log", "attn_offset", "slope_raw")) \
+            if name.endswith(("A_log", "dt_bias", "lam_raw", "tau_log", "attn_offset", "slope_raw", "eta_raw")) \
                     or "conv" in name or "norm" in name:
                 continue
             if name.endswith("bias"):

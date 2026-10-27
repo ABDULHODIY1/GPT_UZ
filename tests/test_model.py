@@ -16,7 +16,8 @@ VARIANTS = [dict(), dict(decay="head", n_reads=1), dict(decay="channel", n_reads
             dict(decouple_erase=True), dict(decouple_erase=True, n_writes=2, n_reads=1), dict(decouple_erase=True, n_reads=2),
             dict(persistent_heads=1, reset_on_eot=True), dict(persistent_heads=1, decay="channel"),
             dict(canon="ACD"), dict(canon="ACD", reset_on_eot=True, persistent_heads=2),
-            dict(mixer="tanlov", select_k=8, select_chunk=16), dict(mixer="tanlov", select_k=4, reset_on_eot=True, canon="ACD")]
+            dict(mixer="tanlov", select_k=8, select_chunk=16), dict(mixer="tanlov", select_k=4, reset_on_eot=True, canon="ACD"),
+            dict(mixer="tanlov", select_k=4, select_chunk=8, select_enrich=True, reset_on_eot=True)]
 
 
 def test_forward_shapes_and_loss():
