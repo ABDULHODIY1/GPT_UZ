@@ -34,6 +34,7 @@ CONFIG = dict(
     sft_mix=0.25,               # va umumiy matn aralashmasi (tilni unutmaslik uchun)
     select_k=32,                # Tanlov: har head saqlaydigan tokenlar soni
     seed=0,
+    allow_cpu=False,            # GPU bo'lmasa o'qitish boshlanmaydi (CPU da kichik sinovdan boshqasi juda uzoq)
 )
 # ========================================================================
 
@@ -759,14 +760,33 @@ def chat(model, tok):
 
 
 # ============================== 7. HAMMASI ==============================
+def check_gpu(cfg):
+    """Eng boshida: GPU bormi. Bo'lmasa — vaqt sarflamay, nima qilish kerakligini aytib to'xtaydi."""
+    if torch.cuda.is_available():
+        p = torch.cuda.get_device_properties(0)
+        mode = "bf16" if torch.cuda.is_bf16_supported() else "fp16"
+        print(f"GPU: {p.name}, {p.total_memory / 2**30:.0f} GB — o'qitish GPU da ({mode} aralash aniqlik)", flush=True)
+    elif not cfg["allow_cpu"]:
+        sys.exit("\n!!! GPU topilmadi. Bu kod GPU uchun yozilgan; CPU da o'qitish kunlab davom etadi.\n"
+                 "    Colab: Runtime → Change runtime type → T4 GPU → Save, so'ng katakni qayta ishga tushiring.\n"
+                 "           (\"GPU mavjud emas\" desa — bepul kvota tugagan, Kaggle'dan foydalaning.)\n"
+                 "    Kaggle: Settings → Accelerator → GPU T4 x2 yoki P100, Internet → On.\n"
+                 "    Oldin tayyorlangan ma'lumot saqlangan — qayta yuklanmaydi.\n"
+                 "    (Baribir CPU da sinash uchun: --allow_cpu 1)")
+    else:
+        print("GPU yo'q — CPU da (faqat kichik sinov uchun)", flush=True)
+
+
 def main(argv=None):
     cfg = dict(CONFIG)
     ap = argparse.ArgumentParser(description="Umid LLM: hammasi bitta faylda")
     for k, v in cfg.items():
-        ap.add_argument(f"--{k}", type=type(v), default=v)
+        conv = (lambda x: str(x).lower() in ("1", "true", "yes", "ha")) if isinstance(v, bool) else type(v)
+        ap.add_argument(f"--{k}", type=conv, default=v)
     ap.add_argument("--chat", action="store_true", help="oxirida interaktiv suhbat")
     args, _ = ap.parse_known_args(argv)                 # notebook argumentlari (-f …) e'tiborsiz qoldiriladi
     cfg.update({k: getattr(args, k) for k in cfg})
+    check_gpu(cfg)
     torch.manual_seed(cfg["seed"])
     random.seed(cfg["seed"])
     if not cfg["save"]:
