@@ -19,7 +19,7 @@ from pathlib import Path
 
 import torch
 
-from umid import PRESETS, UmidConfig, UmidLM
+from umid import PRESETS, BPETokenizer, UmidConfig, UmidLM
 from umid.data import StreamBatcher, cosine_lr, evaluate, prepare_tokens, random_batch, split_tokens
 
 
@@ -56,6 +56,7 @@ def parse_args():
     ap.add_argument("--device", default="auto")
     ap.add_argument("--compile", action="store_true")
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--init", default=None, help="tayyor model.pt dan boshlash (fine-tuning): og'irliklar va tokenizer")
     ap.add_argument("--seed", type=int, default=1337)
     return ap.parse_args()
 
@@ -100,6 +101,10 @@ def main():
         torch.backends.cuda.matmul.allow_tf32 = True
 
     tok_path = Path(args.tokenizer) if args.tokenizer else out / "tokenizer.json"
+    init_model = None
+    if args.init:   # fine-tuning: model va tokenizer tayyor checkpoint'dan
+        init_model, init_ckpt = UmidLM.load(args.init)
+        BPETokenizer.from_dict(init_ckpt["tokenizer"]).save(tok_path)
     tok, tokens = prepare_tokens(args.data, tok_path, args.vocab_size)
     train_tok, val_tok = split_tokens(tokens, args.val_frac)
     print(f"Ma'lumot: {len(tokens):,} token (train {len(train_tok):,}, val {len(val_tok):,}), vocab {tok.vocab_size}")
@@ -110,6 +115,14 @@ def main():
         model, ckpt = UmidLM.load(last_path)
         start, best_val = ckpt["step"], ckpt.get("best_val", best_val)
         print(f"Davom ettirilmoqda: {start}-qadamdan")
+    elif init_model is not None:
+        model, ckpt = init_model, None
+        if args.dropout is not None:
+            model.cfg.dropout = args.dropout
+            for mod in model.modules():
+                if isinstance(mod, torch.nn.Dropout):
+                    mod.p = args.dropout
+        print(f"Boshlang'ich og'irliklar: {args.init}")
     else:
         model, ckpt = UmidLM(build_config(args, tok.vocab_size)), None
     model.to(device)
