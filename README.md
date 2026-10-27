@@ -34,8 +34,19 @@ python prepare_data.py --out data --sources wiki,news,local --max-mb 600 --vocab
 python train.py --tokens data/tokens.npy --tokenizer data/tokenizer.json --preset small --mixer tanlov \
     --select-no-conv --reset-on-eot --seq-len 512 --batch-size 32 --steps 20000 --dropout 0.0 --eval-windows 200
 python sft.py --init checkpoints/umid/model.pt --out checkpoints/umid_chat --qa chat-data/savol-javob,data/sft \
-    --seq-len 512 --batch-size 32 --steps 3000 --lr 3e-4 --dialog-frac 0.25
+    --seq-len 512 --batch-size 32 --steps 6000 --lr 1e-4 --warmup 300 --dialog-frac 0.25
 ```
+
+- **Ma'lumot tozalash** (`umid/clean.py`) standart holatda yoqilgan:
+  - tutuq belgilari bitta ko'rinishga keltiriladi;
+  - URL, HTML va vikimatn qoldiqlari olib tashlanadi;
+  - "Manbalar" va "Havolalar" bo'limlari kesiladi;
+  - raqam yoki belgidan iborat qatorlar, kirillcha va juda qisqa hujjatlar tashlanadi;
+  - takror hujjat va abzaslar olib tashlanadi;
+  - SFT juftliklari ham tozalanadi va takrorlari olib tashlanadi;
+  - o'chirish: `--no-clean`.
+- **SFT ataylab sekin**: lr 1e-4, uzun qizish bosqichi, ko'p qadam va umumiy matn aralashmasi. Shunda
+  pretraining'dagi til buzilmaydi.
 
 ## Transformer attention'ning qaysi kamchiliklari hal qilindi
 
