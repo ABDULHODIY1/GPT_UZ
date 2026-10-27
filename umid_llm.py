@@ -294,9 +294,16 @@ def prepare_data(cfg, out):
         print("== 1) Ma'lumot: yuklash va tozalash", flush=True)
         srcs = [s for s in cfg["sources"].split(",") if s]
         per_source, dedup = cfg["max_mb"] * 1_000_000 // max(len(srcs), 1), Deduper()
-        with open(out / "corpus.txt", "w", encoding="utf-8") as f:
-            for src in srcs:
-                got = dropped = 0
+        files = []
+        for src in srcs:   # har manba alohida faylga; tugagani belgilanadi — uzilsa qayta yuklanmaydi
+            path = out / f"corpus_{re.sub(r'[^\w]+', '_', src).strip('_')}.txt"
+            files.append(path)
+            if path.with_suffix(".done").exists():
+                print(f"   {src}: tayyor ({path.stat().st_size / 1e6:.0f} MB) — o'tkazib yuborildi", flush=True)
+                continue
+            got = dropped = 0
+            t0, next_report = time.time(), 50_000_000
+            with open(path, "w", encoding="utf-8") as f:
                 for text in pretrain_texts(src):
                     text = dedup(clean_doc(text))
                     if not good_doc(text):
@@ -304,24 +311,36 @@ def prepare_data(cfg, out):
                         continue
                     f.write(text + EOT)
                     got += len(text)
+                    if got >= next_report:
+                        print(f"   {src}: {got / 1e6:.0f}/{per_source / 1e6:.0f} MB ({time.time() - t0:.0f}s)", flush=True)
+                        next_report += 50_000_000
                     if got >= per_source:
                         break
-                print(f"   {src}: {got / 1e6:.1f} MB olindi, {dropped:,} hujjat tashlandi", flush=True)
-        print(f"== 2) Tokenizer (vocab {cfg['vocab_size']})", flush=True)
-        with open(out / "corpus.txt", encoding="utf-8") as f:
-            sample = f.read(cfg["tok_sample_mb"] * 1_000_000).replace(EOT, "\n")
-        tok = Tokenizer.train(sample, cfg["vocab_size"])
+            path.with_suffix(".done").touch()
+            print(f"   {src}: {got / 1e6:.1f} MB olindi, {dropped:,} hujjat tashlandi ({time.time() - t0:.0f}s)", flush=True)
+        print(f"== 2) Tokenizer (vocab {cfg['vocab_size']}, namuna {cfg['tok_sample_mb']} MB)", flush=True)
+        t0, sample = time.time(), []
+        for path in files:   # namuna har manbadan teng — tokenizer barcha uslublarni ko'radi
+            with open(path, encoding="utf-8") as f:
+                sample.append(f.read(cfg["tok_sample_mb"] * 1_000_000 // len(files)).replace(EOT, "\n"))
+        tok = Tokenizer.train("\n".join(sample), cfg["vocab_size"])
         (out / "tokenizer.json").write_text(json.dumps({"merges": [list(m) for m in tok.merges]}))
+        print(f"   tayyor ({time.time() - t0:.0f}s)", flush=True)
         print("== 3) Tokenlash", flush=True)
-        ids, buf, t0 = array("i"), "", time.time()
-        with open(out / "corpus.txt", encoding="utf-8") as f:
-            while block := f.read(8_000_000):
-                docs = (buf + block).split(EOT)
-                buf = docs.pop()
-                for d in docs:
-                    ids.extend(tok.encode(d))
-                    ids.append(tok.eot_id)
-                print(f"   {len(ids) / 1e6:.1f}M token ({time.time() - t0:.0f}s)", flush=True)
+        ids, t0 = array("i"), time.time()
+        for path in files:
+            buf = ""
+            with open(path, encoding="utf-8") as f:
+                while block := f.read(8_000_000):
+                    docs = (buf + block).split(EOT)
+                    buf = docs.pop()
+                    for d in docs:
+                        ids.extend(tok.encode(d))
+                        ids.append(tok.eot_id)
+                    print(f"   {len(ids) / 1e6:.1f}M token ({time.time() - t0:.0f}s)", flush=True)
+            if buf:
+                ids.extend(tok.encode(buf))
+                ids.append(tok.eot_id)
         np.save(out / "tokens.npy", np.frombuffer(ids, dtype=np.int32))
     if not (out / "sft.json").exists():
         print("== 4) SFT juftliklari (tozalash, takrorlarni olib tashlash)", flush=True)
