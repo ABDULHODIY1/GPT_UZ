@@ -29,6 +29,14 @@ holda). U quyidagilarni qiladi:
 
 Checkpoint'lar Google Drive'ga yoki `/kaggle/working` ga saqlanadi. Uzilsa, `--resume` bilan davom etadi.
 
+Hammasi bitta buyruqda. Notebook ham faqat shuni chaqiradi:
+
+```bash
+python pipeline.py --save natijalar --preset small --mixer tanlov --max-mb 600 --steps 20000 --sft-steps 6000
+```
+
+Qayta ishga tushirsangiz, tugagan bosqichlar o'tkazib yuboriladi. Bosqichlarni alohida ishga tushirish ham mumkin:
+
 ```bash
 python prepare_data.py --out data --sources wiki,news,local --max-mb 600 --vocab-size 16000 --sft alpaca,instruct
 python train.py --tokens data/tokens.npy --tokenizer data/tokenizer.json --preset small --mixer tanlov \
@@ -128,6 +136,8 @@ umid/
 train.py        # o'qitish (pretraining); --arch gpt — Transformer'ni aynan shu sharoitda o'qitish
 sft.py          # savol-javob fine-tuning: loss faqat javob tokenlarida
 chat.py         # suhbat / generatsiya
+pipeline.py     # hammasi bitta buyruqda: ma'lumot → tokenizer → pretraining → SFT → baholash (Colab/Kaggle)
+prepare_data.py # katta korpus: yuklash, tozalash (umid/clean.py), tokenizer, tokenlar
 chat-data/      # Data.txt (umumiy matn) va savol-javob/ (731 juftlik, shundan 431 tasi qayta ifoda)
 tests/          # pytest testlari
 benchmarks/     # Umid va Transformer'ni solishtirish (natijalar: benchmarks/results/*.json)
