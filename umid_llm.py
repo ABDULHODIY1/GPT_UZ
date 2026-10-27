@@ -620,11 +620,6 @@ def val_loss(model, val, seq_len, dev, dtype, n=50, bs=8):
 
 def pretrain(cfg, tok, tokens, save):
     dev, dtype, scaler = device_and_amp()
-    if dev.type == "cpu" and not cfg["allow_cpu"]:
-        sys.exit("\n!!! GPU topilmadi — o'qitish CPU da kunlab davom etadi, shuning uchun to'xtatildi.\n"
-                 "    Colab: Runtime → Change runtime type → T4 GPU → Save, so'ng katakni qayta ishga tushiring.\n"
-                 "    Kaggle: Settings → Accelerator → GPU. Ma'lumot saqlangan, qayta yuklanmaydi.\n"
-                 "    (Baribir CPU da: --allow_cpu 1)")
     d, L, H = PRESETS[cfg["preset"]]
     mc = ModelConfig(vocab_size=tok.vocab_size, d_model=d, n_layers=L, n_heads=H, select_k=cfg["select_k"])
     model = UmidLM(mc).to(dev)
@@ -765,6 +760,23 @@ def chat(model, tok):
 
 
 # ============================== 7. HAMMASI ==============================
+def check_gpu(cfg):
+    """Eng boshida: GPU bormi. Bo'lmasa — vaqt sarflamay, nima qilish kerakligini aytib to'xtaydi."""
+    if torch.cuda.is_available():
+        p = torch.cuda.get_device_properties(0)
+        mode = "bf16" if torch.cuda.is_bf16_supported() else "fp16"
+        print(f"GPU: {p.name}, {p.total_memory / 2**30:.0f} GB — o'qitish GPU da ({mode} aralash aniqlik)", flush=True)
+    elif not cfg["allow_cpu"]:
+        sys.exit("\n!!! GPU topilmadi. Bu kod GPU uchun yozilgan; CPU da o'qitish kunlab davom etadi.\n"
+                 "    Colab: Runtime → Change runtime type → T4 GPU → Save, so'ng katakni qayta ishga tushiring.\n"
+                 "           (\"GPU mavjud emas\" desa — bepul kvota tugagan, Kaggle'dan foydalaning.)\n"
+                 "    Kaggle: Settings → Accelerator → GPU T4 x2 yoki P100, Internet → On.\n"
+                 "    Oldin tayyorlangan ma'lumot saqlangan — qayta yuklanmaydi.\n"
+                 "    (Baribir CPU da sinash uchun: --allow_cpu 1)")
+    else:
+        print("GPU yo'q — CPU da (faqat kichik sinov uchun)", flush=True)
+
+
 def main(argv=None):
     cfg = dict(CONFIG)
     ap = argparse.ArgumentParser(description="Umid LLM: hammasi bitta faylda")
@@ -774,6 +786,7 @@ def main(argv=None):
     ap.add_argument("--chat", action="store_true", help="oxirida interaktiv suhbat")
     args, _ = ap.parse_known_args(argv)                 # notebook argumentlari (-f …) e'tiborsiz qoldiriladi
     cfg.update({k: getattr(args, k) for k in cfg})
+    check_gpu(cfg)
     torch.manual_seed(cfg["seed"])
     random.seed(cfg["seed"])
     if not cfg["save"]:
