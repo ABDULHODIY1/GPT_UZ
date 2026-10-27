@@ -12,6 +12,31 @@ python sft.py --init checkpoints/umid_base/model.pt --out checkpoints/umid      
 python chat.py --ckpt checkpoints/umid/model.pt                                   # suhbat
 ```
 
+**Yangi algoritm — Tanlov xotirasi** (`--mixer tanlov`, `umid/tanlov.py`, reja: `docs/reja.md`):
+- delta qoidasi ishlatilmaydi;
+- har head hujjatdagi eng muhim K ta tokenni o'zi tanlab saqlaydi;
+- saqlanganlarni softmax'siz, sigmoid bilan alohida o'qiydi;
+- xotira hajmi o'zgarmas.
+
+## GPU'da katta model: Colab / Kaggle
+
+[`notebooks/Umid_LLM.ipynb`](notebooks/Umid_LLM.ipynb) notebook'ini Colab yoki Kaggle'da oching (GPU yoqilgan
+holda). U quyidagilarni qiladi:
+- o'zbekcha Vikipediya va yangiliklarni yuklab tokenlaydi (`prepare_data.py`);
+- Tanlov modelini o'qitadi (`train.py --tokens`, T4/P100 da fp16, A100/L4 da bf16);
+- savol-javob fine-tuning qiladi: loyiha savol-javoblari va o'zbekcha ko'rsatma to'plamlari;
+- baholaydi va suhbat ochadi.
+
+Checkpoint'lar Google Drive'ga yoki `/kaggle/working` ga saqlanadi. Uzilsa, `--resume` bilan davom etadi.
+
+```bash
+python prepare_data.py --out data --sources wiki,news,local --max-mb 600 --vocab-size 16000 --sft alpaca,instruct
+python train.py --tokens data/tokens.npy --tokenizer data/tokenizer.json --preset small --mixer tanlov \
+    --select-no-conv --reset-on-eot --seq-len 512 --batch-size 32 --steps 20000 --dropout 0.0 --eval-windows 200
+python sft.py --init checkpoints/umid/model.pt --out checkpoints/umid_chat --qa chat-data/savol-javob,data/sft \
+    --seq-len 512 --batch-size 32 --steps 3000 --lr 3e-4 --dialog-frac 0.25
+```
+
 ## Transformer attention'ning qaysi kamchiliklari hal qilindi
 
 | Transformer muammosi | Umid'da | Qanday | Isbot |

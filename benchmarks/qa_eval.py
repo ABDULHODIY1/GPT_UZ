@@ -24,7 +24,7 @@ HERE = Path(__file__).parent
 
 
 def answer(model, tok, question, max_new_tokens=60, repetition_penalty=1.15, penalize_prompt=True):
-    ids = torch.tensor([tok.encode(qa_prompt(question))])
+    ids = torch.tensor([tok.encode(qa_prompt(question))], device=next(model.parameters()).device)
     out, _ = generate(model, ids, max_new_tokens, temperature=0.0, repetition_penalty=repetition_penalty,
                       eos_id=tok.eot_id, on_token=None, penalize_prompt=penalize_prompt)
     return tok.decode(out[0].tolist()).split("\n")[0].replace("<|endoftext|>", "").strip()
@@ -65,10 +65,11 @@ def main():
     ap.add_argument("--tag", default="")
     ap.add_argument("--rep-penalty", type=float, default=1.15, help="takrorlash jarimasi (1.0 — yo'q)")
     ap.add_argument("--penalty-answer-only", action="store_true", help="jarima faqat javob tokenlariga")
+    ap.add_argument("--device", default="cpu")
     args = ap.parse_args()
     default_threads()
     model, ck = load_model(args.ckpt)
-    model.eval()
+    model.to(args.device).eval()
     tok = BPETokenizer.from_dict(ck["tokenizer"])
 
     report = {"ckpt": args.ckpt, "rep_penalty": args.rep_penalty, "penalty_answer_only": args.penalty_answer_only,
