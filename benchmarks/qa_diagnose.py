@@ -45,7 +45,8 @@ def batch_nll(model, tok, prompts, answers, bs=64):
     for i in range(0, len(prompts), bs):
         seqs, starts = [], []
         for p, a in zip(prompts[i:i + bs], answers[i:i + bs]):
-            pi, ai = tok.encode(p), tok.encode(f" {a}") + [tok.eot_id]
+            # faqat javob matni baholanadi (tugash belgisi — EOT yoki "\n" — SFT formatiga bog'liq, shuning uchun yo'q)
+            pi, ai = tok.encode(p), tok.encode(f" {a}")
             seqs.append(pi + ai)
             starts.append(len(pi))
         T = max(len(s) for s in seqs)

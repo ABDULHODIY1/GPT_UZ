@@ -23,7 +23,7 @@ HERE = Path(__file__).parent
 
 @torch.no_grad()
 def answer_nll(model, tok, question, answer):
-    prompt, ans = tok.encode(qa_prompt(question)), tok.encode(f" {answer}") + [tok.eot_id]
+    prompt, ans = tok.encode(qa_prompt(question)), tok.encode(f" {answer}")   # tugash belgisisiz (formatdan mustaqil)
     ids = torch.tensor([prompt + ans])
     logits, _ = model(ids[:, :-1])
     nll = F.cross_entropy(logits[0, len(prompt) - 1:].float(), ids[0, len(prompt):], reduction="none")
