@@ -6,8 +6,10 @@
 Pretraining (train.py) tilni o'rgatadi; bu bosqich modelni savolga javob berishga yo'naltiradi:
 har bir misol "Savol: …\\nJavob:" (loss yo'q) + " javob" + EOT (loss bor). Tilni unutmaslik uchun
 qatorlarning bir qismi (--mix-frac) umumiy matndan olinadi va to'liq loss bilan o'qitiladi.
---dialogs: suhbatdan o'rganish uchun sintetik dialoglar (umid/dialog.py) — foydalanuvchi aytgan yangi
-faktni (ism, o'ylab topilgan so'z, raqam) oradagi boshqa savollardan keyin eslab javob berish.
+--dialog-frac: suhbatdan o'rganish uchun sintetik dialoglar (umid/dialog.py) — foydalanuvchi aytgan yangi
+faktni (ism, o'ylab topilgan so'z, raqam) oradagi boshqa savollardan keyin eslab javob berish. Dialoglar
+har qadamda YANGIDAN yaratiladi: qat'iy to'plamni model yodlab oladi va suhbatdan o'qishni o'rganmaydi
+(birinchi tajribada aynan shunday bo'ldi).
 Umid va taqqoslash uchun Transformer (train.py --arch gpt) checkpoint'lari bir xil ishlaydi.
 """
 
@@ -21,8 +23,8 @@ from pathlib import Path
 import torch
 
 from umid import BPETokenizer, load_model
-from umid.data import (cosine_lr, default_threads, encode_dialog, encode_qa, prepare_tokens, qa_batch,
-                       random_batch, read_qa_pairs, split_tokens)
+from umid.data import (cosine_lr, default_threads, encode_dialog, encode_qa, pack_rows, prepare_tokens,
+                       qa_batch, random_batch, read_qa_pairs, split_tokens)
 from umid.dialog import make_dialog
 
 
@@ -33,7 +35,8 @@ def parse_args():
     ap.add_argument("--qa", default="chat-data/savol-javob", help="savol-javob fayllari (papka yoki ro'yxat)")
     ap.add_argument("--mix", default="chat-data/Data.txt!", help="tilni unutmaslik uchun umumiy matn ('' — yo'q)")
     ap.add_argument("--mix-frac", type=float, default=0.25, help="umumiy matndan olinadigan qatorlar ulushi")
-    ap.add_argument("--dialogs", type=int, default=0, help="sintetik suhbatlar soni (o'qitish qiymatlari bilan)")
+    ap.add_argument("--dialog-frac", type=float, default=0.0,
+                    help="savol-javob qatorlarining shuncha ulushi har qadamda yangi yaratilgan suhbatlar")
     ap.add_argument("--steps", type=int, default=300)
     ap.add_argument("--lr", type=float, default=5e-4)
     ap.add_argument("--warmup", type=int, default=30)
@@ -61,20 +64,22 @@ def main():
 
     pairs = read_qa_pairs(args.qa)
     examples = encode_qa(tok, pairs)
-    rng, n_dialogs = random.Random(args.seed), 0
-    while n_dialogs < args.dialogs:
-        ids, mask = encode_dialog(tok, make_dialog(rng, "train", pairs)[0])
-        if len(ids) <= args.seq_len + 1:   # tekshiruv savollari qirqilib qolmasin
-            examples.append((ids, mask))
-            n_dialogs += 1
+    rng = random.Random(args.seed)
+
+    def fresh_dialog():
+        while True:
+            ids, mask = encode_dialog(tok, make_dialog(rng, "train", pairs)[0])
+            if len(ids) <= args.seq_len + 1:   # tekshiruv savollari qirqilib qolmasin
+                return ids, mask
     mix_tok = None
     if args.mix and args.mix_frac > 0:
         tok_path = out / "tokenizer.json"
         tok.save(tok_path)
         mix_tok, _ = split_tokens(prepare_tokens(args.mix, tok_path, verbose=False)[1])
     n_mix = round(args.batch_size * args.mix_frac) if mix_tok is not None else 0
-    print(f"Misollar: {len(examples)} (shundan {n_dialogs} suhbat) | har qatorda {args.batch_size - n_mix} savol-javob, "
-          f"{n_mix} umumiy matn | {model.num_params() / 1e6:.2f}M parametr")
+    n_dlg = round((args.batch_size - n_mix) * args.dialog_frac)
+    print(f"Savol-javoblar: {len(examples)} | har qatorda {args.batch_size - n_mix - n_dlg} savol-javob, {n_dlg} yangi "
+          f"suhbat, {n_mix} umumiy matn | {model.num_params() / 1e6:.2f}M parametr")
 
     decay = [p for p in model.parameters() if p.ndim >= 2]
     no_decay = [p for p in model.parameters() if p.ndim < 2]
@@ -87,7 +92,10 @@ def main():
         lr = cosine_lr(step, args.steps, args.lr, args.warmup)
         for gr in opt.param_groups:
             gr["lr"] = lr
-        x, y = qa_batch(examples, args.batch_size - n_mix, args.seq_len, g)
+        x, y = qa_batch(examples, args.batch_size - n_mix - n_dlg, args.seq_len, g)
+        if n_dlg:
+            dx, dy = pack_rows(fresh_dialog, n_dlg, args.seq_len)
+            x, y = torch.cat([x, dx]), torch.cat([y, dy])
         if n_mix:
             mx, my = random_batch(mix_tok, n_mix, args.seq_len, g)
             x, y = torch.cat([x, mx]), torch.cat([y, my])

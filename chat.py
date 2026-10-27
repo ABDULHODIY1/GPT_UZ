@@ -6,7 +6,7 @@
 Suhbat davomida model butun suhbatni qat'iy o'lchamli xotirada saqlaydi: 1000-xabarda ham
 har bir token uchun xotira va tezlik birinchi xabardagidek (KV-cache o'smaydi). Siz aytgan yangi
 faktlarni (ismingiz, yangi so'z ta'rifi) shu xotiraga yozib, keyingi savollarda ishlatadi
-(sft.py --dialogs bilan o'qitilgan bo'lsa).
+(sft.py --dialog-frac bilan o'qitilgan bo'lsa).
 
 Buyruqlar: /yangi — xotirani tozalash, /xotira — xotira holati, /chiqish — chiqish.
 """

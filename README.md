@@ -414,7 +414,7 @@ bog'lanishini o'rganishning bir gradient qadamiga teng.
 
 - Vositalar:
   - `umid/dialog.py`: train va test qiymatlari kesishmaydi;
-  - `sft.py --dialogs N`;
+  - `sft.py --dialog-frac 0.5` (har qadamda yangi dialoglar);
   - `benchmarks/icl_eval.py`: masofa 0…40 oraliq savol, ~70…1400 token.
 - Hozirgi holat — **ishlamaydi**:
   - dialog bilan fine-tuning qilingan ikkala model ham kontekstdan ko'chirmaydi (0–6%);

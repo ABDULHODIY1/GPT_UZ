@@ -128,20 +128,26 @@ def encode_qa(tok, pairs):
     return [encode_dialog(tok, [(q, a)]) for q, a in pairs]
 
 
-def qa_batch(examples, batch_size, seq_len, generator=None, device="cpu"):
-    """Har bir qator tasodifiy misollardan to'ldiriladi (misol boshidan boshlanadi); javob bo'lmagan
-    tokenlarning maqsadi -100 (loss hisoblanmaydi)."""
+def pack_rows(sample, batch_size, seq_len, device="cpu"):
+    """Har bir qator sample() bergan (tokenlar, maska) misollar bilan to'ldiriladi (misol boshidan
+    boshlanadi); javob bo'lmagan tokenlarning maqsadi -100 (loss hisoblanmaydi)."""
     xs, ys = [], []
     for _ in range(batch_size):
         ids, mask = [], []
         while sum(len(t) for t in ids) < seq_len + 1:
-            t, m = examples[int(torch.randint(len(examples), (1,), generator=generator))]
+            t, m = sample()
             ids.append(t)
             mask.append(m)
         ids, mask = torch.cat(ids)[:seq_len + 1], torch.cat(mask)[:seq_len + 1]
         xs.append(ids[:-1])
         ys.append(torch.where(mask[1:], ids[1:], -100))
     return torch.stack(xs).to(device), torch.stack(ys).to(device)
+
+
+def qa_batch(examples, batch_size, seq_len, generator=None, device="cpu"):
+    """Tasodifiy tayyor misollardan qatorlar (pack_rows)."""
+    return pack_rows(lambda: examples[int(torch.randint(len(examples), (1,), generator=generator))],
+                     batch_size, seq_len, device)
 
 
 def split_tokens(tokens, val_frac=0.1, block=8192):
