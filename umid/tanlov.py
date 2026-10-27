@@ -29,8 +29,22 @@ yozuvi hech qachon o'zgarmaydi. Kalitlar o'zgarmagani uchun bu ham aniq parallel
 
 from __future__ import annotations
 
+import functools
+
 import torch
 import torch.nn.functional as F
+
+
+def fp32_on_cuda(fn):
+    """Xotira yadrosi doim fp32 da: CUDA'da autocast (fp16/bf16) shu funksiya ichida o'chiriladi —
+    holat ko'p qadam to'planadi, past aniqlik xatoni yig'ib boradi."""
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        if args[0].is_cuda:
+            with torch.autocast("cuda", enabled=False):
+                return fn(*args, **kwargs)
+        return fn(*args, **kwargs)
+    return wrapper
 
 
 def _segment_start(seg):
@@ -42,6 +56,7 @@ def _segment_start(seg):
     return torch.where(is_start, idx, torch.zeros_like(idx)).cummax(1).values
 
 
+@fp32_on_cuda
 def selective_read(q, k, v, s, pos, seg, K, tau, bias, slope, cache=None, u=None, eta=None):
     """Bir bo'lak uchun tanlov xotirasi.
 

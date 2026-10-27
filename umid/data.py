@@ -166,8 +166,8 @@ def split_tokens(tokens, val_frac=0.1, block=8192):
 
 def random_batch(tokens, batch_size, seq_len, generator=None, device="cpu"):
     ix = torch.randint(0, len(tokens) - seq_len - 1, (batch_size,), generator=generator)
-    x = torch.stack([tokens[i:i + seq_len] for i in ix])
-    y = torch.stack([tokens[i + 1:i + seq_len + 1] for i in ix])
+    x = torch.stack([tokens[i:i + seq_len] for i in ix]).long()   # tokenlar ixcham int32 bo'lishi mumkin
+    y = torch.stack([tokens[i + 1:i + seq_len + 1] for i in ix]).long()
     return x.to(device), y.to(device)
 
 
@@ -178,8 +178,8 @@ class StreamBatcher:
     def __init__(self, tokens, batch_size, seq_len, device="cpu"):
         self.seq_len, self.device = seq_len, device
         n = (len(tokens) - 1) // batch_size
-        self.x = tokens[: n * batch_size].view(batch_size, n)
-        self.y = tokens[1: n * batch_size + 1].view(batch_size, n)
+        self.x = tokens[: n * batch_size].long().view(batch_size, n)
+        self.y = tokens[1: n * batch_size + 1].long().view(batch_size, n)
         self.pos = 0
 
     def next(self):
@@ -205,14 +205,50 @@ def evaluate(model, tokens, seq_len, batch_size=8, max_windows=None, device="cpu
     total, count = 0.0, 0
     for s in range(0, n, batch_size):
         ix = range(s, min(s + batch_size, n))
-        x = torch.stack([tokens[i * seq_len:(i + 1) * seq_len] for i in ix]).to(device)
-        y = torch.stack([tokens[i * seq_len + 1:(i + 1) * seq_len + 1] for i in ix]).to(device)
+        x = torch.stack([tokens[i * seq_len:(i + 1) * seq_len] for i in ix]).long().to(device)
+        y = torch.stack([tokens[i * seq_len + 1:(i + 1) * seq_len + 1] for i in ix]).long().to(device)
         with autocast or _null():
             _, loss = model(x, targets=y)
         total += loss.item() * y.numel()
         count += y.numel()
     model.train(was_training)
     return total / count
+
+
+def pick_device(name="auto"):
+    if name != "auto":
+        return torch.device(name)
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+
+class _NoScaler:
+    def scale(self, loss):
+        return loss
+
+    def unscale_(self, opt):
+        pass
+
+    def step(self, opt):
+        opt.step()
+
+    def update(self):
+        pass
+
+
+def mixed_precision(device, mode="auto"):
+    """(autocast_fn, scaler). mode: auto | bf16 | fp16 | off. auto: CUDA'da bf16 bo'lsa bf16, aks holda fp16
+    (Colab/Kaggle T4, P100), CPU'da o'chiq. fp16 da loss GradScaler bilan masshtablanadi."""
+    if mode == "auto":
+        mode = ("bf16" if torch.cuda.is_bf16_supported() else "fp16") if device.type == "cuda" else "off"
+    dtype = {"bf16": torch.bfloat16, "fp16": torch.float16}.get(mode)
+    if dtype is None:
+        return _null, _NoScaler()
+    scaler = torch.amp.GradScaler("cuda") if mode == "fp16" else _NoScaler()
+    return (lambda: torch.autocast(device.type, dtype=dtype)), scaler
 
 
 class _null:

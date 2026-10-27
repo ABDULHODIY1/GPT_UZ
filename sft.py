@@ -23,8 +23,8 @@ from pathlib import Path
 import torch
 
 from umid import BPETokenizer, load_model
-from umid.data import (cosine_lr, default_threads, encode_dialog, encode_qa, pack_rows, prepare_tokens,
-                       qa_batch, random_batch, read_qa_pairs, split_tokens)
+from umid.data import (cosine_lr, default_threads, encode_dialog, encode_qa, mixed_precision, pack_rows,
+                       pick_device, prepare_tokens, qa_batch, random_batch, read_qa_pairs, split_tokens)
 from umid.dialog import make_dialog
 
 
@@ -45,6 +45,8 @@ def parse_args():
     ap.add_argument("--weight-decay", type=float, default=0.1)
     ap.add_argument("--dropout", type=float, default=0.1)
     ap.add_argument("--seed", type=int, default=1337)
+    ap.add_argument("--device", default="auto")
+    ap.add_argument("--amp", default="auto", choices=["auto", "bf16", "fp16", "off"])
     return ap.parse_args()
 
 
@@ -55,7 +57,10 @@ def main():
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
+    device = pick_device(args.device)
+    autocast, scaler = mixed_precision(device, args.amp)
     model, init_ckpt = load_model(args.init)
+    model.to(device)
     tok = BPETokenizer.from_dict(init_ckpt["tokenizer"])
     model.cfg.dropout = args.dropout
     for mod in model.modules():
@@ -99,10 +104,13 @@ def main():
         if n_mix:
             mx, my = random_batch(mix_tok, n_mix, args.seq_len, g)
             x, y = torch.cat([x, mx]), torch.cat([y, my])
-        _, loss = model(x, targets=y)
-        loss.backward()
+        with autocast():
+            _, loss = model(x.to(device), targets=y.to(device))
+        scaler.scale(loss).backward()
+        scaler.unscale_(opt)
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        opt.step()
+        scaler.step(opt)
+        scaler.update()
         opt.zero_grad(set_to_none=True)
         recent = (recent + [loss.item()])[-20:]
         if (step + 1) % 20 == 0:

@@ -12,7 +12,6 @@ Misollar:
 from __future__ import annotations
 
 import argparse
-import contextlib
 import json
 import time
 from dataclasses import asdict
@@ -23,7 +22,8 @@ import torch
 from umid import PRESETS, BPETokenizer, UmidConfig, UmidLM, load_model
 from umid.baseline import GPT, GPTConfig
 from umid.model import generate
-from umid.data import StreamBatcher, cosine_lr, evaluate, prepare_tokens, random_batch, split_tokens
+from umid.data import (StreamBatcher, cosine_lr, evaluate, mixed_precision, pick_device, prepare_tokens,
+                       random_batch, split_tokens)
 
 
 def parse_args():
@@ -32,6 +32,8 @@ def parse_args():
                     help=".txt fayl/papka yoki ro'yxat: '!' — tozalash, '*N' — N marta takrorlash")
     ap.add_argument("--out", default="checkpoints/umid", help="checkpoint papkasi")
     ap.add_argument("--tokenizer", default=None, help="tayyor tokenizer.json (bo'lmasa o'qitiladi)")
+    ap.add_argument("--tokens", default=None,
+                    help="prepare_data.py tayyorlagan tokenlar (.npy, int32) — katta korpus uchun; --tokenizer bilan")
     ap.add_argument("--vocab-size", type=int, default=4096)
     ap.add_argument("--arch", default="umid", choices=["umid", "gpt"], help="gpt — taqqoslash uchun Transformer")
     ap.add_argument("--preset", default="tiny", choices=list(PRESETS))
@@ -70,20 +72,12 @@ def parse_args():
     ap.add_argument("--sample-prompt", default="Salom")
     ap.add_argument("--device", default="auto")
     ap.add_argument("--compile", action="store_true")
+    ap.add_argument("--amp", default="auto", choices=["auto", "bf16", "fp16", "off"],
+                    help="aralash aniqlik: auto — CUDA'da bf16 yoki fp16 (T4/P100), CPU'da o'chiq")
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--init", default=None, help="tayyor model.pt dan boshlash (fine-tuning): og'irliklar va tokenizer")
     ap.add_argument("--seed", type=int, default=1337)
     return ap.parse_args()
-
-
-def pick_device(name):
-    if name != "auto":
-        return torch.device(name)
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-    if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
-        return torch.device("mps")
-    return torch.device("cpu")
 
 
 def build_config(args, vocab_size):
@@ -119,8 +113,7 @@ def main():
     device = pick_device(args.device)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    use_bf16 = device.type == "cuda" and torch.cuda.is_bf16_supported()
-    autocast = (lambda: torch.autocast("cuda", dtype=torch.bfloat16)) if use_bf16 else contextlib.nullcontext
+    autocast, scaler = mixed_precision(device, args.amp)
     if device.type == "cuda":
         torch.backends.cuda.matmul.allow_tf32 = True
 
@@ -129,7 +122,11 @@ def main():
     if args.init:   # fine-tuning: model va tokenizer tayyor checkpoint'dan
         init_model, init_ckpt = load_model(args.init)
         BPETokenizer.from_dict(init_ckpt["tokenizer"]).save(tok_path)
-    tok, tokens = prepare_tokens(args.data, tok_path, args.vocab_size)
+    if args.tokens:   # katta korpus: tokenlar oldindan tayyorlangan (prepare_data.py)
+        import numpy as np
+        tok, tokens = BPETokenizer.load(tok_path), torch.from_numpy(np.load(args.tokens))
+    else:
+        tok, tokens = prepare_tokens(args.data, tok_path, args.vocab_size)
     train_tok, val_tok = split_tokens(tokens, args.val_frac)
     print(f"Ma'lumot: {len(tokens):,} token (train {len(train_tok):,}, val {len(val_tok):,}), vocab {tok.vocab_size}")
 
@@ -195,11 +192,13 @@ def main():
                 x, y = random_batch(train_tok, args.batch_size, args.seq_len, g, device)
                 with autocast():
                     _, loss = fwd(x, targets=y)
-            (loss / args.grad_accum).backward()
+            scaler.scale(loss / args.grad_accum).backward()
             tokens_seen += y.numel()
             recent = (recent + [loss.item()])[-20:]
+        scaler.unscale_(opt)
         torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)
-        opt.step()
+        scaler.step(opt)
+        scaler.update()
         opt.zero_grad(set_to_none=True)
 
         if (step + 1) % 20 == 0:

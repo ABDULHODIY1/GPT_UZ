@@ -28,8 +28,22 @@ Fayldagi uch funksiya bir xil matematikani hisoblaydi:
 
 from __future__ import annotations
 
+import functools
+
 import torch
 import torch.nn.functional as F
+
+
+def fp32_on_cuda(fn):
+    """Xotira yadrosi doim fp32 da: CUDA'da autocast (fp16/bf16) shu funksiya ichida o'chiriladi —
+    holat ko'p qadam to'planadi, past aniqlik xatoni yig'ib boradi."""
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        if args[0].is_cuda:
+            with torch.autocast("cuda", enabled=False):
+                return fn(*args, **kwargs)
+        return fn(*args, **kwargs)
+    return wrapper
 
 
 def delta_rule_recurrent(q, k, v, g, beta, initial_state=None, read_fn=None, n_reads=1, erase=None):
@@ -49,6 +63,7 @@ def delta_rule_recurrent(q, k, v, g, beta, initial_state=None, read_fn=None, n_r
     return torch.stack(outs, dim=2), S
 
 
+@fp32_on_cuda
 def delta_rule_step(q, k, v, g, beta, state, read_fn=None, n_reads=1, erase=None):
     """Bitta token uchun yangilanish. q, k: [B, H, Dk]; v: [B, H, Dv]; beta, erase: [B, H];
     g: [B, H] (head bo'yicha unutish) yoki [B, H, Dk] (har bir kalit-kanal o'z tezligida).
@@ -67,6 +82,7 @@ def delta_rule_step(q, k, v, g, beta, state, read_fn=None, n_reads=1, erase=None
     return (outs[0] if n_reads == 1 else torch.stack(outs, 2)), S
 
 
+@fp32_on_cuda
 def delta_rule_chunked(q, k, v, g, beta, chunk_size=64, initial_state=None, read_fn=None, n_reads=1, erase=None):
     """Chunk'li parallel algoritm (WY/UT ko'rinishi), vaqt O(T·C), xotira O(T·C).
 
